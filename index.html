@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThaiUNII — ระบบสืบค้นรหัสสารสำคัญและวัตถุดิบทางเภสัชกรรม (FDA UNII)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- Supabase Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Thai"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            glass: {
+              bg: 'rgba(255, 255, 255, 0.65)',
+              border: 'rgba(255, 255, 255, 0.85)',
+              dark: 'rgba(24, 24, 27, 0.78)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background-color: #f4f4f6;
+      color: #27272a;
+      overflow-x: hidden;
+    }
+
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 45%, #fefce8 100%);
+    }
+    .orb-1 {
+      position: absolute;
+      top: -10%;
+      right: 5%;
+      width: 520px;
+      height: 520px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(250, 204, 21, 0.35) 0%, rgba(254, 240, 138, 0.1) 60%, transparent 80%);
+      filter: blur(55px);
+      animation: floatOrb 14s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      position: absolute;
+      bottom: 5%;
+      left: -8%;
+      width: 600px;
+      height: 600px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(161, 161, 170, 0.25) 0%, rgba(228, 228, 231, 0.1) 65%, transparent 85%);
+      filter: blur(65px);
+      animation: floatOrb 18s ease-in-out infinite alternate-reverse;
+    }
+    .orb-3 {
+      position: absolute;
+      top: 40%;
+      left: 38%;
+      width: 380px;
+      height: 380px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(253, 224, 71, 0.28) 0%, transparent 70%);
+      filter: blur(50px);
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, -25px) scale(1.06); }
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      box-shadow: 0 10px 30px -10px rgba(24, 24, 27, 0.06), 0 4px 12px -2px rgba(24, 24, 27, 0.03);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 4px 20px -4px rgba(24, 24, 27, 0.05);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.82);
+      border-color: rgba(250, 204, 21, 0.65);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px -8px rgba(234, 179, 8, 0.12), 0 6px 16px -4px rgba(24, 24, 27, 0.05);
+    }
+
+    .glass-search {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 40px -10px rgba(24, 24, 27, 0.08), 0 0 0 1px rgba(24, 24, 27, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .glass-search:focus-within {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: #eab308;
+      box-shadow: 0 20px 45px -12px rgba(234, 179, 8, 0.18), 0 0 0 4px rgba(250, 204, 21, 0.2);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(228, 228, 231, 0.8);
+      transition: all 0.18s ease;
+    }
+
+    .glass-pill.active {
+      background: #facc15;
+      color: #18181b;
+      border-color: #eab308;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
+    }
+
+    .bg-grid-pattern {
+      background-image: radial-gradient(rgba(113, 113, 122, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(161, 161, 170, 0.4);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-yellow-300 selection:text-zinc-900">
+
+  <!-- Ambient Glass Background -->
+  <div class="ambient-bg bg-grid-pattern">
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+    <div class="orb-3"></div>
+  </div>
+
+  <!-- Top Sticky Glass Navigation -->
+  <header class="sticky top-4 z-30 mx-auto w-[94%] max-w-6xl">
+    <nav class="glass-panel rounded-2xl px-4 py-3 sm:px-6 flex items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500 flex items-center justify-center shadow-sm border border-white/80">
+          <svg class="w-5 h-5 text-zinc-900" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-lg tracking-tight text-zinc-900">Thai<span class="text-amber-600">UNII</span></span>
+            <span id="syncStatusBadge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300/80 font-medium flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span id="dbSourceText">Supabase Live</span>
+            </span>
+          </div>
+          <p class="text-xs text-zinc-500 hidden sm:block">ฐานข้อมูลรหัสสารสำคัญและวัตถุดิบทางเภสัชกรรม (ฉบับภาษาไทย)</p>
+        </div>
+      </div>
+
+      <!-- View Switcher Tabs -->
+      <div class="flex items-center gap-1.5 bg-zinc-200/50 p-1 rounded-xl border border-white/60">
+        <button id="tabSearchBtn" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-white text-zinc-900 shadow-sm">
+          หน้าค้นหา (Search)
+        </button>
+        <button id="tabSavedBtn" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5">
+          <span>รายการที่บันทึก</span>
+          <span id="savedCountBadge" class="px-1.5 py-0.2 rounded-full text-[11px] font-mono bg-yellow-400 text-zinc-900 font-semibold">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 mx-auto w-[94%] max-w-6xl pt-8 pb-16">
+
+    <!-- ==================== VIEW 1: SEARCH & DISCOVERY UI ==================== -->
+    <section id="viewSearch" class="space-y-8">
+
+      <!-- Minimal Hero & Omni-Search Section -->
+      <div class="text-center max-w-3xl mx-auto space-y-5 pt-2">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel text-xs font-medium text-zinc-600">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>ซิงค์ข้อมูลอัตโนมัติจาก <a href="https://precision.fda.gov/uniisearch/archive" target="_blank" rel="noopener noreferrer" class="underline decoration-yellow-400 hover:text-zinc-900 font-semibold">US FDA Archive</a> ผ่านฐานข้อมูล Supabase</span>
+        </div>
+
+        <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 leading-tight">
+          ค้นหารหัสสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">UNII</span> ชื่อเคมี และสมุนไพรไทย
+        </h1>
+        <p class="text-sm sm:text-base text-zinc-500 max-w-2xl mx-auto">
+          สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII 10 หลัก เลขทะเบียน CAS RN และสูตรโมเลกุล สำหรับงานขึ้นทะเบียนผลิตภัณฑ์ อย. และงานวิจัย
+        </p>
+
+        <!-- Glass Omni-Search Bar -->
+        <div class="relative max-w-2xl mx-auto pt-1">
+          <div class="glass-search rounded-2xl p-2 flex items-center gap-2">
+            <div class="pl-3 text-zinc-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="พิมพ์ชื่อสาร เช่น พาราเซตามอล, ขมิ้นชัน, POVIDONE K30, 390RMW2PEQ, 526-17-0..."
+              class="w-full bg-transparent text-zinc-900 placeholder-zinc-400 text-sm sm:text-base focus:outline-none py-2"
+            />
+            <button id="clearSearchBtn" class="hidden p-2 text-zinc-400 hover:text-zinc-700 rounded-lg" title="ล้างคำค้นหา">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+            <button id="LegacyLookupTrigger" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-xs font-medium transition-all shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+              </svg>
+              <span>เช็ครหัส Legacy</span>
+            </button>
+          </div>
+
+          <!-- Quick Try Keywords -->
+          <div class="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs text-zinc-500">
+            <span>คำค้นยอดนิยม:</span>
+            <button data-quick="ขมิ้นชัน" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">ขมิ้นชัน (Curcuma)</button>
+            <button data-quick="Povidone K30" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Povidone K30</button>
+            <button data-quick="Chlorpheniramine" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">ยาแก้แพ้ Chlorpheniramine</button>
+            <button data-quick="Prednisone" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Prednisone</button>
+            <button data-quick="Lysozyme" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Lysozyme (โปรตีน)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Bar & Controls -->
+      <div class="glass-panel rounded-2xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        <!-- Category Pills -->
+        <div class="flex flex-wrap items-center gap-2" id="categoryFilterGroup">
+          <button data-cat="all" class="cat-btn glass-pill active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm">
+            ทั้งหมด
+          </button>
+          <button data-cat="chemical" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            สารเคมีเดี่ยว (Chemical)
+          </button>
+          <button data-cat="structurallyDiverse" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            สมุนไพร/สารธรรมชาติ (Botanical)
+          </button>
+          <button data-cat="polymer" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+            <span class="w-2 h-2 rounded-full bg-zinc-500"></span>
+            พอลิเมอร์/สารช่วย (Polymer)
+          </button>
+          <button data-cat="protein" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            โปรตีน/ชีววัตถุ (Protein)
+          </button>
+        </div>
+
+        <!-- Right Controls: Legacy Filter & Layout Switch -->
+        <div class="flex items-center justify-between md:justify-end gap-3 border-t md:border-t-0 pt-3 md:pt-0 border-zinc-200/60">
+          <label class="inline-flex items-center gap-2 cursor-pointer text-xs text-zinc-600 select-none">
+            <input type="checkbox" id="onlyLegacyCheckbox" class="rounded border-zinc-300 text-yellow-500 focus:ring-yellow-400">
+            <span>เฉพาะรายการที่มีรหัส Legacy เดิม</span>
+          </label>
+
+          <div class="flex items-center bg-zinc-200/60 p-1 rounded-xl border border-white">
+            <button id="layoutGridBtn" class="p-1.5 rounded-lg bg-white text-zinc-900 shadow-sm" title="มุมมองการ์ด (Grid)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+            </button>
+            <button id="layoutTableBtn" class="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900" title="มุมมองตาราง (Table)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Summary Bar -->
+      <div class="flex items-center justify-between px-1 text-xs text-zinc-500">
+        <div id="resultSummaryText">กำลังเชื่อมต่อฐานข้อมูล...</div>
+        <div class="flex items-center gap-2">
+          <span class="hidden sm:inline">คลิกที่การ์ดเพื่อดูโครงสร้างเคมีและชื่อพ้องทั้งหมด</span>
+        </div>
+      </div>
+
+      <!-- Results Container (Grid) -->
+      <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+      <!-- Results Container (Table - Hidden by default) -->
+      <div id="resultsTableWrap" class="hidden glass-panel rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200/70 bg-white/40 text-[11px] font-mono uppercase text-zinc-500">
+                <th class="py-3.5 px-4">UNII (ปัจจุบัน / Legacy)</th>
+                <th class="py-3.5 px-4">ชื่อสาร (ไทย / Preferred Name)</th>
+                <th class="py-3.5 px-4">CAS RN / สูตรโมเลกุล</th>
+                <th class="py-3.5 px-4">ประเภทสาร</th>
+                <th class="py-3.5 px-4 text-right">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="resultsTableBody" class="divide-y divide-zinc-200/50 text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 2: SAVED / BOOKMARKED ITEMS ==================== -->
+    <section id="viewSaved" class="hidden space-y-6">
+      <div class="glass-panel rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-zinc-900">รายการสารที่บันทึกไว้สำหรับอ้างอิง (RA Shortlist)</h2>
+          <p class="text-xs sm:text-sm text-zinc-500 mt-1">สารที่คุณติดดาวไว้เพื่อเตรียมคัดลอกรหัส UNII และ CAS RN ไปกรอกในคำขอขึ้นทะเบียนผลิตภัณฑ์</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyAllSavedBtn" class="px-4 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-semibold text-xs sm:text-sm transition-all shadow-sm">
+            คัดลอกตารางทั้งหมด (TSV)
+          </button>
+        </div>
+      </div>
+
+      <div id="savedListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL 1: SUBSTANCE DETAIL INSPECTOR ==================== -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+    <div class="glass-panel bg-white/85 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-7 shadow-2xl border border-white relative">
+      <!-- Top Bar -->
+      <div class="flex items-start justify-between gap-4 border-b border-zinc-200/80 pb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="modalUniiBadge" class="font-mono text-sm font-bold px-3 py-1 rounded-lg bg-yellow-400 text-zinc-900 shadow-sm">UNII</span>
+            <span id="modalLegacyBadge" class="hidden font-mono text-xs px-2.5 py-1 rounded-lg bg-zinc-200 text-zinc-700">Legacy: -</span>
+            <span id="modalTypeBadge" class="text-xs font-medium px-2.5 py-1 rounded-lg bg-zinc-100 text-zinc-700 border border-zinc-200">ประเภทสาร</span>
+          </div>
+          <h3 id="modalThaiName" class="text-xl sm:text-2xl font-bold text-zinc-900 mt-2.5">ชื่อภาษาไทย</h3>
+          <p id="modalPreferredName" class="text-sm font-mono text-zinc-500">PREFERRED SUBSTANCE NAME</p>
+        </div>
+        <button id="closeDetailModalBtn" class="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Content Body -->
+      <div class="space-y-5 py-5">
+        <!-- Thai Usage & Role Description -->
+        <div class="p-4 rounded-2xl bg-yellow-50/80 border border-yellow-200/80 space-y-1">
+          <div class="text-xs font-semibold text-amber-800 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>คำอธิบายและบทบาทในผลิตภัณฑ์ (ภาษาไทย)</span>
+          </div>
+          <p id="modalThaiDesc" class="text-xs sm:text-sm text-zinc-700 leading-relaxed"></p>
+        </div>
+
+        <!-- Identifiers Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div class="p-3 rounded-xl bg-white/75 border border-zinc-200/80">
+            <span class="text-[11px] font-mono uppercase text-zinc-400 block">CAS Registry (RN)</span>
+            <div class="flex items-center justify-between mt-1">
+              <span id="modalCas" class="font-mono text-sm font-semibold text-zinc-800">-</span>
+              <button id="copyModalCasBtn" class="text-xs text-amber-600 hover:underline">คัดลอก</button>
+            </div>
+          </div>
+          <div class="p-3 rounded-xl bg-white/75 border border-zinc-200/80">
+            <span class="text-[11px] font-mono uppercase text-zinc-400 block">สูตรโมเลกุล (MF)</span>
+            <span id="modalFormula" class="font-mono text-sm font-semibold text-zinc-800 mt-1 block">-</span>
+          </div>
+          <div class="p-3 rounded-xl bg-white/75 border border-zinc-200/80 col-span-2 sm:col-span-1">
+            <span class="text-[11px] font-mono uppercase text-zinc-400 block">PubChem / RxCUI</span>
+            <span id="modalPubchem" class="font-mono text-sm font-semibold text-zinc-800 mt-1 block">-</span>
+          </div>
+        </div>
+
+        <!-- InChIKey & SMILES Box -->
+        <div class="p-4 rounded-2xl bg-zinc-900 text-zinc-100 space-y-2.5 font-mono text-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-yellow-400 font-semibold">ข้อมูลโครงสร้างโมเลกุล (InChIKey & SMILES)</span>
+            <button id="copyModalSmilesBtn" class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-[11px]">คัดลอก SMILES</button>
+          </div>
+          <div class="text-zinc-400 break-all">
+            <span class="text-zinc-500">InChIKey:</span> <span id="modalInchikey" class="text-zinc-200">-</span>
+          </div>
+          <div class="text-zinc-400 break-all bg-zinc-950/60 p-2.5 rounded-xl border border-zinc-800">
+            <span class="text-zinc-500">SMILES:</span> <span id="modalSmiles" class="text-yellow-200/90">-</span>
+          </div>
+        </div>
+
+        <!-- Synonyms from UNII_Names -->
+        <div class="space-y-2">
+          <div class="text-xs font-semibold text-zinc-700 flex items-center justify-between">
+            <span>ชื่อพ้องและชื่อทางการค้า (Synonyms จากฐานข้อมูล)</span>
+            <span class="text-[11px] font-mono text-zinc-400">Official / Common / Brand</span>
+          </div>
+          <div id="modalSynonyms" class="flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200/80 pt-4">
+        <button id="modalCopyUniiBtn" class="px-4 py-2.5 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+          <span>คัดลอกรหัส UNII</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <a id="modalFdaLink" href="https://precision.fda.gov/uniisearch" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-white border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-xs font-medium transition-all">
+            เปิดดูใน FDA GSRS ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: LEGACY UNII CONVERTER ==================== -->
+  <div id="legacyModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+    <div class="glass-panel bg-white/90 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-white space-y-4">
+      <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+          <h3 class="font-bold text-zinc-900">ตรวจสอบรหัส Legacy UNII ที่ถูกแทนที่</h3>
+        </div>
+        <button id="closeLegacyModalBtn" class="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <p class="text-xs text-zinc-600 leading-relaxed">
+        ตรวจสอบว่ารหัส UNII เดิมในตำรับยาเก่า ถูกเปลี่ยนเป็นรหัส UNII ใหม่ใดในปัจจุบันตามฐานข้อมูล FDA
+      </p>
+      <div class="space-y-2 max-h-64 overflow-y-auto pr-1" id="legacyListPreview"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-2xl bg-zinc-900/90 text-white backdrop-blur-md shadow-xl border border-zinc-700 text-xs sm:text-sm">
+    <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+    <span id="toastMessage">คัดลอกรหัสสำเร็จแล้ว</span>
+  </div>
+
+  <!-- Minimal Footer -->
+  <footer class="mt-auto border-t border-zinc-200/60 py-6 text-center text-xs text-zinc-500">
+    <div class="mx-auto w-[94%] max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>ThaiUNII — Minimal Glassmorphism & Supabase Powered</div>
+      <div class="font-mono text-[11px]">Auto-Synced with FDA Substance Registration System</div>
+    </div>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT & SUPABASE INTEGRATION ==================== -->
+  <script>
+    // =========================================================================
+    // 1. SUPABASE CONFIGURATION (ใส่ URL และ ANON KEY จากโปรเจกต์ Supabase ของคุณที่นี่)
+    // =========================================================================
+    const SUPABASE_CONFIG = {
+      // ตัวอย่าง: 'https://xyzcompany.supabase.co'
+      url: 'https://aiunnmkghvxfkubrhnsy.supabase.co', 
+      // ตัวอย่าง: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+      anonKey: 'sb_publishable_jnM92sIwkE4Of4k_g8MFew_isgnowxw'
+    };
+
+    let supabaseClient = null;
+    const isSupabaseConfigured = Boolean(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
+
+    if (isSupabaseConfigured && window.supabase) {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        document.getElementById("dbSourceText").textContent = "Supabase Live Connected";
+      } catch (err) {
+        console.error("Supabase Init Error:", err);
+      }
+    } else {
+      document.getElementById("dbSourceText").textContent = "Local Sample Cache";
+      document.getElementById("syncStatusBadge").className = "text-[11px] font-mono px-2 py-0.5 rounded-full bg-yellow-100 text-zinc-800 border border-yellow-300 font-medium flex items-center gap-1";
+    }
+
+    // Fallback Seed Data (ชุดข้อมูลตัวอย่างจริงสำหรับแสดงผลทันทีก่อนเชื่อมต่อ Supabase)
+    const fallbackSubstances = [
+      {
+        unii: "U725QWY32X",
+        legacyUnii: "390RMW2PEQ",
+        preferredName: "POVIDONE K30",
+        thaiName: "โพวิโดน เค30 (สารช่วยยึดเกาะเม็ดยา)",
+        cas: "9003-39-8",
+        formula: "(C6H9NO)n",
+        pubchem: "CID 6917",
+        substanceType: "polymer",
+        typeLabelThai: "พอลิเมอร์ / สารช่วย (Excipient)",
+        inchikey: "N/A (Homopolymer)",
+        smiles: "C=CN1CCCC1=O",
+        thaiDesc: "พอลิเมอร์สังเคราะห์ละลายน้ำได้ดี นิยมใช้เป็นสารยึดเกาะ (Binder) ในการตอกเม็ดยา และช่วยเพิ่มการละลายของตัวยาสำคัญ",
+        synonyms: ["PVP K-30", "POLYVINYLPYRROLIDONE K30", "KOLLIDON 30", "PLASDONE K-29/32"]
+      },
+      {
+        unii: "3U6IO1965U",
+        legacyUnii: "783AHI015X",
+        preferredName: "CHLORPHENIRAMINE",
+        thaiName: "คลอร์เฟนิรามีน (ยาแก้แพ้ ลดน้ำมูก)",
+        cas: "132-22-9",
+        formula: "C16H19ClN2",
+        pubchem: "CID 2725",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมีเดี่ยว (Active Ingredient)",
+        inchikey: "SOYKEARFFJGWCQ-UHFFFAOYSA-N",
+        smiles: "CN(C)CCC(C1=CC=C(Cl)C=C1)C2=CC=CC=N2",
+        thaiDesc: "สารต้านฮิสตามีนรุ่นที่ 1 (Antihistamine) ใช้บรรเทาอาการแพ้ จาม น้ำมูกไหล และลมพิษ",
+        synonyms: ["CHLORPHENAMINE", "คลอร์เฟนิรามีน", "CPM"]
+      },
+      {
+        unii: "VB0R961HZT",
+        legacyUnii: "3EN3HG4WSW",
+        preferredName: "PREDNISONE",
+        thaiName: "เพรดนิโซน (ยาลดการอักเสบกลุ่มสเตียรอยด์)",
+        cas: "53-03-2",
+        formula: "C21H26O5",
+        pubchem: "CID 5865",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมีเดี่ยว (Corticosteroid)",
+        inchikey: "XOFYZUVORIHUGs-ZPOLVrTGSA-N",
+        smiles: "CC12CC(=O)C3C(C1CCC2(C(=O)CO)O)CCC4=CC(=O)C=CC34C",
+        thaiDesc: "ตัวยาสำคัญกลุ่มคอร์ติโคสเตียรอยด์ ใช้ต้านการอักเสบและกดภูมิคุ้มกันในโรคภูมิแพ้รุนแรงหรือโรคแพ้ภูมิตัวเอง",
+        synonyms: ["DELTASONE", "METICORTEN", "เพรดนิโซน"]
+      },
+      {
+        unii: "RIV999L6M8",
+        legacyUnii: "2A2233R8M7",
+        preferredName: "CURCUMA AROMATICA WHOLE",
+        thaiName: "ว่านทางคำ / ขมิ้นป่า (ทั้งต้น)",
+        cas: "N/A (Botanical)",
+        formula: "สมุนไพรธรรมชาติ",
+        pubchem: "NCBI 136215",
+        substanceType: "structurallyDiverse",
+        typeLabelThai: "สมุนไพร / พืช (Botanical)",
+        inchikey: "N/A (Botanical Material)",
+        smiles: "N/A (Whole Plant)",
+        thaiDesc: "พืชสมุนไพรตระกูลขมิ้น (Zingiberaceae) นิยมใช้ในตำรับยาแผนโบราณและเวชสำอางบำรุงผิวพรรณ",
+        synonyms: ["WILD TURMERIC WHOLE", "ขมิ้นป่า", "ว่านทางคำ"]
+      },
+      {
+        unii: "G0R4UBI2ZZ",
+        legacyUnii: "2Z4LRR776S",
+        preferredName: "MATRICARIA CHAMOMILLA WHOLE",
+        thaiName: "คาโมมายล์เยอรมัน (ทั้งต้น)",
+        cas: "84082-60-0",
+        formula: "สมุนไพรธรรมชาติ",
+        pubchem: "POWO 313322-2",
+        substanceType: "structurallyDiverse",
+        typeLabelThai: "สมุนไพร / พืช (Botanical)",
+        inchikey: "N/A (Botanical Material)",
+        smiles: "N/A (Botanical)",
+        thaiDesc: "สารสกัดและวัตถุดิบจากดอกคาโมมายล์ นิยมใช้ในเครื่องสำอางและผลิตภัณฑ์ดูแลผิวเพื่อลดการระคายเคือง",
+        synonyms: ["GERMAN CHAMOMILE WHOLE", "คาโมมายล์"]
+      },
+      {
+        unii: "968JKA7T33",
+        legacyUnii: "1ZML031Y3C",
+        preferredName: "LYSOZYME",
+        thaiName: "ไลโซไซม์ (เอนไซม์ต้านเชื้อแบคทีเรีย)",
+        cas: "9001-63-2",
+        formula: "โปรตีนชีวภาพ",
+        pubchem: "EC 3.2.1.17",
+        substanceType: "protein",
+        typeLabelThai: "โปรตีน / เอนไซม์ (Biologic)",
+        inchikey: "N/A (Protein Sequence)",
+        smiles: "N/A (Macromolecule)",
+        thaiDesc: "เอนไซม์ธรรมชาติที่มีฤทธิ์ย่อยผนังเซลล์ของแบคทีเรียแกรมบวก ใช้ในยาอมแก้เจ็บคอ ยาหยอดตา และผลิตภัณฑ์ถนอมอาหาร",
+        synonyms: ["MURAMIDASE", "ไลโซไซม์"]
+      },
+      {
+        unii: "001E35HGVF",
+        legacyUnii: null,
+        preferredName: "MAGNOLOL",
+        thaiName: "แมกโนลอล (สารสำคัญจากเปลือกแมกโนเลีย)",
+        cas: "528-43-8",
+        formula: "C18H18O2",
+        pubchem: "CID 72300",
+        substanceType: "chemical",
+        typeLabelThai: "สารสกัดบริสุทธิ์ (Phytochemical)",
+        inchikey: "VVOAZFWZEDHOOU-UHFFFAOYSA-N",
+        smiles: "c1(-c2c(ccc(c2)CC=C)O)c(ccc(c1)CC=C)O",
+        thaiDesc: "สารกลุ่มลิกแนนที่สกัดได้จากเปลือกต้น Magnolia officinalis มีฤทธิ์ต้านอนุมูลอิสระและต้านเชื้อแบคทีเรียในช่องปากและผิวหนัง",
+        synonyms: ["5,5'-DIALLYL-2,2'-BIPHENYLDIOL", "แมกโนลอล"]
+      },
+      {
+        unii: "DK6Y9P42IN",
+        legacyUnii: "391O0PO49R",
+        preferredName: "SODIUM PROPIONATE",
+        thaiName: "โซเดียมโพรพิโอเนต (สารกันเสีย)",
+        cas: "137-40-6",
+        formula: "C3H5NaO2",
+        pubchem: "CID 2723810",
+        substanceType: "chemical",
+        typeLabelThai: "สารช่วย / สารกันเสีย (Preservative)",
+        inchikey: "JXKPEJDQGNYQSM-UHFFFAOYSA-M",
+        smiles: "CCC(=O)[O-].[Na+]",
+        thaiDesc: "เกลือโซเดียมของกรดโพรพิโอนิก ใช้เป็นวัตถุกันเสียป้องกันเชื้อราและแบคทีเรียในอาหารและเภสัชภัณฑ์ (E281)",
+        synonyms: ["PROPIONIC ACID, SODIUM SALT", "E281", "โซเดียมโพรพิโอเนต"]
+      },
+      {
+        unii: "000QCM6HAL",
+        legacyUnii: null,
+        preferredName: "ZAVEGEPANT HYDROCHLORIDE",
+        thaiName: "ซาเวจีแพนท์ ไฮโดรคลอไรด์ (ยารักษาไมเกรน)",
+        cas: "1414976-20-7",
+        formula: "C36H46N8O3.ClH",
+        pubchem: "CID 134819878",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมีเดี่ยว (CGRP Receptor Antagonist)",
+        inchikey: "VQDUWCSSPSOSNA-RYWNGCACSA-N",
+        smiles: "N1(CCC(CC1)c2c([nH]c3ccccc3c2)=O)C(=O)N[C@@H](C(=O)N4CCN(CC4)C5CCN(CC5)C)Cc6cc7cn[nH]c7c(c6)C.Cl",
+        thaiDesc: "ตัวยาออกฤทธิ์ยับยั้งตัวรับ CGRP รุ่นที่ 3 สำหรับรักษาอาการปวดไมเกรนเฉียบพลันในรูปแบบสเปรย์พ่นจมูก",
+        synonyms: ["ZAVZPRET", "BHV-3500", "ซาเวจีแพนท์"]
+      }
+    ];
+
+    // State Variables
+    let currentCategory = "all";
+    let searchQuery = "";
+    let onlyLegacy = false;
+    let layoutMode = "grid";
+    let savedUniiSet = new Set(["U725QWY32X", "3U6IO1965U"]);
+    let currentResults = [...fallbackSubstances];
+    let activeModalItem = null;
+    let searchDebounceTimer = null;
+
+    // DOM References
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    const onlyLegacyCheckbox = document.getElementById("onlyLegacyCheckbox");
+    const resultsGrid = document.getElementById("resultsGrid");
+    const resultsTableWrap = document.getElementById("resultsTableWrap");
+    const resultsTableBody = document.getElementById("resultsTableBody");
+    const resultSummaryText = document.getElementById("resultSummaryText");
+    const savedCountBadge = document.getElementById("savedCountBadge");
+    const savedListContainer = document.getElementById("savedListContainer");
+
+    // Toast Function
+    let toastTimer = null;
+    function showToast(msg) {
+      const toastBox = document.getElementById("toastBox");
+      const toastMessage = document.getElementById("toastMessage");
+      toastMessage.textContent = msg;
+      toastBox.classList.remove("hidden");
+      toastBox.classList.add("flex");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastBox.classList.add("hidden");
+        toastBox.classList.remove("flex");
+      }, 2500);
+    }
+
+    // Safe Copy
+    function copyText(text, label) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`คัดลอก ${label}: ${text}`);
+        }).catch(() => fallbackCopy(text, label));
+      } else {
+        fallbackCopy(text, label);
+      }
+    }
+
+    function fallbackCopy(text, label) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        showToast(`คัดลอก ${label}: ${text}`);
+      } catch (e) {
+        showToast("คัดลอกสำเร็จ");
+      }
+      document.body.removeChild(ta);
+    }
+
+    // =========================================================================
+    // 2. QUERY ENGINE: SUPABASE LIVE or LOCAL CACHE FALLBACK
+    // =========================================================================
+    async function executeSearch() {
+      resultSummaryText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span> กำลังค้นหาข้อมูล...</span>`;
+
+      if (supabaseClient) {
+        try {
+          // เรียกใช้งาน Supabase RPC search function
+          const { data, error } = await supabaseClient.rpc('search_thai_unii', {
+            search_term: searchQuery,
+            filter_category: currentCategory,
+            only_legacy_flag: onlyLegacy,
+            max_results: 50
+          });
+
+          if (error) throw error;
+
+          if (data && Array.isArray(data)) {
+            currentResults = data.map(row => ({
+              unii: row.unii,
+              legacyUnii: row.legacy_unii,
+              preferredName: row.preferred_name,
+              thaiName: row.thai_name || row.preferred_name,
+              cas: row.cas_rn || "N/A",
+              formula: row.molecular_formula || "-",
+              pubchem: row.pubchem_cid || "-",
+              substanceType: row.substance_type || "chemical",
+              typeLabelThai: row.type_label_th || "สารเคมีเดี่ยว",
+              inchikey: row.inchikey || "-",
+              smiles: row.smiles || "-",
+              thaiDesc: row.thai_desc || "ไม่มีข้อมูลคำอธิบาย",
+              synonyms: row.synonyms || []
+            }));
+            renderResults();
+            return;
+          }
+        } catch (err) {
+          console.warn("Supabase query failed, falling back to local dataset:", err);
+        }
+      }
+
+      // Local Fallback Filter
+      const q = searchQuery.trim().toLowerCase();
+      currentResults = fallbackSubstances.filter(item => {
+        if (currentCategory !== "all" && item.substanceType !== currentCategory) return false;
+        if (onlyLegacy && !item.legacyUnii) return false;
+        if (!q) return true;
+        const inUnii = item.unii.toLowerCase().includes(q);
+        const inLegacy = item.legacyUnii && item.legacyUnii.toLowerCase().includes(q);
+        const inPref = item.preferredName.toLowerCase().includes(q);
+        const inThai = item.thaiName.toLowerCase().includes(q);
+        const inCas = item.cas.toLowerCase().includes(q);
+        const inSyn = item.synonyms.some(s => s.toLowerCase().includes(q));
+        return inUnii || inLegacy || inPref || inThai || inCas || inSyn;
+      });
+
+      renderResults();
+    }
+
+    // Render Results
+    function renderResults() {
+      savedCountBadge.textContent = savedUniiSet.size;
+
+      const sourceInfo = supabaseClient ? "ฐานข้อมูล Supabase" : "ข้อมูลตัวอย่าง";
+      resultSummaryText.innerHTML = `พบผลลัพธ์ <strong class="text-zinc-900 font-semibold">${currentResults.length}</strong> รายการจาก ${sourceInfo} ${searchQuery ? `สำหรับ <span class="px-2 py-0.5 rounded bg-yellow-200/70 text-zinc-900 font-mono">"${searchQuery}"</span>` : ''}`;
+
+      if (currentResults.length === 0) {
+        resultsGrid.innerHTML = `
+          <div class="col-span-full glass-panel rounded-2xl p-10 text-center space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-yellow-400/20 text-amber-600 flex items-center justify-center mx-auto">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="font-bold text-zinc-800">ไม่พบรายการสารที่ตรงกับเงื่อนไข</div>
+            <p class="text-xs text-zinc-500">ลองค้นหาด้วยรหัส UNII, ชื่อสามัญภาษาอังกฤษ หรือเลข CAS</p>
+          </div>
+        `;
+        resultsTableBody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-zinc-500">ไม่พบรายการที่ค้นหา</td></tr>`;
+        return;
+      }
+
+      // Render Cards
+      resultsGrid.innerHTML = currentResults.map(item => {
+        const isSaved = savedUniiSet.has(item.unii);
+        return `
+          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between gap-4 cursor-pointer" data-open-unii="${item.unii}">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-yellow-400 text-zinc-900 shadow-sm">${item.unii}</span>
+                  ${item.legacyUnii ? `<span class="font-mono text-[11px] px-2 py-0.5 rounded-md bg-zinc-200/80 text-zinc-600" title="รหัส Legacy เดิม">เดิม: ${item.legacyUnii}</span>` : ''}
+                </div>
+                <div class="flex items-center gap-1">
+                  <button type="button" data-copy-unii="${item.unii}" class="p-1.5 rounded-lg hover:bg-yellow-400/30 text-zinc-500 hover:text-zinc-900 transition-colors" title="คัดลอกรหัส UNII">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                  </button>
+                  <button type="button" data-toggle-save="${item.unii}" class="p-1.5 rounded-lg hover:bg-yellow-400/30 ${isSaved ? 'text-amber-500' : 'text-zinc-400'} transition-colors" title="บันทึกไว้ในรายการอ้างอิง">
+                    <svg class="w-4 h-4" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="font-bold text-base text-zinc-900 leading-snug">${item.thaiName}</h3>
+                <p class="font-mono text-xs text-zinc-500 mt-0.5 truncate">${item.preferredName}</p>
+              </div>
+
+              <p class="text-xs text-zinc-600 line-clamp-2 leading-relaxed">${item.thaiDesc}</p>
+            </div>
+
+            <div class="pt-3 border-t border-zinc-200/60 flex items-center justify-between text-[11px] text-zinc-500">
+              <span class="font-mono">CAS: <strong class="text-zinc-700">${item.cas}</strong></span>
+              <span class="px-2 py-0.5 rounded-md bg-white/80 border border-zinc-200 text-zinc-700">${item.typeLabelThai}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Render Table Rows
+      resultsTableBody.innerHTML = currentResults.map(item => `
+        <tr class="hover:bg-yellow-50/40 transition-colors cursor-pointer" data-open-unii="${item.unii}">
+          <td class="py-3 px-4 font-mono">
+            <span class="font-bold text-zinc-900 bg-yellow-300/70 px-2 py-0.5 rounded">${item.unii}</span>
+            ${item.legacyUnii ? `<div class="text-[11px] text-zinc-400 mt-0.5">Legacy: ${item.legacyUnii}</div>` : ''}
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-semibold text-zinc-900">${item.thaiName}</div>
+            <div class="font-mono text-xs text-zinc-500">${item.preferredName}</div>
+          </td>
+          <td class="py-3 px-4 font-mono text-xs text-zinc-600">
+            <div>${item.cas}</div>
+            <div class="text-zinc-400">${item.formula}</div>
+          </td>
+          <td class="py-3 px-4 text-xs">
+            <span class="px-2.5 py-1 rounded-full bg-white border border-zinc-200 text-zinc-700">${item.typeLabelThai}</span>
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button type="button" data-copy-unii="${item.unii}" class="px-2.5 py-1 rounded-lg bg-zinc-900 text-yellow-300 text-xs font-mono hover:bg-zinc-800">
+              คัดลอก
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    // Render Saved Shortlist View
+    function renderSavedView() {
+      const savedItems = currentResults.filter(d => savedUniiSet.has(d.unii));
+      if (savedItems.length === 0) {
+        savedListContainer.innerHTML = `
+          <div class="col-span-full glass-panel rounded-2xl p-8 text-center text-zinc-500 text-sm">
+            ยังไม่มีสารที่บันทึกไว้ คลิกไอคอนรูปดาวบนการ์ดในหน้าค้นหาเพื่อเก็บไว้ดูภายหลัง
+          </div>
+        `;
+        return;
+      }
+
+      savedListContainer.innerHTML = savedItems.map(item => `
+        <div class="glass-card rounded-2xl p-5 flex items-start justify-between gap-4">
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-bold px-2.5 py-0.5 rounded bg-yellow-400 text-zinc-900">${item.unii}</span>
+              <span class="font-mono text-xs text-zinc-500">CAS: ${item.cas}</span>
+            </div>
+            <h4 class="font-bold text-zinc-900">${item.thaiName}</h4>
+            <p class="font-mono text-xs text-zinc-500">${item.preferredName}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" data-copy-unii="${item.unii}" class="px-3 py-1.5 rounded-xl bg-zinc-900 text-yellow-300 text-xs font-medium">คัดลอก</button>
+            <button type="button" data-remove-save="${item.unii}" class="p-1.5 rounded-xl bg-zinc-100 hover:bg-red-50 text-zinc-500 hover:text-red-600" title="ลบออก">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // Open Substance Detail Modal
+    function openDetailModal(unii) {
+      const item = currentResults.find(d => d.unii === unii) || fallbackSubstances.find(d => d.unii === unii);
+      if (!item) return;
+      activeModalItem = item;
+
+      document.getElementById("modalUniiBadge").textContent = `UNII: ${item.unii}`;
+      const legBadge = document.getElementById("modalLegacyBadge");
+      if (item.legacyUnii) {
+        legBadge.textContent = `รหัส Legacy เดิม: ${item.legacyUnii}`;
+        legBadge.classList.remove("hidden");
+      } else {
+        legBadge.classList.add("hidden");
+      }
+      document.getElementById("modalTypeBadge").textContent = item.typeLabelThai;
+      document.getElementById("modalThaiName").textContent = item.thaiName;
+      document.getElementById("modalPreferredName").textContent = item.preferredName;
+      document.getElementById("modalThaiDesc").textContent = item.thaiDesc;
+      document.getElementById("modalCas").textContent = item.cas;
+      document.getElementById("modalFormula").textContent = item.formula;
+      document.getElementById("modalPubchem").textContent = item.pubchem;
+      document.getElementById("modalInchikey").textContent = item.inchikey;
+      document.getElementById("modalSmiles").textContent = item.smiles;
+
+      document.getElementById("modalSynonyms").innerHTML = item.synonyms.map(s => `
+        <span class="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-xs font-mono text-zinc-700">${s}</span>
+      `).join("");
+
+      const modal = document.getElementById("detailModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    // Event Listeners: Delegated Actions
+    document.addEventListener("click", (e) => {
+      const copyBtn = e.target.closest("[data-copy-unii]");
+      if (copyBtn) {
+        e.stopPropagation();
+        const u = copyBtn.getAttribute("data-copy-unii");
+        copyText(u, "รหัส UNII");
+        return;
+      }
+
+      const saveBtn = e.target.closest("[data-toggle-save]");
+      if (saveBtn) {
+        e.stopPropagation();
+        const u = saveBtn.getAttribute("data-toggle-save");
+        if (savedUniiSet.has(u)) {
+          savedUniiSet.delete(u);
+          showToast(`นำ ${u} ออกจากรายการที่บันทึก`);
+        } else {
+          savedUniiSet.add(u);
+          showToast(`บันทึก ${u} ลงในรายการอ้างอิงแล้ว`);
+        }
+        renderResults();
+        renderSavedView();
+        return;
+      }
+
+      const removeSaveBtn = e.target.closest("[data-remove-save]");
+      if (removeSaveBtn) {
+        const u = removeSaveBtn.getAttribute("data-remove-save");
+        savedUniiSet.delete(u);
+        renderResults();
+        renderSavedView();
+        showToast(`นำ ${u} ออกจากรายการแล้ว`);
+        return;
+      }
+
+      const cardOpen = e.target.closest("[data-open-unii]");
+      if (cardOpen) {
+        openDetailModal(cardOpen.getAttribute("data-open-unii"));
+      }
+    });
+
+    // Search Input with Debounce
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        executeSearch();
+      }, 250);
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      executeSearch();
+    });
+
+    // Quick Chips
+    document.querySelectorAll(".quick-chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const q = btn.getAttribute("data-quick");
+        searchInput.value = q;
+        searchQuery = q;
+        clearSearchBtn.classList.remove("hidden");
+        executeSearch();
+      });
+    });
+
+    // Category Buttons
+    document.querySelectorAll(".cat-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = btn.getAttribute("data-cat");
+        executeSearch();
+      });
+    });
+
+    // Only Legacy Checkbox
+    onlyLegacyCheckbox.addEventListener("change", (e) => {
+      onlyLegacy = e.target.checked;
+      executeSearch();
+    });
+
+    // Layout Toggle (Grid vs Table)
+    const layoutGridBtn = document.getElementById("layoutGridBtn");
+    const layoutTableBtn = document.getElementById("layoutTableBtn");
+
+    layoutGridBtn.addEventListener("click", () => {
+      layoutMode = "grid";
+      resultsGrid.classList.remove("hidden");
+      resultsTableWrap.classList.add("hidden");
+      layoutGridBtn.className = "p-1.5 rounded-lg bg-white text-zinc-900 shadow-sm";
+      layoutTableBtn.className = "p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900";
+    });
+
+    layoutTableBtn.addEventListener("click", () => {
+      layoutMode = "table";
+      resultsGrid.classList.add("hidden");
+      resultsTableWrap.classList.remove("hidden");
+      layoutTableBtn.className = "p-1.5 rounded-lg bg-white text-zinc-900 shadow-sm";
+      layoutGridBtn.className = "p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900";
+    });
+
+    // View Switching Tabs
+    const tabSearchBtn = document.getElementById("tabSearchBtn");
+    const tabSavedBtn = document.getElementById("tabSavedBtn");
+    const viewSearch = document.getElementById("viewSearch");
+    const viewSaved = document.getElementById("viewSaved");
+
+    tabSearchBtn.addEventListener("click", () => {
+      viewSearch.classList.remove("hidden");
+      viewSaved.classList.add("hidden");
+      tabSearchBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-white text-zinc-900 shadow-sm";
+      tabSavedBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5";
+    });
+
+    tabSavedBtn.addEventListener("click", () => {
+      viewSearch.classList.add("hidden");
+      viewSaved.classList.remove("hidden");
+      tabSavedBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-white text-zinc-900 shadow-sm flex items-center gap-1.5";
+      tabSearchBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900";
+      renderSavedView();
+    });
+
+    // Detail Modal Controls
+    document.getElementById("closeDetailModalBtn").addEventListener("click", () => {
+      document.getElementById("detailModal").classList.add("hidden");
+      document.getElementById("detailModal").classList.remove("flex");
+    });
+
+    document.getElementById("modalCopyUniiBtn").addEventListener("click", () => {
+      if (activeModalItem) copyText(activeModalItem.unii, "รหัส UNII");
+    });
+
+    document.getElementById("copyModalCasBtn").addEventListener("click", () => {
+      if (activeModalItem) copyText(activeModalItem.cas, "เลข CAS");
+    });
+
+    document.getElementById("copyModalSmilesBtn").addEventListener("click", () => {
+      if (activeModalItem) copyText(activeModalItem.smiles, "SMILES");
+    });
+
+    // Legacy Lookup Modal
+    const legacyModal = document.getElementById("legacyModal");
+    document.getElementById("LegacyLookupTrigger").addEventListener("click", () => {
+      const legacyItems = fallbackSubstances.filter(d => d.legacyUnii);
+      document.getElementById("legacyListPreview").innerHTML = legacyItems.map(item => `
+        <div class="p-3 rounded-xl bg-white border border-zinc-200 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-zinc-800">${item.thaiName}</div>
+            <div class="font-mono text-zinc-500">${item.preferredName}</div>
+          </div>
+          <div class="flex items-center gap-2 font-mono">
+            <span class="px-2 py-0.5 rounded bg-zinc-200 text-zinc-600 line-through">${item.legacyUnii}</span>
+            <span>→</span>
+            <span class="px-2 py-0.5 rounded bg-yellow-400 text-zinc-900 font-bold">${item.unii}</span>
+          </div>
+        </div>
+      `).join("");
+      legacyModal.classList.remove("hidden");
+      legacyModal.classList.add("flex");
+    });
+
+    document.getElementById("closeLegacyModalBtn").addEventListener("click", () => {
+      legacyModal.classList.add("hidden");
+      legacyModal.classList.remove("flex");
+    });
+
+    // Export Saved TSV
+    document.getElementById("copyAllSavedBtn").addEventListener("click", () => {
+      const savedItems = currentResults.filter(d => savedUniiSet.has(d.unii));
+      const tsv = "UNII\tPreferred Name\tThai Name\tCAS RN\n" +
+        savedItems.map(i => `${i.unii}\t${i.preferredName}\t${i.thaiName}\t${i.cas}`).join("\n");
+      copyText(tsv, "ตารางรายการที่บันทึก");
+    });
+
+    // Initial Execution
+    executeSearch();
+  </script>
+</body>
+</html>
