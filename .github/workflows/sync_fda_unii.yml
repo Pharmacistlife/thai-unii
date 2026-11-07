@@ -20,10 +20,10 @@ jobs:
       - name: Download Latest FDA UNII Data
         run: |
           echo "กำลังดาวน์โหลดไฟล์ UNII ล่าสุดจาก precisionFDA Archive..."
-          curl -f -L -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/latest/UNII_Data.zip" || curl -f -L -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/2026-08-04/UNII_Data_20260804.zip"
+          curl -f -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/latest/UNII_Data.zip"
           unzip -o UNII_Data.zip
-          echo "รายชื่อไฟล์ที่แตกออกมาได้:"
-          ls -lh
+          echo "ตรวจสอบไฟล์ที่ได้:"
+          ls -la
 
       - name: Sync Data into Supabase
         env:
