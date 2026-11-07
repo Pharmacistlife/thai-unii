@@ -20,20 +20,21 @@ jobs:
       - name: Download Latest FDA UNII Data
         run: |
           echo "กำลังดาวน์โหลดไฟล์ UNII ล่าสุดจาก precisionFDA Archive..."
-          curl -s -L -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/UNII_Data.zip" || true
-          if [ -f UNII_Data.zip ]; then
-            unzip -o UNII_Data.zip || true
-          fi
+          curl -f -L -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/latest/UNII_Data.zip" || curl -f -L -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/2026-08-04/UNII_Data_20260804.zip"
+          unzip -o UNII_Data.zip
+          echo "รายชื่อไฟล์ที่แตกออกมาได้:"
+          ls -lh
 
       - name: Sync Data into Supabase
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          RECORD_FILE=$(ls UNII_Records_*.txt 2>/dev/null | head -n 1)
+          RECORD_FILE=$(find . -name "UNII_Records*.txt" | head -n 1)
           if [ -n "$RECORD_FILE" ]; then
             echo "พบไฟล์ $RECORD_FILE กำลังนำเข้า Supabase..."
             python3 import_to_supabase.py "$RECORD_FILE"
           else
-            echo "ไม่พบไฟล์ สิ้นสุดการทำงาน"
+            echo "ไม่พบไฟล์ UNII_Records"
+            exit 1
           fi
