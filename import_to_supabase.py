@@ -2,6 +2,7 @@
 """
 ThaiUNII — Data Importer & Background Sync to Supabase
 ดึงข้อมูล FDA UNII จาก precisionFDA Archive หรือไฟล์ในเครื่อง แล้วนำเข้า Supabase แบบ Batch
+รองรับ Supabase New API Keys (sb_secret_...) และ Legacy Keys
 """
 
 import os
@@ -13,7 +14,6 @@ import urllib.request
 import re
 from typing import List, Dict, Any
 
-# พจนานุกรมชื่อสามัญภาษาไทยและสมุนไพรไทยพื้นฐานสำหรับจับคู่อัตโนมัติ
 THAI_NAME_DICT = {
     "POVIDONE K30": ("โพวิโดน เค30 (สารช่วยยึดเกาะเม็ดยา)", "พอลิเมอร์สังเคราะห์ละลายน้ำได้ดี นิยมใช้เป็นสารยึดเกาะ (Binder) ในการตอกเม็ดยา"),
     "CHLORPHENIRAMINE": ("คลอร์เฟนิรามีน (ยาแก้แพ้ ลดน้ำมูก)", "สารต้านฮิสตามีนรุ่นที่ 1 (Antihistamine) บรรเทาอาการแพ้ จาม และลมพิษ"),
@@ -24,8 +24,8 @@ THAI_NAME_DICT = {
     "MAGNOLOL": ("แมกโนลอล (สารสำคัญจากเปลือกแมกโนเลีย)", "สารกลุ่มลิกแนนต้านอนุมูลอิสระและต้านเชื้อแบคทีเรีย"),
     "SODIUM PROPIONATE": ("โซเดียมโพรพิโอเนต (สารกันเสีย)", "วัตถุกันเสียป้องกันเชื้อราและแบคทีเรียในอาหารและยา (E281)"),
     "ZAVEGEPANT HYDROCHLORIDE": ("ซาเวจีแพนท์ ไฮโดรคลอไรด์ (ยารักษาไมเกรน)", "ตัวยาออกฤทธิ์ยับยั้งตัวรับ CGRP สำหรับรักษาอาการปวดไมเกรนเฉียบพลัน"),
-    "PARACETAMOL": ("พาราเซตามอล (ยาลดไข้ บรรเทาปวด)", "ยาสามัญประจำบ้านสำหรับลดไข้และบรรเทาอาการปวดเล็กน้อยถึงปานกลาง"),
-    "ACETAMINOPHEN": ("พาราเซตามอล (ยาลดไข้ บรรเทาปวด)", "ยาสามัญประจำบ้านสำหรับลดไข้และบรรเทาอาการปวดเล็กน้อยถึงปานกลาง"),
+    "PARACETAMOL": ("พาราเซตามอล (ยาลดไข้ บรรเทาปวด)", "ยาสามัญประจำบ้านสำหรับลดไข้และบรรเทาอาการปวด (หรือ Acetaminophen)"),
+    "ACETAMINOPHEN": ("พาราเซตามอล (ยาลดไข้ บรรเทาปวด)", "ยาสามัญประจำบ้านสำหรับลดไข้และบรรเทาอาการปวด (หรือ Paracetamol)"),
     "IBUPROFEN": ("ไอบูโพรเฟน (ยาแก้ปวด ต้านการอักเสบ)", "ยาต้านการอักเสบที่ไม่ใช่สเตียรอยด์ (NSAIDs)"),
     "ASPIRIN": ("แอสไพริน (ยาต้านการเกาะกลุ่มของเกล็ดเลือด)", "ยาบรรเทาปวด ลดไข้ และต้านการแข็งตัวของเลือด"),
     "CURCUMIN": ("เคอร์คูมิน (สารสำคัญในขมิ้นชัน)", "สารออกฤทธิ์หลักสีเหลืองในขมิ้นชัน มีฤทธิ์ต้านการอักเสบและต้านอนุมูลอิสระ"),
@@ -44,20 +44,23 @@ TYPE_MAP_THAI = {
 }
 
 def supabase_upsert_batch(supabase_url: str, service_key: str, table: str, records: List[Dict[str, Any]]):
-    """ส่งข้อมูลแบบ Batch Upsert เข้า Supabase REST API (PostgREST)"""
+    """ส่งข้อมูลแบบ Batch Upsert เข้า Supabase REST API (สำหรับคีย์ใหม่ sb_secret_)"""
     if not records:
         return
     url = f"{supabase_url.rstrip('/')}/rest/v1/{table}?on_conflict=unii"
     data_bytes = json.dumps(records).encode('utf-8')
+    
+    # ส่งเฉพาะ apikey header เท่านั้นสำหรับ sb_secret_ key
+    headers = {
+        "apikey": service_key,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+    }
+
     req = urllib.request.Request(
         url,
         data=data_bytes,
-        headers={
-            "apikey": service_key,
-            "Authorization": f"Bearer {service_key}",
-            "Content-Type": "application/json",
-            "Prefer": "resolution=merge-duplicates"
-        },
+        headers=headers,
         method="POST"
     )
     try:
@@ -66,6 +69,7 @@ def supabase_upsert_batch(supabase_url: str, service_key: str, table: str, recor
     except urllib.error.HTTPError as e:
         err_msg = e.read().decode('utf-8', errors='ignore')
         print(f"[!] Error upserting to {table}: HTTP {e.code} - {err_msg}")
+        raise RuntimeError(f"Supabase upsert failed: {err_msg}")
 
 def process_unii_records_file(filepath: str, supabase_url: str, service_key: str, limit: int = 0):
     """อ่านไฟล์ UNII_Records (TSV) แล้วแปลงข้อมูลส่งเข้า Supabase"""
@@ -93,7 +97,7 @@ def process_unii_records_file(filepath: str, supabase_url: str, service_key: str
             inchikey = parts[col_map.get("INCHIKEY", -1)].strip() if "INCHIKEY" in col_map and col_map["INCHIKEY"] < len(parts) else None
             smiles = parts[col_map.get("SMILES", -1)].strip() if "SMILES" in col_map and col_map["SMILES"] < len(parts) else None
 
-            # จับคู่ชื่อภาษาไทยและคำอธิบาย
+            # แมปชื่อไทยและคำอธิบาย (รองรับทั้ง Paracetamol และ Acetaminophen)
             thai_info = THAI_NAME_DICT.get(pref_name.upper())
             thai_name = thai_info[0] if thai_info else None
             thai_desc = thai_info[1] if thai_info else None
@@ -125,7 +129,7 @@ def process_unii_records_file(filepath: str, supabase_url: str, service_key: str
 
         if batch:
             supabase_upsert_batch(supabase_url, service_key, "substances", batch)
-            print(f"[✔] ซิงค์ข้อมูลครบทั้งหมด {count} รายการ!")
+            print(f"[✔] ซิงค์ข้อมูลเข้า Supabase สำเร็จครบทั้งหมด {count} รายการ!")
 
 def main():
     supabase_url = os.environ.get("SUPABASE_URL", "")
@@ -133,7 +137,6 @@ def main():
 
     if not supabase_url or not service_key:
         print("[!] ไม่พบ SUPABASE_URL หรือ SUPABASE_SERVICE_ROLE_KEY ใน Environment Variables")
-        print("วิธีรัน: SUPABASE_URL=https://xyz.supabase.co SUPABASE_SERVICE_ROLE_KEY=ey... python3 import_to_supabase.py [path_to_file]")
         sys.exit(1)
 
     filepath = sys.argv[1] if len(sys.argv) > 1 else "UNII_Records_4Aug2026.txt"
