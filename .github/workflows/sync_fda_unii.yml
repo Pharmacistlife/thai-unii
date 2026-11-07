@@ -1,0 +1,39 @@
+name: Weekly FDA UNII Sync to Supabase
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Download Latest FDA UNII Data
+        run: |
+          echo "กำลังดาวน์โหลดไฟล์ UNII ล่าสุดจาก precisionFDA Archive..."
+          curl -s -L -o UNII_Data.zip "https://precision.fda.gov/uniisearch/archive/UNII_Data.zip" || true
+          if [ -f UNII_Data.zip ]; then
+            unzip -o UNII_Data.zip || true
+          fi
+
+      - name: Sync Data into Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          RECORD_FILE=$(ls UNII_Records_*.txt 2>/dev/null | head -n 1)
+          if [ -n "$RECORD_FILE" ]; then
+            echo "พบไฟล์ $RECORD_FILE กำลังนำเข้า Supabase..."
+            python3 import_to_supabase.py "$RECORD_FILE"
+          else
+            echo "ไม่พบไฟล์ สิ้นสุดการทำงาน"
+          fi
