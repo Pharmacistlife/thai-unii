@@ -7,6 +7,8 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <!-- Supabase Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Vis.js Network Library for Interactive Knowledge Graph -->
+  <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -439,15 +441,26 @@
           <h3 id="modalThaiName" class="text-xl sm:text-2xl font-bold text-zinc-900 mt-2.5">ชื่อภาษาไทย</h3>
           <p id="modalPreferredName" class="text-sm font-mono text-zinc-500">PREFERRED SUBSTANCE NAME</p>
         </div>
-        <button id="closeDetailModalBtn" class="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+        <div class="flex items-center gap-2">
+          <!-- View Toggle: Specs vs Knowledge Graph -->
+          <div class="flex items-center bg-zinc-200/60 p-1 rounded-xl border border-white/80">
+            <button id="modalTabSpecsBtn" type="button" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-zinc-900 shadow-2xs transition-all flex items-center gap-1">
+              <span>📄 ข้อมูลจำเพาะ</span>
+            </button>
+            <button id="modalTabGraphBtn" type="button" class="px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all flex items-center gap-1">
+              <span>🕸️ แผนผังกราฟ</span>
+            </button>
+          </div>
+          <button id="closeDetailModalBtn" type="button" class="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-colors" title="ปิดหน้าต่าง">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <!-- Content Body -->
-      <div class="space-y-5 py-5">
+      <!-- Content Body: Tab 1 Specs View -->
+      <div id="modalSpecsView" class="space-y-5 py-5">
         <!-- Thai Usage & Live PubChem Pharmacology Box -->
         <div class="p-4 rounded-2xl bg-yellow-50/80 border border-yellow-200/80 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
@@ -576,6 +589,38 @@
         </div>
       </div>
 
+      <!-- Content Body: Tab 2 Interactive Vis.js Knowledge Graph View -->
+      <div id="modalGraphView" class="hidden py-4 space-y-3">
+        <!-- Graph Control Bar & Legend -->
+        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-zinc-900/90 text-white backdrop-blur-md border border-zinc-800 text-xs">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] font-mono">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-xs"></span> ตัวยาหลัก (UNII)</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> WHO ATC</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> EU CosIng</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> CAS RN</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> PubChem CID</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> ข้อบ่งใช้</span>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" id="graphFitBtn" class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-yellow-300 text-[11px] transition-all">
+              ⛶ จัดกึ่งกลาง
+            </button>
+            <button type="button" id="graphPhysicsToggleBtn" class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] transition-all">
+              ⚡ พักแรงฟิสิกส์
+            </button>
+          </div>
+        </div>
+
+        <!-- Vis.js Network Canvas Container -->
+        <div class="relative w-full h-[380px] sm:h-[440px] rounded-3xl overflow-hidden glass-panel border border-yellow-400/40 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 shadow-inner">
+          <div id="visNetworkContainer" class="w-full h-full"></div>
+          <!-- Hint overlay on start -->
+          <div class="absolute bottom-3 left-3 text-[11px] font-mono text-zinc-400 bg-zinc-900/80 px-2.5 py-1 rounded-xl border border-zinc-800 pointer-events-none">
+            💡 ใช้เมาส์หรือนิ้วลากจุดโหนดเพื่อดูแรงสปริงฟิสิกส์ • ซูมเข้า-ออกได้
+          </div>
+        </div>
+      </div>
+
       <!-- Footer Actions -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200/80 pt-4">
         <button id="modalCopyUniiBtn" class="px-4 py-2.5 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-sm">
@@ -645,9 +690,9 @@
     // =========================================================================
     const SUPABASE_CONFIG = {
       // ตัวอย่าง: 'https://xyzcompany.supabase.co'
-      url: '', 
+      url: 'https://aiunnmkghvxfkubrhnsy.supabase.co', 
       // ตัวอย่าง: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-      anonKey: ''
+      anonKey: 'sb_publishable_jnM92sIwkE4Of4k_g8MFew_isgnowxw'
     };
 
     let supabaseClient = null;
@@ -1442,11 +1487,227 @@
       }
     }
 
+
+    // =========================================================================
+    // 3. VIS.JS NETWORK: INTERACTIVE KNOWLEDGE GRAPH ENGINE
+    // =========================================================================
+    let currentModalTab = "specs";
+    let visNetworkInstance = null;
+    let isPhysicsActive = true;
+
+    function switchModalTab(tab) {
+      currentModalTab = tab;
+      const specsView = document.getElementById("modalSpecsView");
+      const graphView = document.getElementById("modalGraphView");
+      const specsBtn = document.getElementById("modalTabSpecsBtn");
+      const graphBtn = document.getElementById("modalTabGraphBtn");
+
+      if (tab === "specs") {
+        specsView.classList.remove("hidden");
+        graphView.classList.add("hidden");
+        specsBtn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-zinc-900 shadow-2xs transition-all flex items-center gap-1";
+        graphBtn.className = "px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all flex items-center gap-1";
+      } else {
+        specsView.classList.add("hidden");
+        graphView.classList.remove("hidden");
+        graphBtn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-yellow-400 text-zinc-900 shadow-2xs transition-all flex items-center gap-1";
+        specsBtn.className = "px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all flex items-center gap-1";
+        
+        // Render network on next tick after container becomes visible
+        setTimeout(() => {
+          renderVisKnowledgeGraph(activeModalItem);
+        }, 50);
+      }
+    }
+
+    function renderVisKnowledgeGraph(item) {
+      if (!item || !window.vis) return;
+      const container = document.getElementById("visNetworkContainer");
+
+      const nodes = [
+        // Central Golden Yellow Substance Node
+        {
+          id: 1,
+          label: `${item.preferredName}\n[UNII: ${item.unii}]`,
+          shape: "dot",
+          size: 34,
+          color: {
+            background: "#FACC15",
+            border: "#EAB308",
+            highlight: { background: "#FEF08A", border: "#CA8A04" }
+          },
+          font: { color: "#18181B", size: 14, face: "JetBrains Mono", bold: true },
+          shadow: { enabled: true, color: "rgba(250, 204, 21, 0.45)", size: 18 }
+        },
+        // Thai Name Node
+        {
+          id: 2,
+          label: `ชื่อภาษาไทย:\n${item.thaiName.replace(/\(.*\)/, '').trim()}`,
+          shape: "dot",
+          size: 26,
+          color: {
+            background: "#FEF08A",
+            border: "#FACC15",
+            highlight: { background: "#FFFFFF", border: "#EAB308" }
+          },
+          font: { color: "#18181B", size: 12, face: "IBM Plex Sans Thai", bold: true },
+          shadow: { enabled: true, color: "rgba(254, 240, 138, 0.4)", size: 12 }
+        }
+      ];
+
+      const edges = [
+        { from: 1, to: 2, label: "thai_name", font: { size: 10, color: "#A1A1AA" } }
+      ];
+
+      let nextId = 3;
+
+      // WHO ATC Node
+      if (item.atcCode) {
+        nodes.push({
+          id: nextId,
+          label: `WHO ATC:\n${item.atcCode}\n(${item.atcName ? item.atcName.slice(0, 30) : ''})`,
+          shape: "dot",
+          size: 25,
+          color: { background: "#C084FC", border: "#A855F7" },
+          font: { color: "#FFFFFF", size: 11, face: "JetBrains Mono" },
+          shadow: { enabled: true, color: "rgba(192, 132, 252, 0.45)", size: 14 }
+        });
+        edges.push({ from: 1, to: nextId, label: "atc_classification", font: { size: 10, color: "#C084FC" } });
+        nextId++;
+      }
+
+      // EU CosIng Node
+      if (item.cosingFunction) {
+        nodes.push({
+          id: nextId,
+          label: `EU CosIng:\n${item.cosingFunction.slice(0, 35)}...`,
+          shape: "dot",
+          size: 23,
+          color: { background: "#60A5FA", border: "#3B82F6" },
+          font: { color: "#FFFFFF", size: 11 },
+          shadow: { enabled: true, color: "rgba(96, 165, 250, 0.4)", size: 12 }
+        });
+        edges.push({ from: 1, to: nextId, label: "cosmetic_function", font: { size: 10, color: "#60A5FA" } });
+        nextId++;
+      }
+
+      // CAS RN Node
+      if (item.cas && item.cas !== "N/A") {
+        nodes.push({
+          id: nextId,
+          label: `CAS RN:\n${item.cas}`,
+          shape: "dot",
+          size: 22,
+          color: { background: "#4ADE80", border: "#22C55E" },
+          font: { color: "#FFFFFF", size: 11, face: "JetBrains Mono" },
+          shadow: { enabled: true, color: "rgba(74, 222, 128, 0.4)", size: 12 }
+        });
+        edges.push({ from: 1, to: nextId, label: "cas_registry", font: { size: 10, color: "#4ADE80" } });
+        nextId++;
+      }
+
+      // PubChem Node
+      if (item.pubchem && item.pubchem !== "-") {
+        nodes.push({
+          id: nextId,
+          label: `PubChem:\n${item.pubchem}`,
+          shape: "dot",
+          size: 21,
+          color: { background: "#FB923C", border: "#F97316" },
+          font: { color: "#FFFFFF", size: 11, face: "JetBrains Mono" }
+        });
+        edges.push({ from: 1, to: nextId, label: "pubchem_cid", font: { size: 10, color: "#FB923C" } });
+        nextId++;
+      }
+
+      // Chemical Formula Node
+      if (item.formula && item.formula !== "-" && !item.formula.includes("ธรรมชาติ")) {
+        nodes.push({
+          id: nextId,
+          label: `สูตรเคมี (MF):\n${item.formula}`,
+          shape: "dot",
+          size: 20,
+          color: { background: "#94A3B8", border: "#64748B" },
+          font: { color: "#FFFFFF", size: 11, face: "JetBrains Mono" }
+        });
+        edges.push({ from: 1, to: nextId, label: "formula", font: { size: 10, color: "#94A3B8" } });
+        nextId++;
+      }
+
+      // Clinical Indication Node
+      if (item.fdaIndications || (item.thaiDesc && item.thaiDesc.includes("ยา"))) {
+        nodes.push({
+          id: nextId,
+          label: `ข้อบ่งใช้ (openFDA):\n${item.thaiDesc.slice(0, 32)}...`,
+          shape: "dot",
+          size: 24,
+          color: { background: "#F87171", border: "#EF4444" },
+          font: { color: "#FFFFFF", size: 11 },
+          shadow: { enabled: true, color: "rgba(248, 113, 113, 0.45)", size: 14 }
+        });
+        edges.push({ from: 1, to: nextId, label: "clinical_usage", font: { size: 10, color: "#F87171" } });
+        nextId++;
+      }
+
+      // Synonyms Nodes (Top 2)
+      if (item.synonyms && item.synonyms.length > 0) {
+        const syn1 = item.synonyms[0];
+        nodes.push({
+          id: nextId,
+          label: `ชื่อพ้อง:\n${syn1}`,
+          shape: "dot",
+          size: 19,
+          color: { background: "#CBD5E1", border: "#94A3B8" },
+          font: { color: "#18181B", size: 10, face: "JetBrains Mono" }
+        });
+        edges.push({ from: 1, to: nextId, label: "synonym", font: { size: 9, color: "#CBD5E1" } });
+        nextId++;
+      }
+
+      const data = {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+      };
+
+      const options = {
+        physics: {
+          enabled: isPhysicsActive,
+          solver: "forceAtlas2Based",
+          forceAtlas2Based: {
+            gravitationalConstant: -60,
+            centralGravity: 0.015,
+            springLength: 120,
+            springConstant: 0.08,
+            damping: 0.35,
+            avoidOverlap: 0.6
+          }
+        },
+        interaction: {
+          hover: true,
+          tooltipDelay: 150,
+          zoomView: true,
+          dragView: true
+        },
+        edges: {
+          color: { color: "rgba(250, 204, 21, 0.35)", highlight: "#FACC15" },
+          width: 1.5,
+          smooth: { type: "continuous" }
+        }
+      };
+
+      if (visNetworkInstance) {
+        visNetworkInstance.destroy();
+      }
+
+      visNetworkInstance = new vis.Network(container, data, options);
+    }
+
     // Open Substance Detail Modal
     function openDetailModal(unii) {
       const item = currentResults.find(d => d.unii === unii) || fallbackSubstances.find(d => d.unii === unii);
       if (!item) return;
       activeModalItem = item;
+      switchModalTab("specs");
 
       document.getElementById("modalUniiBadge").textContent = `UNII: ${item.unii}`;
       const legBadge = document.getElementById("modalLegacyBadge");
@@ -1598,6 +1859,22 @@
     });
 
     
+    // Detail Modal View Tabs (Specs vs Vis.js Knowledge Graph)
+    document.getElementById("modalTabSpecsBtn").addEventListener("click", () => switchModalTab("specs"));
+    document.getElementById("modalTabGraphBtn").addEventListener("click", () => switchModalTab("graph"));
+
+    document.getElementById("graphFitBtn").addEventListener("click", () => {
+      if (visNetworkInstance) visNetworkInstance.fit({ animation: { duration: 500 } });
+    });
+
+    document.getElementById("graphPhysicsToggleBtn").addEventListener("click", (e) => {
+      isPhysicsActive = !isPhysicsActive;
+      if (visNetworkInstance) {
+        visNetworkInstance.setOptions({ physics: { enabled: isPhysicsActive } });
+      }
+      e.target.textContent = isPhysicsActive ? "⚡ พักแรงฟิสิกส์" : "▶ ปล่อยแรงฟิสิกส์";
+    });
+
     // Detail Modal Controls
     document.getElementById("closeDetailModalBtn").addEventListener("click", () => {
       document.getElementById("detailModal").classList.add("hidden");
