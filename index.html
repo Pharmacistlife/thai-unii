@@ -645,9 +645,9 @@
     // =========================================================================
     const SUPABASE_CONFIG = {
       // ตัวอย่าง: 'https://xyzcompany.supabase.co'
-      url: 'https://aiunnmkghvxfkubrhnsy.supabase.co', 
+      url: '', 
       // ตัวอย่าง: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-      anonKey: 'sb_publishable_jnM92sIwkE4Of4k_g8MFew_isgnowxw'
+      anonKey: ''
     };
 
     let supabaseClient = null;
@@ -964,6 +964,10 @@
               cosingFunction: row.cosing_function || null,
               atcCode: row.atc_code || (COMMON_ATC_MAP[row.preferred_name?.toUpperCase()]?.[0] || null),
               atcName: row.atc_name || (COMMON_ATC_MAP[row.preferred_name?.toUpperCase()]?.[1] || null),
+              fdaIndications: row.fda_indications || null,
+              fdaWarnings: row.fda_warnings || null,
+              fdaReactions: row.fda_reactions || null,
+              fdaContra: row.fda_contra || null,
               synonyms: row.synonyms || []
             }));
             renderResults();
@@ -1493,7 +1497,17 @@
         atcLink.classList.remove("hidden");
       }
 
-      // 2. Trigger Live PubChem API, WHO ATC, and openFDA Clinical Drug Label
+      // 2. If openFDA Drug Label exists in Supabase backup, display immediately without waiting!
+      if (item.fdaIndications || item.fdaWarnings || item.fdaReactions || item.fdaContra) {
+        applyOpenFdaData({
+          indications: item.fdaIndications,
+          warnings: item.fdaWarnings,
+          reactions: item.fdaReactions,
+          contra: item.fdaContra
+        });
+      }
+
+      // 3. Trigger Live PubChem API, WHO ATC, and openFDA Clinical Drug Label for real-time verification
       fetchPubchemEnrichment(item);
       fetchWhoAtcCode(item);
       fetchOpenFdaDrugLabel(item);
