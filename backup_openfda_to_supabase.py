@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-ThaiUNII — openFDA Drug Label Backup to Supabase
-ดึงข้อมูลข้อบ่งใช้ คำเตือน ผลข้างเคียง จาก openFDA API มาบันทึกสำรองไว้ในตาราง public.substance_drug_labels
+ThaiUNII — openFDA Full Drug Label Bulk Backup to Supabase
+ดึงข้อมูลเอกสารกำกับยาทางการจาก openFDA API (Indications, Warnings, Adverse Reactions, Contraindications)
+แบบ Paging ละ 100 ฉบับ แล้วจับคู่ด้วย openfda.unii เพื่อนำเข้าตาราง public.substance_drug_labels ใน Supabase
 """
 
 import os
@@ -12,44 +13,16 @@ import urllib.parse
 import time
 from typing import Dict, List, Any
 
-# ชุดข้อมูลสำรองเริ่มต้นสำหรับยาสามัญยอดนิยม
-SEED_DRUG_LABELS = [
-    {
-        "unii": "804826J2HU", # Amoxicillin
-        "indications": "Amoxicillin is indicated for the treatment of infections due to susceptible isolates of the designated microorganisms in the infections listed below: Infections of the ear, nose, and throat; infections of the genitourinary tract; infections of the skin and skin structure; infections of the lower respiratory tract.",
-        "warnings": "Serious and occasionally fatal hypersensitivity (anaphylactic) reactions have been reported in patients on penicillin therapy. Clostridium difficile associated diarrhea (CDAD) has been reported with use of nearly all antibacterial agents.",
-        "adverse_reactions": "Common adverse reactions are diarrhea, nausea, vomiting, and skin rashes. Anaphylaxis and hypersensitivity reactions may occur.",
-        "contraindications": "Amoxicillin is contraindicated in patients who have experienced a serious hypersensitivity reaction (e.g., anaphylaxis or Stevens-Johnson syndrome) to amoxicillin or to other beta-lactam antibacterial drugs."
-    },
-    {
-        "unii": "362O9ITL9D", # Acetaminophen / Paracetamol
-        "indications": "Temporarily relieves minor aches and pains due to: the common cold, headache, backache, minor pain of arthritis, toothache, muscular aches, premenstrual and menstrual cramps; temporarily reduces fever.",
-        "warnings": "Liver warning: This product contains acetaminophen. Severe liver damage may occur if you take more than 4,000 mg of acetaminophen in 24 hours, with other drugs containing acetaminophen, or 3 or more alcoholic drinks every day.",
-        "adverse_reactions": "Rare cases of serious skin reactions (Stevens-Johnson syndrome, toxic epidermal necrolysis). Allergic reactions including swelling of the face, mouth, and throat.",
-        "contraindications": "Do not use with any other drug containing acetaminophen (prescription or nonprescription). Do not use if you are allergic to acetaminophen or any of the inactive ingredients."
-    },
-    {
-        "unii": "57Y76R9ATQ", # Naproxen
-        "indications": "Naproxen is indicated for the relief of the signs and symptoms of rheumatoid arthritis, osteoarthritis, ankylosing spondylitis, juvenile arthritis, tendonitis, bursitis, and acute gout, and for the management of pain and primary dysmenorrhea.",
-        "warnings": "Cardiovascular Thrombotic Events: Nonsteroidal anti-inflammatory drugs (NSAIDs) cause an increased risk of serious cardiovascular thrombotic events, including myocardial infarction and stroke. Gastrointestinal Risk: NSAIDs cause an increased risk of serious gastrointestinal adverse events including bleeding and ulceration.",
-        "adverse_reactions": "Most common adverse reactions are dyspepsia, abdominal pain, nausea, constipation, heartburn, dizziness, and headache.",
-        "contraindications": "Naproxen is contraindicated in patients with known hypersensitivity to naproxen. In the setting of coronary artery bypass graft (CABG) surgery."
-    },
-    {
-        "unii": "YO7261ME24", # Cetirizine
-        "indications": "Temporarily relieves these symptoms due to hay fever or other upper respiratory allergies: runny nose; sneezing; itchy, watery eyes; itching of the nose or throat.",
-        "warnings": "Do not use if you have ever had an allergic reaction to this product or any of its ingredients or to an antihistamine containing hydroxyzine. Drowsiness may occur; avoid alcoholic drinks.",
-        "adverse_reactions": "Somnolence, fatigue, dry mouth, pharyngitis, and dizziness.",
-        "contraindications": "Known hypersensitivity to cetirizine, hydroxyzine, or any inactive ingredient."
-    },
-    {
-        "unii": "VB0R961HZT", # Prednisone
-        "indications": "Indicated in the management of allergic conditions, dermatologic diseases, endocrine disorders, gastrointestinal diseases, hematologic disorders, neoplastic diseases, nervous system conditions, ophthalmic diseases, renal diseases, respiratory diseases, and rheumatic disorders.",
-        "warnings": "Immunosuppression and increased risk of infection. Hypothalamic-pituitary-adrenal (HPA) axis suppression, Cushing's syndrome, and hyperglycemia. Elevation of blood pressure and salt/water retention.",
-        "adverse_reactions": "Fluid retention, hypertension, glucose intolerance, peptic ulcer, osteoporosis, muscle weakness, and behavioral disturbances.",
-        "contraindications": "Systemic fungal infections and known hypersensitivity to the drug."
-    }
-]
+def clean_text_snippet(arr: Any, max_len: int = 500) -> str:
+    """ทำความสะอาดและตัดข้อความให้อ่านง่าย กระชับ เหมาะแก่การแสดงผล"""
+    if not arr:
+        return ""
+    if isinstance(arr, list):
+        text = " ".join(str(x) for x in arr)
+    else:
+        text = str(arr)
+    text = " ".join(text.split()).strip()
+    return text[:max_len] + "..." if len(text) > max_len else text
 
 def insert_label_batch(supabase_url: str, service_key: str, batch: List[Dict[str, Any]]):
     """ส่งข้อมูลแบบ Batch Insert เข้าตาราง substance_drug_labels"""
@@ -69,6 +42,108 @@ def insert_label_batch(supabase_url: str, service_key: str, batch: List[Dict[str
     except Exception as e:
         print(f"[!] Error inserting drug label batch: {e}")
 
+def get_existing_substances_set(supabase_url: str, service_key: str) -> set:
+    """ดึงรหัส unii ทั้งหมดที่มีในตาราง substances เพื่อตรวจสอบความสัมพันธ์"""
+    print("[*] กำลังตรวจสอบรหัส UNII ในฐานข้อมูล Supabase...")
+    unii_set = set()
+    limit = 2000
+    offset = 0
+
+    while True:
+        url = f"{supabase_url.rstrip('/')}/rest/v1/substances?select=unii&limit={limit}&offset={offset}"
+        req = urllib.request.Request(url, headers={"apikey": service_key})
+        try:
+            with urllib.request.urlopen(req) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                if not data:
+                    break
+                for row in data:
+                    u = row.get("unii")
+                    if u:
+                        unii_set.add(u.strip())
+                offset += limit
+                if len(data) < limit:
+                    break
+        except Exception as e:
+            print(f"[!] Error reading substances: {e}")
+            break
+
+    print(f"[✔] พบรหัส UNII ในฐานข้อมูล Supabase พร้อมรับข้อมูลฉลากยา {len(unii_set)} ตัว")
+    return unii_set
+
+def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_count: int = 1000):
+    """ดึงข้อมูลเอกสารกำกับยาจาก openFDA ทีละ 100 ฉบับ จนครบตามเป้าหมาย"""
+    print(f"[*] เริ่มต้นดาวน์โหลดเอกสารกำกับยาจาก openFDA API (เป้าหมาย {target_count} รายการ)...")
+    
+    existing_uniis = get_existing_substances_set(supabase_url, service_key)
+    processed_uniis = set()
+    batch = []
+    total_saved = 0
+    skip = 0
+    limit = 100
+
+    while total_saved < target_count and skip < 10000:
+        url = f"https://api.fda.gov/drug/label.json?limit={limit}&skip={skip}"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        
+        try:
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                results = data.get("results", [])
+                if not results:
+                    break
+
+                for label in results:
+                    openfda = label.get("openfda", {})
+                    uniis = openfda.get("unii", [])
+                    if not uniis:
+                        continue
+
+                    for unii in uniis:
+                        unii = unii.strip()
+                        if unii in existing_uniis and unii not in processed_uniis:
+                            processed_uniis.add(unii)
+
+                            ind = clean_text_snippet(label.get("indications_and_usage"))
+                            warn = clean_text_snippet(label.get("boxed_warning") or label.get("warnings_and_cautions") or label.get("warnings"))
+                            react = clean_text_snippet(label.get("adverse_reactions"))
+                            contra = clean_text_snippet(label.get("contraindications"))
+
+                            if ind or warn or react or contra:
+                                batch.append({
+                                    "unii": unii,
+                                    "indications": ind if ind else None,
+                                    "warnings": warn if warn else None,
+                                    "adverse_reactions": react if react else None,
+                                    "contraindications": contra if contra else None
+                                })
+                                total_saved += 1
+
+                            if len(batch) >= 100:
+                                insert_label_batch(supabase_url, service_key, batch)
+                                print(f"[+] บันทึกเอกสารกำกับยาลง Supabase แล้ว {total_saved} ตัว...")
+                                batch = []
+
+                            if total_saved >= target_count:
+                                break
+
+                skip += limit
+                time.sleep(0.3) # ให้เกียรติ rate limit ของ openFDA
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                print("[*] สิ้นสุดข้อมูลใน openFDA")
+                break
+            print(f"[!] HTTP Error {e.code} จาก openFDA: {e}")
+            break
+        except Exception as e:
+            print(f"[!] เกิดข้อผิดพลาดในการดึงข้อมูล: {e}")
+            break
+
+    if batch:
+        insert_label_batch(supabase_url, service_key, batch)
+
+    print(f"[✔] สำรองเอกสารกำกับยา openFDA เข้าสู่ Supabase สำเร็จครบถ้วน {total_saved} รายการ!")
+
 def main():
     supabase_url = os.environ.get("SUPABASE_URL", "")
     service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
@@ -77,9 +152,7 @@ def main():
         print("[!] ไม่พบ SUPABASE_URL หรือ SUPABASE_SERVICE_ROLE_KEY")
         sys.exit(1)
 
-    print("[*] กำลังสำรองข้อมูลเอกสารกำกับยา openFDA เข้าสู่ตาราง substance_drug_labels...")
-    insert_label_batch(supabase_url, service_key, SEED_DRUG_LABELS)
-    print(f"[✔] สำรองข้อมูลเอกสารกำกับยาสำเร็จรวม {len(SEED_DRUG_LABELS)} รายการ!")
+    fetch_and_backup_openfda_labels(supabase_url, service_key, target_count=1000)
 
 if __name__ == "__main__":
     main()
