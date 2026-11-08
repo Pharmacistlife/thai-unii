@@ -377,15 +377,37 @@
 
       <!-- Content Body -->
       <div class="space-y-5 py-5">
-        <!-- Thai Usage & Role Description -->
-        <div class="p-4 rounded-2xl bg-yellow-50/80 border border-yellow-200/80 space-y-1">
-          <div class="text-xs font-semibold text-amber-800 flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span>คำอธิบายและบทบาทในผลิตภัณฑ์ (ภาษาไทย)</span>
+        <!-- Thai Usage & Live PubChem Pharmacology Box -->
+        <div class="p-4 rounded-2xl bg-yellow-50/80 border border-yellow-200/80 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="text-xs font-semibold text-amber-800 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>คำอธิบายและข้อมูลเภสัชวิทยา (Thai & Live PubChem API)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="pubchemLiveBadge" class="hidden text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">ดึงสดจาก NIH PubChem</span>
+              <button type="button" id="translatePubchemBtn" class="hidden px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-[11px] font-medium transition-all">
+                แปลเป็นภาษาไทย 🇹🇭
+              </button>
+            </div>
           </div>
-          <p id="modalThaiDesc" class="text-xs sm:text-sm text-zinc-700 leading-relaxed"></p>
+
+          <div class="flex flex-col sm:flex-row gap-4 items-start">
+            <div class="flex-1 space-y-2">
+              <p id="modalThaiDesc" class="text-xs sm:text-sm text-zinc-800 leading-relaxed font-medium"></p>
+              <div id="pubchemExtraBox" class="hidden pt-2 border-t border-yellow-200/80 space-y-1">
+                <div class="text-[11px] font-mono text-amber-700" id="pubchemSourceLabel">Source: NIH PubChem PUG REST API</div>
+                <p id="pubchemDescText" class="text-xs text-zinc-700 leading-relaxed"></p>
+              </div>
+            </div>
+            <!-- 2D Chemical Structure from PubChem -->
+            <div id="pubchemStructureWrap" class="hidden shrink-0 mx-auto sm:mx-0 p-2 rounded-xl bg-white border border-zinc-200 shadow-sm text-center">
+              <img id="pubchemStructureImg" src="" alt="2D Structure" class="w-28 h-28 object-contain mx-auto" />
+              <span class="text-[10px] font-mono text-zinc-400 block mt-1">2D Structure</span>
+            </div>
+          </div>
         </div>
 
         <!-- Identifiers Grid -->
@@ -896,6 +918,148 @@
       `).join("");
     }
 
+    // Cache for PubChem descriptions
+    const pubchemCache = {};
+    let currentPubchemEnglishText = "";
+
+    // Extract numeric CID from string like "CID 6917" or "6917"
+    function extractCidNumber(pubchemStr) {
+      if (!pubchemStr) return null;
+      const m = String(pubchemStr).match(/(\d{2,12})/);
+      return m ? m[1] : null;
+    }
+
+    // Fetch live pharmacology/description & synonyms from NIH PubChem PUG REST API
+    async function fetchPubchemEnrichment(item) {
+      const extraBox = document.getElementById("pubchemExtraBox");
+      const descTextEl = document.getElementById("pubchemDescText");
+      const badgeEl = document.getElementById("pubchemLiveBadge");
+      const transBtn = document.getElementById("translatePubchemBtn");
+      const sourceLabel = document.getElementById("pubchemSourceLabel");
+      const structWrap = document.getElementById("pubchemStructureWrap");
+      const structImg = document.getElementById("pubchemStructureImg");
+
+      extraBox.classList.add("hidden");
+      badgeEl.classList.add("hidden");
+      transBtn.classList.add("hidden");
+      structWrap.classList.add("hidden");
+      currentPubchemEnglishText = "";
+
+      const cid = extractCidNumber(item.pubchem);
+      const queryTarget = cid ? `cid/${cid}` : `name/${encodeURIComponent(item.preferredName)}`;
+
+      // Load 2D chemical structure if CID or chemical
+      if (cid || item.substanceType === "chemical") {
+        structImg.src = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/${queryTarget}/PNG?record_type=2d&image_size=300x300`;
+        structImg.onload = () => structWrap.classList.remove("hidden");
+        structImg.onerror = () => structWrap.classList.add("hidden");
+      }
+
+      // Show loading state if substance has no Thai description
+      const hasCustomThaiDesc = item.thaiDesc && item.thaiDesc !== "ไม่มีข้อมูลคำอธิบาย";
+      if (!hasCustomThaiDesc) {
+        document.getElementById("modalThaiDesc").innerHTML = `<span class="text-zinc-500 italic">กำลังดึงคำอธิบายสารสำคัญสดจากฐานข้อมูล NIH PubChem...</span>`;
+      }
+
+      if (pubchemCache[item.unii]) {
+        applyPubchemData(pubchemCache[item.unii], hasCustomThaiDesc);
+        return;
+      }
+
+      try {
+        const descUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/${queryTarget}/description/JSON`;
+        const resp = await fetch(descUrl);
+        if (!resp.ok) throw new Error("PubChem not found");
+        const json = await resp.json();
+        const infoList = (json && json.InformationList && json.InformationList.Information) || [];
+
+        // Find the most informative description entry
+        let bestDesc = "";
+        let bestSource = "NIH PubChem";
+        for (const info of infoList) {
+          if (info.Description && info.Description.length > bestDesc.length) {
+            bestDesc = info.Description;
+            bestSource = info.DescriptionSourceName || "NIH PubChem";
+          }
+        }
+
+        // Also fetch top synonyms if empty
+        let synList = item.synonyms && item.synonyms.length ? item.synonyms : [];
+        if (synList.length === 0) {
+          try {
+            const synResp = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/${queryTarget}/synonyms/JSON`);
+            if (synResp.ok) {
+              const synJson = await synResp.json();
+              const rawSyns = synJson?.InformationList?.Information?.[0]?.Synonym || [];
+              synList = rawSyns.slice(0, 12);
+            }
+          } catch (e) {}
+        }
+
+        const resultData = { description: bestDesc, source: bestSource, synonyms: synList };
+        pubchemCache[item.unii] = resultData;
+        applyPubchemData(resultData, hasCustomThaiDesc);
+      } catch (err) {
+        if (!hasCustomThaiDesc) {
+          document.getElementById("modalThaiDesc").textContent = `สารสำคัญประเภท ${item.typeLabelThai} ที่ขึ้นทะเบียนในระบบ US FDA GSRS (รหัส UNII: ${item.unii})`;
+        }
+      }
+    }
+
+    function applyPubchemData(data, hasCustomThaiDesc) {
+      const extraBox = document.getElementById("pubchemExtraBox");
+      const descTextEl = document.getElementById("pubchemDescText");
+      const badgeEl = document.getElementById("pubchemLiveBadge");
+      const transBtn = document.getElementById("translatePubchemBtn");
+      const sourceLabel = document.getElementById("pubchemSourceLabel");
+
+      if (data.synonyms && data.synonyms.length > 0) {
+        document.getElementById("modalSynonyms").innerHTML = data.synonyms.map(s => `
+          <span class="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-xs font-mono text-zinc-700">${s}</span>
+        `).join("");
+      }
+
+      if (data.description) {
+        currentPubchemEnglishText = data.description;
+        badgeEl.classList.remove("hidden");
+        transBtn.classList.remove("hidden");
+        transBtn.textContent = "แปลเป็นภาษาไทย 🇹🇭";
+        sourceLabel.textContent = `แหล่งอ้างอิง: ${data.source} (PubChem API)`;
+
+        if (!hasCustomThaiDesc) {
+          document.getElementById("modalThaiDesc").textContent = data.description;
+          extraBox.classList.add("hidden");
+        } else {
+          descTextEl.textContent = data.description;
+          extraBox.classList.remove("hidden");
+        }
+      } else if (!hasCustomThaiDesc && activeModalItem) {
+        document.getElementById("modalThaiDesc").textContent = `สารสำคัญประเภท ${activeModalItem.typeLabelThai} ในฐานข้อมูล US FDA (รหัส UNII: ${activeModalItem.unii})`;
+      }
+    }
+
+    // Translate PubChem English description into Thai using free Google Translate GTX endpoint
+    async function translateCurrentPubchemToThai() {
+      if (!currentPubchemEnglishText) return;
+      const transBtn = document.getElementById("translatePubchemBtn");
+      transBtn.textContent = "กำลังแปลภาษาไทย...";
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=th&dt=t&q=${encodeURIComponent(currentPubchemEnglishText)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const translatedText = data[0].map(part => part[0]).join("");
+        const extraBox = document.getElementById("pubchemExtraBox");
+        if (extraBox.classList.contains("hidden")) {
+          document.getElementById("modalThaiDesc").textContent = translatedText;
+        } else {
+          document.getElementById("pubchemDescText").textContent = translatedText;
+        }
+        transBtn.textContent = "แปลเป็นไทยแล้ว ✓";
+      } catch (e) {
+        transBtn.textContent = "ไม่สามารถแปลอัตโนมัติได้";
+      }
+    }
+
     // Open Substance Detail Modal
     function openDetailModal(unii) {
       const item = currentResults.find(d => d.unii === unii) || fallbackSubstances.find(d => d.unii === unii);
@@ -920,13 +1084,16 @@
       document.getElementById("modalInchikey").textContent = item.inchikey;
       document.getElementById("modalSmiles").textContent = item.smiles;
 
-      document.getElementById("modalSynonyms").innerHTML = item.synonyms.map(s => `
-        <span class="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-xs font-mono text-zinc-700">${s}</span>
-      `).join("");
+      document.getElementById("modalSynonyms").innerHTML = (item.synonyms && item.synonyms.length)
+        ? item.synonyms.map(s => `<span class="px-2.5 py-1 rounded-lg bg-white border border-zinc-200 text-xs font-mono text-zinc-700">${s}</span>`).join("")
+        : `<span class="text-xs text-zinc-400 italic">กำลังดึงชื่อพ้องจาก PubChem...</span>`;
 
       const modal = document.getElementById("detailModal");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
+
+      // Trigger Live PubChem API Fetch
+      fetchPubchemEnrichment(item);
     }
 
     // Event Listeners: Delegated Actions
@@ -1060,6 +1227,10 @@
     document.getElementById("closeDetailModalBtn").addEventListener("click", () => {
       document.getElementById("detailModal").classList.add("hidden");
       document.getElementById("detailModal").classList.remove("flex");
+    });
+
+    document.getElementById("translatePubchemBtn").addEventListener("click", () => {
+      translateCurrentPubchemToThai();
     });
 
     document.getElementById("modalCopyUniiBtn").addEventListener("click", () => {
