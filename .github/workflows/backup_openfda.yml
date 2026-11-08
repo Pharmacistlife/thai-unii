@@ -1,0 +1,23 @@
+name: Backup openFDA Drug Labels to Supabase
+
+on:
+  workflow_dispatch: # ปุ่มกดสั่งรันด้วยมือในแท็บ Actions บน GitHub
+
+jobs:
+  openfda-backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run openFDA Drug Labels Backup
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python3 backup_openfda_to_supabase.py
