@@ -68,7 +68,7 @@ def get_already_saved_uniis(supabase_url: str, service_key: str) -> set:
         pass
     return saved_set
 
-def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_count: int = 1000):
+def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_count: int = 100000):
     print(f"[*] เริ่มต้นดาวน์โหลดเอกสารกำกับยาจาก openFDA API (เป้าหมาย {target_count} รายการ)...")
     
     already_saved = get_already_saved_uniis(supabase_url, service_key)
