@@ -214,7 +214,9 @@
           <a href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" rel="noopener noreferrer" class="font-semibold text-blue-700 bg-blue-100/90 border border-blue-300/80 px-2 py-0.5 rounded-md hover:bg-blue-200 transition-all">EU CosIng</a>
           <span class="text-zinc-400">•</span>
           <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank" rel="noopener noreferrer" class="font-semibold text-emerald-800 bg-emerald-100/90 border border-emerald-300/80 px-2 py-0.5 rounded-md hover:bg-emerald-200 transition-all">NIH PubChem</a>
-          <span class="text-zinc-400 hidden md:inline">ผ่านฐานข้อมูล Supabase</span>
+          <span class="text-zinc-400">•</span>
+          <a href="https://open.fda.gov/apis/drug/label/" target="_blank" rel="noopener noreferrer" class="font-semibold text-cyan-800 bg-cyan-100/90 border border-cyan-300/80 px-2 py-0.5 rounded-md hover:bg-cyan-200 transition-all">openFDA Label</a>
+          <span class="text-zinc-400 hidden md:inline">ผ่าน Supabase</span>
         </div>
 
         <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 leading-tight">
@@ -479,6 +481,58 @@
           </div>
         </div>
 
+        <!-- openFDA Clinical Drug Label & Package Insert Box -->
+        <div id="openFdaBox" class="hidden p-4 rounded-2xl bg-slate-50/90 border border-slate-200/90 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span class="text-xs font-bold text-slate-900">ข้อมูลคลินิกจากเอกสารกำกับยา (openFDA Drug Label)</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-cyan-100 text-cyan-800 border border-cyan-200 font-semibold">Official SPL</span>
+            </div>
+            <button type="button" id="translateFdaBtn" class="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-[11px] font-medium transition-all shadow-2xs">
+              แปลข้อมูลคลินิกเป็นไทย 🇹🇭
+            </button>
+          </div>
+
+          <div class="space-y-2.5 text-xs leading-relaxed text-zinc-700" id="openFdaContentWrap">
+            <!-- Indications -->
+            <div id="fdaIndicationsWrap" class="hidden space-y-1">
+              <div class="font-semibold text-zinc-900 flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>ข้อบ่งใช้ทางการแพทย์ที่ได้รับการรับรอง (Indications & Usage)</span>
+              </div>
+              <p id="fdaIndicationsText" class="p-2.5 rounded-xl bg-white border border-slate-200 text-zinc-800 text-[11px] sm:text-xs"></p>
+            </div>
+
+            <!-- Warnings / Boxed Warnings -->
+            <div id="fdaWarningsWrap" class="hidden space-y-1">
+              <div class="font-semibold text-amber-900 flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span>คำเตือนและข้อควรระวังสำคัญ (Warnings & Precautions)</span>
+              </div>
+              <p id="fdaWarningsText" class="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-950 text-[11px] sm:text-xs"></p>
+            </div>
+
+            <!-- Adverse Reactions -->
+            <div id="fdaReactionsWrap" class="hidden space-y-1">
+              <div class="font-semibold text-red-900 flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                <span>อาการไม่พึงประสงค์ / ผลข้างเคียง (Adverse Reactions)</span>
+              </div>
+              <p id="fdaReactionsText" class="p-2.5 rounded-xl bg-red-50/80 border border-red-200 text-red-950 text-[11px] sm:text-xs"></p>
+            </div>
+
+            <!-- Contraindications -->
+            <div id="fdaContraWrap" class="hidden space-y-1">
+              <div class="font-semibold text-rose-900 flex items-center gap-1.5 text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                <span>ข้อห้ามใช้ (Contraindications)</span>
+              </div>
+              <p id="fdaContraText" class="p-2.5 rounded-xl bg-rose-50/80 border border-rose-200 text-rose-950 text-[11px] sm:text-xs"></p>
+            </div>
+          </div>
+        </div>
+
         <!-- Identifiers Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div class="p-3 rounded-xl bg-white/75 border border-zinc-200/80">
@@ -537,6 +591,9 @@
           </a>
           <a id="modalCosingLink" href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-blue-400 text-blue-700 text-xs font-medium transition-all">
             EU CosIng ↗
+          </a>
+          <a id="modalOpenFdaLink" href="https://open.fda.gov/apis/drug/label/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-cyan-400 text-cyan-800 text-xs font-medium transition-all">
+            openFDA Label ↗
           </a>
           <a id="modalFdaLink" href="https://precision.fda.gov/uniisearch" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-yellow-400 text-zinc-700 text-xs font-medium transition-all">
             FDA GSRS ↗
@@ -1256,6 +1313,131 @@
       }
     }
 
+    const openFdaCache = {};
+
+    // Fetch live official clinical package insert from openFDA Drug Label API using UNII or substance name
+    async function fetchOpenFdaDrugLabel(item) {
+      const fdaBox = document.getElementById("openFdaBox");
+      const indWrap = document.getElementById("fdaIndicationsWrap");
+      const indText = document.getElementById("fdaIndicationsText");
+      const warnWrap = document.getElementById("fdaWarningsWrap");
+      const warnText = document.getElementById("fdaWarningsText");
+      const reactWrap = document.getElementById("fdaReactionsWrap");
+      const reactText = document.getElementById("fdaReactionsText");
+      const contraWrap = document.getElementById("fdaContraWrap");
+      const contraText = document.getElementById("fdaContraText");
+      const transFdaBtn = document.getElementById("translateFdaBtn");
+
+      fdaBox.classList.add("hidden");
+      indWrap.classList.add("hidden");
+      warnWrap.classList.add("hidden");
+      reactWrap.classList.add("hidden");
+      contraWrap.classList.add("hidden");
+
+      if (openFdaCache[item.unii]) {
+        applyOpenFdaData(openFdaCache[item.unii]);
+        return;
+      }
+
+      try {
+        let url = `https://api.fda.gov/drug/label.json?search=openfda.unii:"${encodeURIComponent(item.unii)}"&limit=1`;
+        let resp = await fetch(url);
+        if (!resp.ok) {
+          const cleanName = item.preferredName.replace(/ (WHOLE|SALT|HYDROCHLORIDE|SODIUM|POTASSIUM)$/i, '').trim();
+          url = `https://api.fda.gov/drug/label.json?search=openfda.substance_name:"${encodeURIComponent(cleanName)}"&limit=1`;
+          resp = await fetch(url);
+        }
+        if (!resp.ok) return;
+
+        const data = await resp.json();
+        const label = data?.results?.[0];
+        if (!label) return;
+
+        function cleanSnippet(arr) {
+          if (!arr || !arr.length) return "";
+          const text = arr.join(" ").replace(/\s+/g, ' ').trim();
+          return text.length > 450 ? text.slice(0, 450) + "..." : text;
+        }
+
+        const indications = cleanSnippet(label.indications_and_usage);
+        const warnings = cleanSnippet(label.boxed_warning || label.warnings_and_cautions || label.warnings);
+        const reactions = cleanSnippet(label.adverse_reactions);
+        const contra = cleanSnippet(label.contraindications);
+
+        if (indications || warnings || reactions || contra) {
+          const res = { indications, warnings, reactions, contra };
+          openFdaCache[item.unii] = res;
+          applyOpenFdaData(res);
+        }
+      } catch (e) {}
+    }
+
+    function applyOpenFdaData(data) {
+      const fdaBox = document.getElementById("openFdaBox");
+      const indWrap = document.getElementById("fdaIndicationsWrap");
+      const indText = document.getElementById("fdaIndicationsText");
+      const warnWrap = document.getElementById("fdaWarningsWrap");
+      const warnText = document.getElementById("fdaWarningsText");
+      const reactWrap = document.getElementById("fdaReactionsWrap");
+      const reactText = document.getElementById("fdaReactionsText");
+      const contraWrap = document.getElementById("fdaContraWrap");
+      const contraText = document.getElementById("fdaContraText");
+      const transFdaBtn = document.getElementById("translateFdaBtn");
+
+      let hasAny = false;
+      if (data.indications) {
+        indText.textContent = data.indications;
+        indWrap.classList.remove("hidden");
+        hasAny = true;
+      }
+      if (data.warnings) {
+        warnText.textContent = data.warnings;
+        warnWrap.classList.remove("hidden");
+        hasAny = true;
+      }
+      if (data.reactions) {
+        reactText.textContent = data.reactions;
+        reactWrap.classList.remove("hidden");
+        hasAny = true;
+      }
+      if (data.contra) {
+        contraText.textContent = data.contra;
+        contraWrap.classList.remove("hidden");
+        hasAny = true;
+      }
+
+      if (hasAny) {
+        fdaBox.classList.remove("hidden");
+        transFdaBtn.textContent = "แปลข้อมูลคลินิกเป็นไทย 🇹🇭";
+      }
+    }
+
+    async function translateOpenFdaToThai() {
+      const transBtn = document.getElementById("translateFdaBtn");
+      transBtn.textContent = "กำลังแปลภาษาไทย...";
+      const targets = [
+        document.getElementById("fdaIndicationsText"),
+        document.getElementById("fdaWarningsText"),
+        document.getElementById("fdaReactionsText"),
+        document.getElementById("fdaContraText")
+      ];
+
+      try {
+        for (const el of targets) {
+          if (el && el.textContent.trim()) {
+            const raw = el.textContent.trim();
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=th&dt=t&q=${encodeURIComponent(raw)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            el.textContent = data[0].map(part => part[0]).join("");
+          }
+        }
+        transBtn.textContent = "แปลเป็นไทยแล้ว ✓";
+      } catch (e) {
+        transBtn.textContent = "ไม่สามารถแปลได้";
+      }
+    }
+
     // Open Substance Detail Modal
     function openDetailModal(unii) {
       const item = currentResults.find(d => d.unii === unii) || fallbackSubstances.find(d => d.unii === unii);
@@ -1311,9 +1493,10 @@
         atcLink.classList.remove("hidden");
       }
 
-      // 2. Trigger Live PubChem API and Live WHO ATC Lookup for fresh real-time verification
+      // 2. Trigger Live PubChem API, WHO ATC, and openFDA Clinical Drug Label
       fetchPubchemEnrichment(item);
       fetchWhoAtcCode(item);
+      fetchOpenFdaDrugLabel(item);
     }
 
     // Event Listeners: Delegated Actions
@@ -1409,6 +1592,10 @@
 
     document.getElementById("translatePubchemBtn").addEventListener("click", () => {
       translateCurrentPubchemToThai();
+    });
+
+    document.getElementById("translateFdaBtn").addEventListener("click", () => {
+      translateOpenFdaToThai();
     });
 
     document.getElementById("modalCopyUniiBtn").addEventListener("click", () => {
