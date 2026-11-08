@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 ThaiUNII — openFDA Full Drug Label Bulk Backup to Supabase
-ดึงข้อมูลเอกสารกำกับยาทางการจาก openFDA API (Indications, Warnings, Adverse Reactions, Contraindications)
-แบบ Bulk Paging เข้าสู่ตาราง public.substance_drug_labels ใน Supabase โดยตรง
+ดึงข้อมูลเอกสารกำกับยาทางการจาก openFDA API ทั้งหมดที่มีในระบบ (จนสุดขอบเขต Paging 25,000 ฉบับ)
+แล้วนำเข้าตาราง public.substance_drug_labels ใน Supabase โดยตัดตัวยาที่ซ้ำกันออก (1 UNII ต่อ 1 ฉลากยาที่สมบูรณ์ที่สุด)
 """
 
 import os
@@ -40,7 +40,6 @@ def insert_label_batch(supabase_url: str, service_key: str, batch: List[Dict[str
         with urllib.request.urlopen(req) as resp:
             pass
     except urllib.error.HTTPError as e:
-        # หากมีตัวใดไม่ผ่าน foreign key ให้แยก insert ทีละตัวเพื่อไม่ให้กระทบทั้ง batch
         for item in batch:
             try:
                 single_payload = json.dumps([item]).encode('utf-8')
@@ -55,33 +54,43 @@ def insert_label_batch(supabase_url: str, service_key: str, batch: List[Dict[str
 def get_already_saved_uniis(supabase_url: str, service_key: str) -> set:
     """ดึงรหัส unii ที่มีข้อมูลใน substance_drug_labels อยู่แล้วเพื่อไม่ต้องดึงซ้ำ"""
     saved_set = set()
-    url = f"{supabase_url.rstrip('/')}/rest/v1/substance_drug_labels?select=unii&limit=5000"
-    req = urllib.request.Request(url, headers={"apikey": service_key})
-    try:
-        with urllib.request.urlopen(req) as resp:
-            data = json.loads(resp.read().decode('utf-8'))
-            for row in data:
-                u = row.get("unii")
-                if u:
-                    saved_set.add(u.strip())
-    except Exception:
-        pass
+    limit = 2000
+    offset = 0
+
+    while True:
+        url = f"{supabase_url.rstrip('/')}/rest/v1/substance_drug_labels?select=unii&limit={limit}&offset={offset}"
+        req = urllib.request.Request(url, headers={"apikey": service_key})
+        try:
+            with urllib.request.urlopen(req) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                if not data:
+                    break
+                for row in data:
+                    u = row.get("unii")
+                    if u:
+                        saved_set.add(u.strip())
+                offset += len(data)
+                if len(data) < limit:
+                    break
+        except Exception:
+            break
+
     return saved_set
 
-def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_count: int = 100000):
-    print(f"[*] เริ่มต้นดาวน์โหลดเอกสารกำกับยาจาก openFDA API (เป้าหมาย {target_count} รายการ)...")
+def fetch_and_backup_all_openfda(supabase_url: str, service_key: str):
+    print("[*] เริ่มต้นกวาดเอกสารกำกับยาทั้งหมดที่มีในฐานข้อมูล openFDA...")
     
     already_saved = get_already_saved_uniis(supabase_url, service_key)
-    print(f"[*] มีข้อมูลฉลากยาเดิมในตารางอยู่แล้ว {len(already_saved)} รายการ (จะข้ามเพื่อไม่ให้ซ้ำ)")
+    print(f"[*] พบข้อมูลยาเดิมในตารางแล้ว {len(already_saved)} ตัว (จะข้ามเพื่อไม่ให้ซ้ำ)")
 
     processed_uniis = set(already_saved)
     batch = []
     total_saved = 0
     skip = 0
     limit = 100
+    max_skip_limit = 24900 # ขีดจำกัดสูงสุดของ openFDA Paging API
 
-    while total_saved < target_count and skip < 20000:
-        # ดึงเฉพาะฉลากยาที่มีรหัส UNII แน่ชัดจาก openFDA
+    while skip <= max_skip_limit:
         url = f"https://api.fda.gov/drug/label.json?search=_exists_:openfda.unii&limit={limit}&skip={skip}"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         
@@ -90,6 +99,7 @@ def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_
                 data = json.loads(resp.read().decode('utf-8'))
                 results = data.get("results", [])
                 if not results:
+                    print("[*] openFDA ส่งข้อมูลมาครบหมดสิ้นแล้ว")
                     break
 
                 for label in results:
@@ -98,7 +108,7 @@ def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_
                     if not uniis:
                         continue
 
-                    # ใช้รหัส UNII ตัวแรกของฉลากยานั้นๆ
+                    # กรองเอาเฉพาะ UNII ที่ยังไม่เคยเก็บ (1 ตัวยาต่อ 1 ฉลากยาที่สมบูรณ์ที่สุด)
                     unii = uniis[0].strip()
                     if unii in processed_uniis:
                         continue
@@ -119,31 +129,29 @@ def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_
                         })
                         total_saved += 1
 
-                    if len(batch) >= 50:
+                    if len(batch) >= 100:
                         insert_label_batch(supabase_url, service_key, batch)
-                        print(f"[+] บันทึกเอกสารกำกับยาลง Supabase แล้ว {total_saved} ตัว...")
+                        print(f"[+] บันทึกยาใหม่ลง Supabase แล้ว {total_saved} ตัว (สำรวจฉลากยาไปแล้ว {skip + limit} ฉบับ)...")
                         batch = []
 
-                    if total_saved >= target_count:
-                        break
-
                 skip += limit
-                time.sleep(0.25) # ให้เกียรติ openFDA API rate limit
+                time.sleep(0.26) # ควบคุมความเร็วให้อยู่ในโควตาฟรี 240 requests/นาที ของ openFDA
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 print("[*] สิ้นสุดข้อมูลใน openFDA")
                 break
-            print(f"[!] HTTP Error {e.code} จาก openFDA, พัก 2 วินาทีแล้วลองต่อ...")
+            print(f"[!] HTTP Error {e.code} จาก openFDA, พัก 2 วินาทีแล้วข้ามไปหน้าถัดไป...")
             time.sleep(2)
             skip += limit
         except Exception as e:
-            print(f"[!] Error: {e}")
-            break
+            print(f"[!] เกิดข้อผิดพลาดชั่วคราว: {e}, พัก 2 วินาทีแล้วลองต่อ...")
+            time.sleep(2)
+            skip += limit
 
     if batch:
         insert_label_batch(supabase_url, service_key, batch)
 
-    print(f"[✔] สำรองเอกสารกำกับยา openFDA เข้าสู่ Supabase สำเร็จครบถ้วนรวม {total_saved} รายการใหม่!")
+    print(f"[✔] สิ้นสุดการกวาดข้อมูล openFDA ทั้งระบบ! เพิ่มข้อมูลยาใหม่เข้า Supabase สำเร็จรวม {total_saved} รายการ (รวมมีฉลากยาในระบบทั้งสิ้น {len(processed_uniis)} ตัว)!")
 
 def main():
     supabase_url = os.environ.get("SUPABASE_URL", "")
@@ -153,7 +161,7 @@ def main():
         print("[!] ไม่พบ SUPABASE_URL หรือ SUPABASE_SERVICE_ROLE_KEY")
         sys.exit(1)
 
-    fetch_and_backup_openfda_labels(supabase_url, service_key, target_count=1000)
+    fetch_and_backup_all_openfda(supabase_url, service_key)
 
 if __name__ == "__main__":
     main()
