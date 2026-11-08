@@ -204,9 +204,17 @@
 
       <!-- Minimal Hero & Omni-Search Section -->
       <div class="text-center max-w-3xl mx-auto space-y-5 pt-2">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel text-xs font-medium text-zinc-600">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>ซิงค์ข้อมูลอัตโนมัติจาก <a href="https://precision.fda.gov/uniisearch/archive" target="_blank" rel="noopener noreferrer" class="underline decoration-yellow-400 hover:text-zinc-900 font-semibold">US FDA Archive</a> ผ่านฐานข้อมูล Supabase</span>
+        <div class="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 rounded-2xl glass-panel text-[11px] sm:text-xs font-medium text-zinc-600 max-w-full shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
+          <span class="text-zinc-500">ซิงค์ข้อมูลอัตโนมัติจาก:</span>
+          <a href="https://precision.fda.gov/uniisearch/archive" target="_blank" rel="noopener noreferrer" class="font-semibold text-amber-700 bg-yellow-100/90 border border-yellow-300/80 px-2 py-0.5 rounded-md hover:bg-yellow-200 transition-all">US FDA UNII</a>
+          <span class="text-zinc-400">•</span>
+          <a href="https://atcddd.fhi.no/atc_ddd_index/" target="_blank" rel="noopener noreferrer" class="font-semibold text-purple-700 bg-purple-100/90 border border-purple-300/80 px-2 py-0.5 rounded-md hover:bg-purple-200 transition-all">WHO ATC Index</a>
+          <span class="text-zinc-400">•</span>
+          <a href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" rel="noopener noreferrer" class="font-semibold text-blue-700 bg-blue-100/90 border border-blue-300/80 px-2 py-0.5 rounded-md hover:bg-blue-200 transition-all">EU CosIng</a>
+          <span class="text-zinc-400">•</span>
+          <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank" rel="noopener noreferrer" class="font-semibold text-emerald-800 bg-emerald-100/90 border border-emerald-300/80 px-2 py-0.5 rounded-md hover:bg-emerald-200 transition-all">NIH PubChem</a>
+          <span class="text-zinc-400 hidden md:inline">ผ่านฐานข้อมูล Supabase</span>
         </div>
 
         <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 leading-tight">
@@ -227,7 +235,7 @@
             <input
               id="searchInput"
               type="text"
-              placeholder="พิมพ์ชื่อสาร เช่น พาราเซตามอล, ขมิ้นชัน, POVIDONE K30, 390RMW2PEQ, 526-17-0..."
+              placeholder="พิมพ์ชื่อสาร เช่น พาราเซตามอล, N02BE01, ขมิ้นชัน, POVIDONE K30, 103-90-2..."
               class="w-full bg-transparent text-zinc-900 placeholder-zinc-400 text-sm sm:text-base focus:outline-none py-2"
             />
             <button id="clearSearchBtn" class="hidden p-2 text-zinc-400 hover:text-zinc-700 rounded-lg" title="ล้างคำค้นหา">
@@ -344,7 +352,21 @@
           <span class="text-[11px] font-mono text-zinc-500">ข้อมูลเชื่อมโยงแบบมาตรฐานเปิด</span>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <!-- Source 0: WHO ATC -->
+          <a href="https://atcddd.fhi.no/atc_ddd_index/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-purple-400 transition-all group">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">WHO ATC</span>
+                <span class="text-xs text-zinc-400 group-hover:text-zinc-700">↗</span>
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900">WHO ATC/DDD Index</h3>
+              <p class="text-xs text-zinc-600 leading-relaxed">
+                ระบบจำแนกกลุ่มยาและสารบำบัดโรคตามกายวิภาคศาสตร์และสรีรวิทยาขององค์การอนามัยโลก (WHO)
+              </p>
+            </div>
+            <div class="mt-3 text-[11px] font-mono text-zinc-400 group-hover:text-purple-600">atcddd.fhi.no</div>
+          </a>
           <!-- Source 1: US FDA UNII -->
           <a href="https://precision.fda.gov/uniisearch/archive" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-yellow-400 transition-all group">
             <div class="space-y-1.5">
@@ -406,6 +428,10 @@
             <span id="modalLegacyBadge" class="hidden font-mono text-xs px-2.5 py-1 rounded-lg bg-zinc-200 text-zinc-700">Legacy: -</span>
             <span id="modalTypeBadge" class="text-xs font-medium px-2.5 py-1 rounded-lg bg-zinc-100 text-zinc-700 border border-zinc-200">ประเภทสาร</span>
             <span id="modalCosingBadge" class="hidden text-xs font-medium px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">EU CosIng Function</span>
+            <span id="modalAtcBadge" class="hidden text-xs font-mono font-medium px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+              <span id="modalAtcText">WHO ATC: -</span>
+            </span>
           </div>
           <h3 id="modalThaiName" class="text-xl sm:text-2xl font-bold text-zinc-900 mt-2.5">ชื่อภาษาไทย</h3>
           <p id="modalPreferredName" class="text-sm font-mono text-zinc-500">PREFERRED SUBSTANCE NAME</p>
@@ -505,6 +531,9 @@
         </button>
 
         <div class="flex flex-wrap items-center gap-2">
+          <a id="modalAtcLink" href="https://atcddd.fhi.no/atc_ddd_index/" target="_blank" rel="noopener noreferrer" class="hidden px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-purple-400 text-purple-700 text-xs font-medium transition-all">
+            WHO ATC Index ↗
+          </a>
           <a id="modalCosingLink" href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-blue-400 text-blue-700 text-xs font-medium transition-all">
             EU CosIng ↗
           </a>
@@ -606,6 +635,8 @@
         pubchem: "CID 2725",
         substanceType: "chemical",
         typeLabelThai: "สารเคมีเดี่ยว (Active Ingredient)",
+        atcCode: "N02BE01",
+        atcName: "Anilides / Analgesics",
         inchikey: "SOYKEARFFJGWCQ-UHFFFAOYSA-N",
         smiles: "CN(C)CCC(C1=CC=C(Cl)C=C1)C2=CC=CC=N2",
         thaiDesc: "สารต้านฮิสตามีนรุ่นที่ 1 (Antihistamine) ใช้บรรเทาอาการแพ้ จาม น้ำมูกไหล และลมพิษ",
@@ -718,6 +749,30 @@
       }
     ];
 
+    // Comprehensive WHO ATC Map for common drugs to ensure cards show ATC instantly
+    const COMMON_ATC_MAP = {
+      "PARACETAMOL": ["N02BE01", "Anilides / Analgesics (ยาระงับปวดและลดไข้)"],
+      "ACETAMINOPHEN": ["N02BE01", "Anilides / Analgesics (ยาระงับปวดและลดไข้)"],
+      "CHLORPHENIRAMINE": ["R06AB04", "Substituted alkylamines / Antihistamines (ยาแก้แพ้)"],
+      "PREDNISONE": ["H02AB07", "Glucocorticoids / Corticosteroids (ยาสเตียรอยด์)"],
+      "ASPIRIN": ["B01AC06", "Platelet aggregation inhibitors (ยาต้านเกล็ดเลือด)"],
+      "IBUPROFEN": ["M01AE01", "Propionic acid derivatives (NSAIDs ยาแก้ปวดอักเสบ)"],
+      "AMOXICILLIN": ["J01CA04", "Penicillins with extended spectrum (ยาปฏิชีวนะ)"],
+      "OMEPRAZOLE": ["A02BC01", "Proton pump inhibitors (ยาลดกรดในกระเพาะอาหาร)"],
+      "METFORMIN": ["A10BA02", "Biguanides / Blood glucose lowering (ยาลดระดับน้ำตาล)"],
+      "DIAZEPAM": ["N05BA01", "Benzodiazepine derivatives (ยากล่อมประสาท/คลายกังวล)"],
+      "SIMVASTATIN": ["C10AA01", "HMG CoA reductase inhibitors (ยาลดไขมันในเลือด)"],
+      "AMLODIPINE": ["C08CA01", "Dihydropyridine derivatives (ยาลดความดันโลหิต)"],
+      "LOSARTAN": ["C09CA01", "Angiotensin II receptor blockers (ยาลดความดัน ARBs)"],
+      "ATENOLOL": ["C07AB03", "Beta blocking agents, selective (ยาลดความดันเบต้าบล็อกเกอร์)"],
+      "CETIRIZINE": ["R06AE07", "Piperazine derivatives (ยาแก้แพ้รุ่นที่ 2)"],
+      "LORATADINE": ["R06AX13", "Other antihistamines for systemic use (ยาแก้แพ้ไม่ง่วง)"],
+      "DEXAMETHASONE": ["H02AB02", "Glucocorticoids (ยาสเตียรอยด์ออกฤทธิ์แรง)"],
+      "HYDROCHLOROTHIAZIDE": ["C03AA03", "Thiazides / Diuretics (ยาขับปัสสาวะลดความดัน)"],
+      "CIPROFLOXACIN": ["J01MA02", "Fluoroquinolones (ยาฆ่าเชื้อแบคทีเรีย)"],
+      "AZITHROMYCIN": ["J01FA10", "Macrolides (ยาปฏิชีวนะกลุ่มแมคโครไลด์)"]
+    };
+
     // State Variables
     let currentCategory = "all";
     let searchQuery = "";
@@ -809,6 +864,9 @@
               inchikey: row.inchikey || "-",
               smiles: row.smiles || "-",
               thaiDesc: row.thai_desc || "ไม่มีข้อมูลคำอธิบาย",
+              cosingFunction: row.cosing_function || null,
+              atcCode: row.atc_code || (COMMON_ATC_MAP[row.preferred_name?.toUpperCase()]?.[0] || null),
+              atcName: row.atc_name || (COMMON_ATC_MAP[row.preferred_name?.toUpperCase()]?.[1] || null),
               synonyms: row.synonyms || []
             }));
             renderResults();
@@ -883,6 +941,24 @@
                 <p class="font-mono text-xs text-zinc-500 mt-0.5 truncate">${item.preferredName}</p>
               </div>
 
+              <!-- ATC Code & Name Badge on Card -->
+              ${item.atcCode ? `
+                <div class="flex items-center gap-1.5 text-xs font-mono text-purple-800 bg-purple-50/90 border border-purple-200/80 px-2.5 py-1.5 rounded-xl">
+                  <span class="w-2 h-2 rounded-full bg-purple-500 shrink-0"></span>
+                  <span class="font-bold shrink-0">ATC: ${item.atcCode}</span>
+                  <span class="text-zinc-600 truncate text-[11px] font-sans font-medium">— ${item.atcName || 'WHO ATC'}</span>
+                </div>
+              ` : ''}
+
+              <!-- CosIng Function Badge on Card -->
+              ${item.cosingFunction ? `
+                <div class="flex items-center gap-1.5 text-xs text-blue-800 bg-blue-50/90 border border-blue-200/80 px-2.5 py-1 rounded-xl">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></span>
+                  <span class="font-bold shrink-0 text-[11px] font-mono">CosIng:</span>
+                  <span class="text-zinc-600 truncate text-[11px]">${item.cosingFunction}</span>
+                </div>
+              ` : ''}
+
               <p class="text-xs text-zinc-600 line-clamp-2 leading-relaxed">${item.thaiDesc}</p>
             </div>
 
@@ -904,6 +980,7 @@
           <td class="py-3 px-4">
             <div class="font-semibold text-zinc-900">${item.thaiName}</div>
             <div class="font-mono text-xs text-zinc-500">${item.preferredName}</div>
+            ${item.atcCode ? `<div class="text-[11px] font-mono text-purple-700 font-semibold mt-0.5">ATC: ${item.atcCode} (${item.atcName || ''})</div>` : ''}
           </td>
           <td class="py-3 px-4 font-mono text-xs text-zinc-600">
             <div>${item.cas}</div>
@@ -933,6 +1010,63 @@
       if (!pubchemStr) return null;
       const m = String(pubchemStr).match(/(\d{2,12})/);
       return m ? m[1] : null;
+    }
+
+    const atcCache = {};
+
+    // Fetch live WHO ATC Code from NIH NLM RxClass API (100% Free & Open Access)
+    async function fetchWhoAtcCode(item) {
+      const atcBadge = document.getElementById("modalAtcBadge");
+      const atcText = document.getElementById("modalAtcText");
+      const atcLink = document.getElementById("modalAtcLink");
+
+      // Don't hide badge if it was already displayed from Supabase backup!
+      if (!item.atcCode && !atcCache[item.preferredName]) {
+        atcBadge.classList.add("hidden");
+        atcLink.classList.add("hidden");
+      }
+
+      if (atcCache[item.preferredName]) {
+        applyAtcData(atcCache[item.preferredName]);
+        return;
+      }
+
+      // Check both US name (Acetaminophen) and International name (Paracetamol)
+      const candidateNames = [item.preferredName];
+      if (/ACETAMINOPHEN/i.test(item.preferredName)) candidateNames.push("PARACETAMOL");
+      if (/PARACETAMOL/i.test(item.preferredName)) candidateNames.push("ACETAMINOPHEN");
+
+      for (const rawName of candidateNames) {
+        try {
+          const cleanDrugName = encodeURIComponent(rawName.replace(/ (WHOLE|SALT|HYDROCHLORIDE|SODIUM|POTASSIUM)$/i, '').trim());
+          const url = `https://rxnav.nlm.nih.gov/REST/rxclass/class/byDrugName.json?drugName=${cleanDrugName}&relaSource=ATC`;
+          const resp = await fetch(url);
+          if (!resp.ok) continue;
+          const data = await resp.json();
+          const concepts = data?.rxclassDrugInfoList?.rxclassDrugInfo || [];
+          
+          if (concepts.length > 0) {
+            const atcItem = concepts[0].rxclassMinConceptItem;
+            const atcCode = atcItem.classId;
+            const atcName = atcItem.className;
+            const res = { code: atcCode, name: atcName };
+            atcCache[item.preferredName] = res;
+            applyAtcData(res);
+            return;
+          }
+        } catch (err) {}
+      }
+    }
+
+    function applyAtcData(data) {
+      const atcBadge = document.getElementById("modalAtcBadge");
+      const atcText = document.getElementById("modalAtcText");
+      const atcLink = document.getElementById("modalAtcLink");
+
+      atcText.textContent = `WHO ATC: ${data.code} (${data.name})`;
+      atcBadge.classList.remove("hidden");
+      atcLink.href = `https://atcddd.fhi.no/atc_ddd_index/?code=${encodeURIComponent(data.code)}`;
+      atcLink.classList.remove("hidden");
     }
 
     // Fetch live pharmacology/description & synonyms from NIH PubChem PUG REST API
@@ -1109,8 +1243,21 @@
       modal.classList.remove("hidden");
       modal.classList.add("flex");
 
-      // Trigger Live PubChem API Fetch
+      // 1. If ATC code exists in Supabase backup, display immediately without waiting!
+      const atcBadge = document.getElementById("modalAtcBadge");
+      const atcText = document.getElementById("modalAtcText");
+      const atcLink = document.getElementById("modalAtcLink");
+
+      if (item.atcCode) {
+        atcText.textContent = `WHO ATC: ${item.atcCode}${item.atcName ? ` (${item.atcName})` : ''}`;
+        atcBadge.classList.remove("hidden");
+        atcLink.href = `https://atcddd.fhi.no/atc_ddd_index/?code=${encodeURIComponent(item.atcCode)}`;
+        atcLink.classList.remove("hidden");
+      }
+
+      // 2. Trigger Live PubChem API and Live WHO ATC Lookup for fresh real-time verification
       fetchPubchemEnrichment(item);
+      fetchWhoAtcCode(item);
     }
 
     // Event Listeners: Delegated Actions
