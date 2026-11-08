@@ -168,10 +168,9 @@
     <nav class="glass-panel rounded-2xl px-4 py-3 sm:px-6 flex items-center justify-between gap-3">
       <!-- Brand Logo -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500 flex items-center justify-center shadow-sm border border-white/80">
-          <svg class="w-5 h-5 text-zinc-900" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-          </svg>
+        <div class="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0">
+          <img src="data:image/png;base64,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" alt="น้องโกร่งแก้ว" class="w-full h-full rounded-2xl object-cover shadow-sm border-2 border-yellow-400 bg-zinc-950" />
+          <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></span>
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -185,15 +184,14 @@
         </div>
       </div>
 
-      <!-- View Switcher Tabs -->
-      <div class="flex items-center gap-1.5 bg-zinc-200/50 p-1 rounded-xl border border-white/60">
-        <button id="tabSearchBtn" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-white text-zinc-900 shadow-sm">
-          หน้าค้นหา (Search)
-        </button>
-        <button id="tabSavedBtn" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5">
-          <span>รายการที่บันทึก</span>
-          <span id="savedCountBadge" class="px-1.5 py-0.2 rounded-full text-[11px] font-mono bg-yellow-400 text-zinc-900 font-semibold">0</span>
-        </button>
+      <!-- Live Status Pill & Quick Info -->
+      <div class="flex items-center gap-2">
+        <a href="#dataSourcesSection" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-panel text-xs font-medium text-zinc-700 hover:text-zinc-950 hover:border-yellow-400 transition-all">
+          <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          <span>แหล่งอ้างอิงสากล</span>
+        </a>
       </div>
     </nav>
   </header>
@@ -214,8 +212,8 @@
         <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 leading-tight">
           ค้นหารหัสสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">UNII</span> ชื่อเคมี และสมุนไพรไทย
         </h1>
-        <p class="text-sm sm:text-base text-zinc-500 max-w-2xl mx-auto">
-          สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII 10 หลัก เลขทะเบียน CAS RN และสูตรโมเลกุล สำหรับงานขึ้นทะเบียนผลิตภัณฑ์ อย. และงานวิจัย
+        <p class="text-xs sm:text-base text-zinc-500 max-w-2xl mx-auto leading-relaxed px-2">
+          สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII 10 หลัก เลขทะเบียน CAS RN และสูตรโมเลกุล
         </p>
 
         <!-- Glass Omni-Search Bar -->
@@ -259,26 +257,26 @@
 
       <!-- Filter Bar & Controls -->
       <div class="glass-panel rounded-2xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        <!-- Category Pills -->
-        <div class="flex flex-wrap items-center gap-2" id="categoryFilterGroup">
-          <button data-cat="all" class="cat-btn glass-pill active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm">
+        <!-- Category Pills (Horizontal scroll on mobile, wrap on desktop) -->
+        <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full md:w-auto -mx-1 px-1" id="categoryFilterGroup">
+          <button data-cat="all" class="cat-btn glass-pill active px-3 py-1.5 rounded-xl text-xs sm:text-sm whitespace-nowrap shrink-0">
             ทั้งหมด
           </button>
-          <button data-cat="chemical" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+          <button data-cat="chemical" class="cat-btn glass-pill px-3 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700 whitespace-nowrap shrink-0">
             <span class="w-2 h-2 rounded-full bg-amber-400"></span>
             สารเคมีเดี่ยว (Chemical)
           </button>
-          <button data-cat="structurallyDiverse" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+          <button data-cat="structurallyDiverse" class="cat-btn glass-pill px-3 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700 whitespace-nowrap shrink-0">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            สมุนไพร/สารธรรมชาติ (Botanical)
+            สมุนไพร/พืช (Botanical)
           </button>
-          <button data-cat="polymer" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+          <button data-cat="polymer" class="cat-btn glass-pill px-3 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700 whitespace-nowrap shrink-0">
             <span class="w-2 h-2 rounded-full bg-zinc-500"></span>
-            พอลิเมอร์/สารช่วย (Polymer)
+            พอลิเมอร์ (Polymer)
           </button>
-          <button data-cat="protein" class="cat-btn glass-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700">
+          <button data-cat="protein" class="cat-btn glass-pill px-3 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 text-zinc-700 whitespace-nowrap shrink-0">
             <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-            โปรตีน/ชีววัตถุ (Protein)
+            โปรตีน (Protein)
           </button>
         </div>
 
@@ -335,21 +333,64 @@
 
     </section>
 
-    <!-- ==================== VIEW 2: SAVED / BOOKMARKED ITEMS ==================== -->
-    <section id="viewSaved" class="hidden space-y-6">
-      <div class="glass-panel rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-zinc-900">รายการสารที่บันทึกไว้สำหรับอ้างอิง (RA Shortlist)</h2>
-          <p class="text-xs sm:text-sm text-zinc-500 mt-1">สารที่คุณติดดาวไว้เพื่อเตรียมคัดลอกรหัส UNII และ CAS RN ไปกรอกในคำขอขึ้นทะเบียนผลิตภัณฑ์</p>
+    <!-- ==================== REFERENCE DATA SOURCES SECTION ==================== -->
+    <section id="dataSourcesSection" class="pt-4 space-y-4">
+      <div class="glass-panel rounded-3xl p-5 sm:p-7 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+            <h2 class="text-base sm:text-lg font-bold text-zinc-900">ฐานข้อมูลอ้างอิงระดับสากล (Global Data Sources)</h2>
+          </div>
+          <span class="text-[11px] font-mono text-zinc-500">ข้อมูลเชื่อมโยงแบบมาตรฐานเปิด</span>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="copyAllSavedBtn" class="px-4 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-semibold text-xs sm:text-sm transition-all shadow-sm">
-            คัดลอกตารางทั้งหมด (TSV)
-          </button>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <!-- Source 1: US FDA UNII -->
+          <a href="https://precision.fda.gov/uniisearch/archive" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-yellow-400 transition-all group">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-amber-600 bg-yellow-100/80 px-2 py-0.5 rounded-md">US FDA GSRS</span>
+                <span class="text-xs text-zinc-400 group-hover:text-zinc-700">↗</span>
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900">FDA UNII Master Archive</h3>
+              <p class="text-xs text-zinc-600 leading-relaxed">
+                ฐานข้อมูลรหัสสากลของสารเคมียา สารช่วย และสมุนไพร 171,912 รายการ กำกับโดยองค์การอาหารและยาสหรัฐฯ (US FDA)
+              </p>
+            </div>
+            <div class="mt-3 text-[11px] font-mono text-zinc-400 group-hover:text-amber-600">precision.fda.gov</div>
+          </a>
+
+          <!-- Source 2: EU CosIng -->
+          <a href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-yellow-400 transition-all group">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">EU CosIng</span>
+                <span class="text-xs text-zinc-400 group-hover:text-zinc-700">↗</span>
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900">European Commission CosIng</h3>
+              <p class="text-xs text-zinc-600 leading-relaxed">
+                ฐานข้อมูลมาตรฐานส่วนผสมเครื่องสำอางยุโรป ระบุชื่อ INCI เลข CAS และหน้าที่ของสาร (CosIng Function)
+              </p>
+            </div>
+            <div class="mt-3 text-[11px] font-mono text-zinc-400 group-hover:text-blue-600">ec.europa.eu/cosing</div>
+          </a>
+
+          <!-- Source 3: NIH PubChem -->
+          <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank" rel="noopener noreferrer" class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-yellow-400 transition-all group">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">NIH PubChem</span>
+                <span class="text-xs text-zinc-400 group-hover:text-zinc-700">↗</span>
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900">PubChem PUG REST API</h3>
+              <p class="text-xs text-zinc-600 leading-relaxed">
+                คลังสารประกอบเคมีที่ใหญ่ที่สุดในโลกของสถาบันสุขภาพแห่งชาติสหรัฐฯ (NIH) ดึงข้อมูลโครงสร้าง 2D และเภสัชวิทยาแบบสด
+              </p>
+            </div>
+            <div class="mt-3 text-[11px] font-mono text-zinc-400 group-hover:text-emerald-700">pubchem.ncbi.nlm.nih.gov</div>
+          </a>
         </div>
       </div>
-
-      <div id="savedListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </section>
 
   </main>
@@ -364,6 +405,7 @@
             <span id="modalUniiBadge" class="font-mono text-sm font-bold px-3 py-1 rounded-lg bg-yellow-400 text-zinc-900 shadow-sm">UNII</span>
             <span id="modalLegacyBadge" class="hidden font-mono text-xs px-2.5 py-1 rounded-lg bg-zinc-200 text-zinc-700">Legacy: -</span>
             <span id="modalTypeBadge" class="text-xs font-medium px-2.5 py-1 rounded-lg bg-zinc-100 text-zinc-700 border border-zinc-200">ประเภทสาร</span>
+            <span id="modalCosingBadge" class="hidden text-xs font-medium px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">EU CosIng Function</span>
           </div>
           <h3 id="modalThaiName" class="text-xl sm:text-2xl font-bold text-zinc-900 mt-2.5">ชื่อภาษาไทย</h3>
           <p id="modalPreferredName" class="text-sm font-mono text-zinc-500">PREFERRED SUBSTANCE NAME</p>
@@ -462,9 +504,12 @@
           <span>คัดลอกรหัส UNII</span>
         </button>
 
-        <div class="flex items-center gap-2">
-          <a id="modalFdaLink" href="https://precision.fda.gov/uniisearch" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-white border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-xs font-medium transition-all">
-            เปิดดูใน FDA GSRS ↗
+        <div class="flex flex-wrap items-center gap-2">
+          <a id="modalCosingLink" href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-blue-400 text-blue-700 text-xs font-medium transition-all">
+            EU CosIng ↗
+          </a>
+          <a id="modalFdaLink" href="https://precision.fda.gov/uniisearch" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white border border-zinc-300 hover:border-yellow-400 text-zinc-700 text-xs font-medium transition-all">
+            FDA GSRS ↗
           </a>
         </div>
       </div>
@@ -545,6 +590,7 @@
         pubchem: "CID 6917",
         substanceType: "polymer",
         typeLabelThai: "พอลิเมอร์ / สารช่วย (Excipient)",
+        cosingFunction: "BINDING, FILM FORMING, EMULSION STABILISING",
         inchikey: "N/A (Homopolymer)",
         smiles: "C=CN1CCCC1=O",
         thaiDesc: "พอลิเมอร์สังเคราะห์ละลายน้ำได้ดี นิยมใช้เป็นสารยึดเกาะ (Binder) ในการตอกเม็ดยา และช่วยเพิ่มการละลายของตัวยาสำคัญ",
@@ -690,9 +736,7 @@
     const resultsTableWrap = document.getElementById("resultsTableWrap");
     const resultsTableBody = document.getElementById("resultsTableBody");
     const resultSummaryText = document.getElementById("resultSummaryText");
-    const savedCountBadge = document.getElementById("savedCountBadge");
-    const savedListContainer = document.getElementById("savedListContainer");
-
+        
     // Toast Function
     let toastTimer = null;
     function showToast(msg) {
@@ -795,8 +839,7 @@
 
     // Render Results
     function renderResults() {
-      savedCountBadge.textContent = savedUniiSet.size;
-
+      
       const sourceInfo = supabaseClient ? "ฐานข้อมูล Supabase" : "ข้อมูลตัวอย่าง";
       resultSummaryText.innerHTML = `พบผลลัพธ์ <strong class="text-zinc-900 font-semibold">${currentResults.length}</strong> รายการจาก ${sourceInfo} ${searchQuery ? `สำหรับ <span class="px-2 py-0.5 rounded bg-yellow-200/70 text-zinc-900 font-mono">"${searchQuery}"</span>` : ''}`;
 
@@ -823,22 +866,16 @@
           <div class="glass-card rounded-2xl p-5 flex flex-col justify-between gap-4 cursor-pointer" data-open-unii="${item.unii}">
             <div class="space-y-3">
               <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center gap-1.5">
                   <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-yellow-400 text-zinc-900 shadow-sm">${item.unii}</span>
                   ${item.legacyUnii ? `<span class="font-mono text-[11px] px-2 py-0.5 rounded-md bg-zinc-200/80 text-zinc-600" title="รหัส Legacy เดิม">เดิม: ${item.legacyUnii}</span>` : ''}
                 </div>
-                <div class="flex items-center gap-1">
-                  <button type="button" data-copy-unii="${item.unii}" class="p-1.5 rounded-lg hover:bg-yellow-400/30 text-zinc-500 hover:text-zinc-900 transition-colors" title="คัดลอกรหัส UNII">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                    </svg>
-                  </button>
-                  <button type="button" data-toggle-save="${item.unii}" class="p-1.5 rounded-lg hover:bg-yellow-400/30 ${isSaved ? 'text-amber-500' : 'text-zinc-400'} transition-colors" title="บันทึกไว้ในรายการอ้างอิง">
-                    <svg class="w-4 h-4" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                    </svg>
-                  </button>
-                </div>
+                <button type="button" data-copy-unii="${item.unii}" class="px-2.5 py-1 rounded-lg bg-zinc-100 hover:bg-yellow-400/40 text-zinc-600 hover:text-zinc-900 transition-colors text-xs font-mono flex items-center gap-1 shrink-0" title="คัดลอกรหัส UNII">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                  </svg>
+                  <span>คัดลอก</span>
+                </button>
               </div>
 
               <div>
@@ -884,39 +921,8 @@
       `).join("");
     }
 
-    // Render Saved Shortlist View
-    function renderSavedView() {
-      const savedItems = currentResults.filter(d => savedUniiSet.has(d.unii));
-      if (savedItems.length === 0) {
-        savedListContainer.innerHTML = `
-          <div class="col-span-full glass-panel rounded-2xl p-8 text-center text-zinc-500 text-sm">
-            ยังไม่มีสารที่บันทึกไว้ คลิกไอคอนรูปดาวบนการ์ดในหน้าค้นหาเพื่อเก็บไว้ดูภายหลัง
-          </div>
-        `;
-        return;
-      }
+    
 
-      savedListContainer.innerHTML = savedItems.map(item => `
-        <div class="glass-card rounded-2xl p-5 flex items-start justify-between gap-4">
-          <div class="space-y-1.5">
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-xs font-bold px-2.5 py-0.5 rounded bg-yellow-400 text-zinc-900">${item.unii}</span>
-              <span class="font-mono text-xs text-zinc-500">CAS: ${item.cas}</span>
-            </div>
-            <h4 class="font-bold text-zinc-900">${item.thaiName}</h4>
-            <p class="font-mono text-xs text-zinc-500">${item.preferredName}</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" data-copy-unii="${item.unii}" class="px-3 py-1.5 rounded-xl bg-zinc-900 text-yellow-300 text-xs font-medium">คัดลอก</button>
-            <button type="button" data-remove-save="${item.unii}" class="p-1.5 rounded-xl bg-zinc-100 hover:bg-red-50 text-zinc-500 hover:text-red-600" title="ลบออก">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `).join("");
-    }
 
     // Cache for PubChem descriptions
     const pubchemCache = {};
@@ -1075,6 +1081,17 @@
         legBadge.classList.add("hidden");
       }
       document.getElementById("modalTypeBadge").textContent = item.typeLabelThai;
+      const cosingBadge = document.getElementById("modalCosingBadge");
+      const cosingLink = document.getElementById("modalCosingLink");
+      if (item.cosingFunction) {
+        cosingBadge.textContent = `CosIng: ${item.cosingFunction}`;
+        cosingBadge.classList.remove("hidden");
+        if (item.cas && item.cas !== "N/A") {
+          cosingLink.href = `https://ec.europa.eu/growth/tools-databases/cosing/index.cfm?fuseaction=search.results&cas_no=${encodeURIComponent(item.cas)}`;
+        }
+      } else {
+        cosingBadge.classList.add("hidden");
+      }
       document.getElementById("modalThaiName").textContent = item.thaiName;
       document.getElementById("modalPreferredName").textContent = item.preferredName;
       document.getElementById("modalThaiDesc").textContent = item.thaiDesc;
@@ -1106,31 +1123,9 @@
         return;
       }
 
-      const saveBtn = e.target.closest("[data-toggle-save]");
-      if (saveBtn) {
-        e.stopPropagation();
-        const u = saveBtn.getAttribute("data-toggle-save");
-        if (savedUniiSet.has(u)) {
-          savedUniiSet.delete(u);
-          showToast(`นำ ${u} ออกจากรายการที่บันทึก`);
-        } else {
-          savedUniiSet.add(u);
-          showToast(`บันทึก ${u} ลงในรายการอ้างอิงแล้ว`);
-        }
-        renderResults();
-        renderSavedView();
-        return;
-      }
+      
 
-      const removeSaveBtn = e.target.closest("[data-remove-save]");
-      if (removeSaveBtn) {
-        const u = removeSaveBtn.getAttribute("data-remove-save");
-        savedUniiSet.delete(u);
-        renderResults();
-        renderSavedView();
-        showToast(`นำ ${u} ออกจากรายการแล้ว`);
-        return;
-      }
+      
 
       const cardOpen = e.target.closest("[data-open-unii]");
       if (cardOpen) {
@@ -1202,27 +1197,7 @@
       layoutGridBtn.className = "p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900";
     });
 
-    // View Switching Tabs
-    const tabSearchBtn = document.getElementById("tabSearchBtn");
-    const tabSavedBtn = document.getElementById("tabSavedBtn");
-    const viewSearch = document.getElementById("viewSearch");
-    const viewSaved = document.getElementById("viewSaved");
-
-    tabSearchBtn.addEventListener("click", () => {
-      viewSearch.classList.remove("hidden");
-      viewSaved.classList.add("hidden");
-      tabSearchBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-white text-zinc-900 shadow-sm";
-      tabSavedBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5";
-    });
-
-    tabSavedBtn.addEventListener("click", () => {
-      viewSearch.classList.add("hidden");
-      viewSaved.classList.remove("hidden");
-      tabSavedBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-white text-zinc-900 shadow-sm flex items-center gap-1.5";
-      tabSearchBtn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900";
-      renderSavedView();
-    });
-
+    
     // Detail Modal Controls
     document.getElementById("closeDetailModalBtn").addEventListener("click", () => {
       document.getElementById("detailModal").classList.add("hidden");
@@ -1271,14 +1246,7 @@
       legacyModal.classList.remove("flex");
     });
 
-    // Export Saved TSV
-    document.getElementById("copyAllSavedBtn").addEventListener("click", () => {
-      const savedItems = currentResults.filter(d => savedUniiSet.has(d.unii));
-      const tsv = "UNII\tPreferred Name\tThai Name\tCAS RN\n" +
-        savedItems.map(i => `${i.unii}\t${i.preferredName}\t${i.thaiName}\t${i.cas}`).join("\n");
-      copyText(tsv, "ตารางรายการที่บันทึก");
-    });
-
+    
     // Initial Execution
     executeSearch();
   </script>
