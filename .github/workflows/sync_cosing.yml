@@ -1,0 +1,23 @@
+name: Sync EU CosIng Cosmetic Functions
+
+on:
+  workflow_dispatch: # ปุ่มกดสั่งรันด้วยมือในแท็บ Actions
+
+jobs:
+  cosing-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run CosIng Importer
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python3 import_cosing_to_supabase.py
