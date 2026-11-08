@@ -1,4 +1,4 @@
-# 🌿 ThaiUNII — ระบบสืบค้นรหัสสารสำคัญและวัตถุดิบทางเภสัชกรรม (FDA UNII) ฉบับภาษาไทย
+# 🌿 ThaiUNII — คลังข้อมูลสารสำคัญและวัตถุดิบทางเภสัชกรรม (FDA UNII) ฉบับภาษาไทย
 
 เว็บแอปพลิเคชันสืบค้นฐานข้อมูล **FDA UNII (Unique Ingredient Identifier)** และสารสำคัญทางเภสัชกรรม/เครื่องสำอาง/สมุนไพรไทย ดีไซน์ **Minimal Glassmorphism ** พร้อมระบบหลังบ้านจัดเก็บข้อมูลบน **Supabase (PostgreSQL + pg_trgm Full-Text Search)** และโฮสต์บน **GitHub Pages** ได้ฟรี 100%
 
