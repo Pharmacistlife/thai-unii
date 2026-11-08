@@ -186,14 +186,14 @@
         </div>
       </div>
 
-      <!-- Live Status Pill & Quick Info -->
-      <div class="flex items-center gap-2">
-        <a href="#dataSourcesSection" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-panel text-xs font-medium text-zinc-700 hover:text-zinc-950 hover:border-yellow-400 transition-all">
-          <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-          </svg>
-          <span>แหล่งอ้างอิงสากล</span>
-        </a>
+      <!-- Main Page Navigation Tabs -->
+      <div class="flex items-center gap-1.5 bg-zinc-200/60 p-1 rounded-xl border border-white/80">
+        <button id="navPageSearchBtn" type="button" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-zinc-900 shadow-xs flex items-center gap-1.5">
+          <span>🔍 หน้าค้นหาสาร</span>
+        </button>
+        <button id="navPageOntologyBtn" type="button" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5">
+          <span>🕸️ โครงข่ายเชื่อมโยง (Ontology Graph)</span>
+        </button>
       </div>
     </nav>
   </header>
@@ -344,6 +344,130 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- ==================== VIEW 2: FULL-PAGE ONTOLOGY KNOWLEDGE GRAPH EXPLORER ==================== -->
+    <section id="viewOntologyPage" class="hidden space-y-5">
+      <!-- Top Search & Ontology Control Header (Yellow-Gray Glass Theme) -->
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 space-y-4 border border-yellow-400/50">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-yellow-400/30 text-amber-900 text-[11px] font-mono font-semibold border border-yellow-400/50">
+              <span>INTERACTIVE BIOMEDICAL ONTOLOGY GRAPH</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-zinc-900">
+              สำรวจโครงข่ายความเชื่อมโยงสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">(Knowledge Graph)</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-zinc-500">
+              ค้นหาสารเพื่อสร้างโหนดตั้งต้น แล้ว <strong>คลิกที่โหนดใดก็ได้เพื่อแตกแขนง (Expand)</strong> ดูกลุ่มยา WHO ATC, หน้าที่สาร CosIng, โครงสร้างเคมี และตัวยาที่เกี่ยวข้องต่อเนื่องไปจนสุดทาง
+            </p>
+          </div>
+
+          <!-- Search Input for Ontology Graph -->
+          <div class="w-full md:w-96 shrink-0">
+            <div class="glass-search rounded-2xl p-1.5 flex items-center gap-1.5">
+              <input
+                id="graphSearchInput"
+                type="text"
+                placeholder="พิมพ์ชื่อยา/สมุนไพร เช่น พาราเซตามอล, N02BE, บัวบก..."
+                class="w-full bg-transparent text-zinc-900 placeholder-zinc-400 text-xs sm:text-sm focus:outline-none px-3 py-1.5"
+              />
+              <button id="graphSearchBtn" type="button" class="px-3.5 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 text-xs font-bold transition-all shrink-0 shadow-xs">
+                สร้างโหนด
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Seed Graph presets & Action Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-zinc-200/60 text-xs">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-zinc-500 font-medium">เริ่มสำรวจจาก:</span>
+            <button type="button" data-graph-seed="all9" class="graph-seed-btn px-2.5 py-1 rounded-lg bg-yellow-400 text-zinc-900 font-semibold shadow-2xs transition-all">🌟 รวม 9 สารไฮไลต์เชื่อมกัน</button>
+            <button type="button" data-graph-seed="ACETAMINOPHEN" class="graph-seed-btn px-2.5 py-1 rounded-lg glass-pill hover:border-yellow-400 text-zinc-700">พาราเซตามอล</button>
+            <button type="button" data-graph-seed="AMOXICILLIN" class="graph-seed-btn px-2.5 py-1 rounded-lg glass-pill hover:border-yellow-400 text-zinc-700">Amoxicillin</button>
+            <button type="button" data-graph-seed="NAPROXEN" class="graph-seed-btn px-2.5 py-1 rounded-lg glass-pill hover:border-yellow-400 text-zinc-700">Naproxen</button>
+            <button type="button" data-graph-seed="CURCUMIN" class="graph-seed-btn px-2.5 py-1 rounded-lg glass-pill hover:border-yellow-400 text-zinc-700">เคอร์คูมิน</button>
+            <button type="button" data-graph-seed="CENTELLA ASIATICA WHOLE" class="graph-seed-btn px-2.5 py-1 rounded-lg glass-pill hover:border-yellow-400 text-zinc-700">บัวบก</button>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button type="button" id="ontologyExpandAllBtn" class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 font-medium transition-all flex items-center gap-1 shadow-2xs">
+              <span>✨ แตกกิ่งโหนดที่เลือก</span>
+            </button>
+            <button type="button" id="ontologyFitBtn" class="px-2.5 py-1.5 rounded-xl bg-white border border-zinc-300 hover:border-yellow-400 text-zinc-700 font-medium transition-all">
+              ⛶ จัดกึ่งกลาง
+            </button>
+            <button type="button" id="ontologyResetBtn" class="px-2.5 py-1.5 rounded-xl bg-white border border-zinc-300 hover:border-red-300 text-zinc-600 hover:text-red-600 font-medium transition-all">
+              ล้างกระดาน
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Graph Workspace (Yellow-Gray Minimal Glass Canvas + Inspector Drawer) -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <!-- Left 3 Cols: Interactive Vis.js Canvas in Light Yellow-Gray Glass Theme -->
+        <div class="lg:col-span-3 relative h-[500px] sm:h-[600px] rounded-3xl overflow-hidden glass-panel border-2 border-white shadow-lg bg-gradient-to-br from-white/85 via-zinc-50/75 to-yellow-50/70">
+          <!-- Subtle Dot Matrix Grid inside Graph -->
+          <div class="absolute inset-0 bg-grid-pattern opacity-70 pointer-events-none"></div>
+
+          <!-- Top Floating Legend Bar -->
+          <div class="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+            <div class="flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/85 backdrop-blur-md border border-zinc-200/80 shadow-xs text-[11px] font-medium text-zinc-700">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-yellow-400 border border-amber-500 inline-block"></span> สารสำคัญ (UNII)</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-zinc-800 border border-yellow-400 inline-block"></span> กลุ่มยา WHO ATC</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-200 border border-amber-400 inline-block"></span> หน้าที่สาร (CosIng)</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-zinc-200 border border-zinc-400 inline-block"></span> รหัส CAS / สูตรเคมี</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-yellow-200 border border-amber-500 inline-block"></span> ข้อบ่งใช้คลินิก</span>
+            </div>
+            <div id="graphStatsBadge" class="px-3 py-1 rounded-xl bg-zinc-900/90 text-yellow-300 font-mono text-[11px] shadow-xs">
+              Nodes: 0 | Edges: 0
+            </div>
+          </div>
+
+          <!-- Vis.js Network Target Container -->
+          <div id="fullOntologyCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+          <!-- Bottom Floating Instruction Banner -->
+          <div class="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between gap-2 px-3.5 py-2 rounded-2xl bg-white/85 backdrop-blur-md border border-zinc-200/80 text-[11px] text-zinc-600 pointer-events-none">
+            <span>💡 <strong>วิธีสำรวจ:</strong> คลิกที่วงกลมโหนดใดก็ได้เพื่อ <strong>แตกแขนงความสัมพันธ์ถัดไป ( Progressive Expand )</strong> จนสุดทาง • ลากโหนดเพื่อเล่นกับแรงสปริง</span>
+            <span class="hidden sm:inline font-mono text-amber-700 font-semibold">Vis.js Force-Directed Engine</span>
+          </div>
+        </div>
+
+        <!-- Right 1 Col: Active Node Inspector & Trail Panel -->
+        <div class="glass-panel rounded-3xl p-5 flex flex-col justify-between gap-4 h-[500px] sm:h-[600px] overflow-y-auto border border-white">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-zinc-200/80 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+                <h3 class="font-bold text-sm text-zinc-900">ข้อมูลโหนดที่เลือก (Node Inspector)</h3>
+              </div>
+              <span id="inspectorNodeType" class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-200 text-zinc-700 font-semibold">READY</span>
+            </div>
+
+            <!-- Selected Node Details -->
+            <div id="inspectorContent" class="space-y-3 text-xs">
+              <div class="p-4 rounded-2xl bg-yellow-50/70 border border-yellow-200/80 text-zinc-700 leading-relaxed">
+                คลิกที่ <strong>โหนดวงกลมในกราฟ</strong> เพื่อดูรายละเอียดและแตกแขนงความเชื่อมโยงไปยังกลุ่มยา รหัสสากล โครงสร้างเคมี และสารอื่นที่อยู่ในกลุ่มเดียวกัน
+              </div>
+            </div>
+
+            <!-- Exploration Breadcrumb Trail -->
+            <div class="space-y-2 pt-2 border-t border-zinc-200/70">
+              <div class="text-[11px] font-mono uppercase text-zinc-400 font-semibold">เส้นทางการแตกกิ่ง (Exploration Trail)</div>
+              <div id="ontologyTrailList" class="flex flex-wrap gap-1.5 text-[11px]"></div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-zinc-200/80 space-y-2">
+            <button id="inspectorOpenCardBtn" type="button" class="hidden w-full py-2.5 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-bold text-xs transition-all shadow-xs">
+              เปิดการ์ดข้อมูลฉบับเต็ม ↗
+            </button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ==================== REFERENCE DATA SOURCES SECTION ==================== -->
@@ -1702,6 +1826,530 @@
       visNetworkInstance = new vis.Network(container, data, options);
     }
 
+
+    // =========================================================================
+    // 4. DEDICATED FULL-PAGE ONTOLOGY KNOWLEDGE GRAPH (PROGRESSIVE EXPANSION)
+    // =========================================================================
+    let fullGraphNodes = null;
+    let fullGraphEdges = null;
+    let fullGraphNetwork = null;
+    let selectedOntologyNodeId = null;
+    let selectedSubstanceUniiForModal = null;
+    let expandedNodesSet = new Set();
+    let explorationTrail = [];
+
+    // ATC Level Hierarchy Dictionary for multi-hop ontology expansion until root
+    const ATC_HIERARCHY_TREE = {
+      "N02BE01": { parent: "N02BE", name: "Anilides (ยากลุ่มอะนิไลด์)", rootCode: "N", rootName: "NERVOUS SYSTEM (ระบบประสาท)" },
+      "J01CA04": { parent: "J01CA", name: "Penicillins with extended spectrum", rootCode: "J", rootName: "ANTIINFECTIVES FOR SYSTEMIC USE (ยาต้านการติดเชื้อ)" },
+      "M01AE02": { parent: "M01AE", name: "Propionic acid derivatives (NSAIDs)", rootCode: "M", rootName: "MUSCULO-SKELETAL SYSTEM (ระบบกล้ามเนื้อและโครงกระดูก)" },
+      "M01AE01": { parent: "M01AE", name: "Propionic acid derivatives (NSAIDs)", rootCode: "M", rootName: "MUSCULO-SKELETAL SYSTEM (ระบบกล้ามเนื้อและโครงกระดูก)" },
+      "R06AE07": { parent: "R06AE", name: "Piperazine derivatives (Antihistamines)", rootCode: "R", rootName: "RESPIRATORY SYSTEM (ระบบทางเดินหายใจ)" },
+      "R06AB04": { parent: "R06AB", name: "Substituted alkylamines (Antihistamines)", rootCode: "R", rootName: "RESPIRATORY SYSTEM (ระบบทางเดินหายใจ)" },
+      "B05CB01": { parent: "B05CB", name: "Salt solutions (สารละลายเกลือ)", rootCode: "B", rootName: "BLOOD AND BLOOD FORMING ORGANS (ระบบเลือด)" },
+      "A05AX":   { parent: "A05A",  name: "Bile therapy (ระบบทางเดินน้ำดีและตับ)", rootCode: "A", rootName: "ALIMENTARY TRACT AND METABOLISM (ระบบทางเดินอาหาร)" },
+      "M01AX05": { parent: "M01AX", name: "Other antiinflammatory & antirheumatic agents", rootCode: "M", rootName: "MUSCULO-SKELETAL SYSTEM (ระบบกล้ามเนื้อและโครงกระดูก)" },
+      "R02AA16": { parent: "R02AA", name: "Antiseptics (ยาฆ่าเชื้อในช่องปากและลำคอ)", rootCode: "R", rootName: "RESPIRATORY SYSTEM (ระบบทางเดินหายใจ)" },
+      "D03AX":   { parent: "D03A",  name: "Cicatrizants / Wound healing (สมานแผล)", rootCode: "D", rootName: "DERMATOLOGICALS (ระบบผิวหนัง)" }
+    };
+
+    // Switch between Main Search Page and Dedicated Ontology Graph Page
+    function switchMainPage(page) {
+      const searchSec = document.getElementById("viewSearch");
+      const ontoSec = document.getElementById("viewOntologyPage");
+      const btnSearch = document.getElementById("navPageSearchBtn");
+      const btnOnto = document.getElementById("navPageOntologyBtn");
+
+      if (page === "search") {
+        searchSec.classList.remove("hidden");
+        ontoSec.classList.add("hidden");
+        btnSearch.className = "px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-zinc-900 shadow-xs flex items-center gap-1.5";
+        btnOnto.className = "px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5";
+      } else {
+        searchSec.classList.add("hidden");
+        ontoSec.classList.remove("hidden");
+        btnOnto.className = "px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-yellow-400 text-zinc-900 shadow-xs flex items-center gap-1.5";
+        btnSearch.className = "px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-zinc-600 hover:text-zinc-900 flex items-center gap-1.5";
+
+        setTimeout(() => {
+          if (!fullGraphNetwork) {
+            initFullOntologyGraph("all9");
+          } else {
+            fullGraphNetwork.fit({ animation: { duration: 400 } });
+          }
+        }, 60);
+      }
+    }
+
+    function updateGraphStats() {
+      if (!fullGraphNodes || !fullGraphEdges) return;
+      const badge = document.getElementById("graphStatsBadge");
+      if (badge) {
+        badge.textContent = `Nodes: ${fullGraphNodes.length} | Edges: ${fullGraphEdges.length}`;
+      }
+      const trailEl = document.getElementById("ontologyTrailList");
+      if (trailEl) {
+        trailEl.innerHTML = explorationTrail.map(t => `
+          <span class="px-2 py-0.5 rounded-md bg-yellow-100/90 border border-yellow-300 text-zinc-800 font-mono">${t}</span>
+        `).join(" <span class='text-zinc-400'>→</span> ");
+      }
+    }
+
+    function addNodeSafe(nodeObj) {
+      if (!fullGraphNodes.get(nodeObj.id)) {
+        fullGraphNodes.add(nodeObj);
+      }
+    }
+
+    function addEdgeSafe(fromId, toId, labelText) {
+      const edgeId = `${fromId}__${toId}`;
+      const revId = `${toId}__${fromId}`;
+      if (!fullGraphEdges.get(edgeId) && !fullGraphEdges.get(revId)) {
+        fullGraphEdges.add({
+          id: edgeId,
+          from: fromId,
+          to: toId,
+          label: labelText || "",
+          font: { size: 9, color: "#71717A", face: "JetBrains Mono", background: "rgba(255,255,255,0.75)" }
+        });
+      }
+    }
+
+    // Create a Substance Node (Golden Yellow Primary Node)
+    function makeSubstanceNode(item) {
+      return {
+        id: `sub_${item.unii}`,
+        label: `${item.thaiName.split('(')[0].trim()}\n[${item.preferredName}]`,
+        nodeCategory: "substance",
+        payload: item,
+        shape: "dot",
+        size: 30,
+        color: {
+          background: "#FACC15",
+          border: "#CA8A04",
+          highlight: { background: "#FEF08A", border: "#18181B" },
+          hover: { background: "#FDE047", border: "#CA8A04" }
+        },
+        font: { color: "#18181B", size: 13, face: "IBM Plex Sans Thai", bold: true },
+        shadow: { enabled: true, color: "rgba(234, 179, 8, 0.35)", size: 16 }
+      };
+    }
+
+    // Initialize or Reset Full Ontology Graph
+    function initFullOntologyGraph(seedMode) {
+      if (!window.vis) return;
+      const container = document.getElementById("fullOntologyCanvas");
+      fullGraphNodes = new vis.DataSet([]);
+      fullGraphEdges = new vis.DataSet([]);
+      expandedNodesSet.clear();
+      explorationTrail = [];
+
+      if (seedMode === "all9") {
+        // Hub Node connecting all 9 featured substances by their Substance Type
+        addNodeSafe({
+          id: "hub_thaiunii",
+          label: "ThaiUNII Hub\n(คลังเชื่อมโยงสากล)",
+          nodeCategory: "hub",
+          shape: "dot",
+          size: 36,
+          color: { background: "#18181B", border: "#FACC15", highlight: { background: "#27272A", border: "#EAB308" } },
+          font: { color: "#18181B", size: 14, face: "IBM Plex Sans Thai", bold: true },
+          shadow: { enabled: true, color: "rgba(24, 24, 27, 0.25)", size: 18 }
+        });
+        explorationTrail.push("ThaiUNII Hub");
+
+        fallbackSubstances.forEach(item => {
+          const typeNodeId = `type_${item.substanceType}`;
+          const typeShortLabel = item.substanceType === "chemical" ? "กลุ่มสารเคมี/ตัวยาเดี่ยว" :
+                                 (item.substanceType === "structurallyDiverse" ? "กลุ่มสมุนไพร/พฤกษศาสตร์" : "กลุ่มโปรตีน/ชีววัตถุ");
+          addNodeSafe({
+            id: typeNodeId,
+            label: typeShortLabel,
+            nodeCategory: "type_group",
+            payload: { substanceType: item.substanceType, label: typeShortLabel },
+            shape: "dot",
+            size: 22,
+            color: { background: "#FEF08A", border: "#EAB308" },
+            font: { color: "#27272A", size: 12, face: "IBM Plex Sans Thai" }
+          });
+          addEdgeSafe("hub_thaiunii", typeNodeId, "category");
+
+          addNodeSafe(makeSubstanceNode(item));
+          addEdgeSafe(typeNodeId, `sub_${item.unii}`, "contains");
+        });
+      } else {
+        // Seed with a specific substance
+        const found = currentResults.find(d => d.preferredName === seedMode || d.unii === seedMode) ||
+                      fallbackSubstances.find(d => d.preferredName === seedMode || d.unii === seedMode) ||
+                      fallbackSubstances[1];
+        addNodeSafe(makeSubstanceNode(found));
+        expandOntologyNode(`sub_${found.unii}`);
+      }
+
+      const options = {
+        physics: {
+          enabled: true,
+          solver: "forceAtlas2Based",
+          forceAtlas2Based: {
+            gravitationalConstant: -75,
+            centralGravity: 0.012,
+            springLength: 135,
+            springConstant: 0.07,
+            damping: 0.4,
+            avoidOverlap: 0.75
+          }
+        },
+        interaction: {
+          hover: true,
+          tooltipDelay: 120,
+          zoomView: true,
+          dragView: true
+        },
+        edges: {
+          color: { color: "#A1A1AA", highlight: "#EAB308", hover: "#CA8A04" },
+          width: 1.8,
+          smooth: { type: "continuous" }
+        }
+      };
+
+      if (fullGraphNetwork) {
+        fullGraphNetwork.destroy();
+      }
+      fullGraphNetwork = new vis.Network(container, { nodes: fullGraphNodes, edges: fullGraphEdges }, options);
+
+      // Click on any node to inspect and progressively expand its connected nodes!
+      fullGraphNetwork.on("click", (params) => {
+        if (params.nodes && params.nodes.length > 0) {
+          const clickedId = params.nodes[0];
+          selectedOntologyNodeId = clickedId;
+          inspectAndExpandNode(clickedId);
+        }
+      });
+
+      updateGraphStats();
+    }
+
+    // Progressive Expansion Engine: clicking a node spawns its related child/sibling nodes up to the terminal leaf!
+    async function expandOntologyNode(nodeId) {
+      const node = fullGraphNodes.get(nodeId);
+      if (!node) return;
+
+      const shortName = node.label.split('\n')[0];
+      if (!explorationTrail.includes(shortName)) {
+        explorationTrail.push(shortName);
+        if (explorationTrail.length > 7) explorationTrail.shift();
+      }
+
+      // Case 1: Expanding a Substance Node -> spawns UNII/CAS, Formula, ATC node, CosIng node, Clinical Indication node
+      if (node.nodeCategory === "substance") {
+        const item = node.payload;
+
+        // 1A. WHO ATC Node
+        if (item.atcCode) {
+          const atcNodeId = `atc_${item.atcCode}`;
+          addNodeSafe({
+            id: atcNodeId,
+            label: `WHO ATC: ${item.atcCode}\n${item.atcName ? item.atcName.split('(')[0].trim() : ''}`,
+            nodeCategory: "atc",
+            payload: { atcCode: item.atcCode, atcName: item.atcName, sourceItem: item },
+            shape: "dot",
+            size: 23,
+            color: { background: "#27272A", border: "#FACC15", highlight: { background: "#3F3F46", border: "#FEF08A" } },
+            font: { color: "#18181B", size: 11, face: "JetBrains Mono", bold: true }
+          });
+          addEdgeSafe(nodeId, atcNodeId, "has_atc");
+        }
+
+        // 1B. EU CosIng Function Node
+        if (item.cosingFunction) {
+          const funcs = item.cosingFunction.split(',').map(s => s.trim()).filter(Boolean);
+          funcs.forEach((fn, idx) => {
+            const cosId = `cos_${fn.slice(0, 22)}`;
+            addNodeSafe({
+              id: cosId,
+              label: `หน้าที่สาร (CosIng):\n${fn}`,
+              nodeCategory: "cosing",
+              payload: { functionName: fn },
+              shape: "dot",
+              size: 21,
+              color: { background: "#FDE68A", border: "#D97706" },
+              font: { color: "#18181B", size: 11, face: "IBM Plex Sans Thai" }
+            });
+            addEdgeSafe(nodeId, cosId, "has_role");
+          });
+        }
+
+        // 1C. CAS & Formula Node
+        if (item.cas && item.cas !== "N/A") {
+          const casId = `cas_${item.cas}`;
+          addNodeSafe({
+            id: casId,
+            label: `CAS RN: ${item.cas}\nสูตร: ${item.formula}`,
+            nodeCategory: "cas",
+            payload: { cas: item.cas, formula: item.formula, pubchem: item.pubchem, smiles: item.smiles },
+            shape: "dot",
+            size: 19,
+            color: { background: "#E4E4E7", border: "#71717A" },
+            font: { color: "#27272A", size: 10, face: "JetBrains Mono" }
+          });
+          addEdgeSafe(nodeId, casId, "chemical_id");
+        }
+
+        // 1D. Clinical Usage Node
+        if (item.thaiDesc) {
+          const indId = `ind_${item.unii}`;
+          addNodeSafe({
+            id: indId,
+            label: `สรรพคุณ/บทบาท:\n${item.thaiDesc.slice(0, 34)}...`,
+            nodeCategory: "indication",
+            payload: { desc: item.thaiDesc, item: item },
+            shape: "dot",
+            size: 20,
+            color: { background: "#FEF9C3", border: "#EAB308" },
+            font: { color: "#18181B", size: 10, face: "IBM Plex Sans Thai" }
+          });
+          addEdgeSafe(nodeId, indId, "indication");
+        }
+      }
+
+      // Case 2: Expanding a WHO ATC Node -> expands to ATC Level 4 Therapeutic Subgroup -> Level 1 Organ System + Sibling Drugs!
+      else if (node.nodeCategory === "atc") {
+        const code = node.payload.atcCode;
+        const treeInfo = ATC_HIERARCHY_TREE[code] || {
+          parent: code.slice(0, 4),
+          name: `กลุ่มยาระดับย่อย (${code.slice(0, 4)})`,
+          rootCode: code.slice(0, 1),
+          rootName: `หมวดระบบอวัยวะหลัก (Group ${code.slice(0, 1)})`
+        };
+
+        const parentId = `atc_parent_${treeInfo.parent}`;
+        addNodeSafe({
+          id: parentId,
+          label: `กลุ่มเภสัชวิทยา: ${treeInfo.parent}\n${treeInfo.name}`,
+          nodeCategory: "atc_parent",
+          payload: treeInfo,
+          shape: "dot",
+          size: 24,
+          color: { background: "#3F3F46", border: "#FACC15" },
+          font: { color: "#18181B", size: 11, face: "IBM Plex Sans Thai", bold: true }
+        });
+        addEdgeSafe(nodeId, parentId, "subclass_of");
+
+        // Also find any sibling drugs sharing the same root organ system or ATC prefix
+        fallbackSubstances.forEach(other => {
+          if (other.atcCode && other.atcCode.startsWith(treeInfo.rootCode)) {
+            addNodeSafe(makeSubstanceNode(other));
+            addEdgeSafe(parentId, `sub_${other.unii}`, "related_drug");
+          }
+        });
+      }
+
+      // Case 3: Expanding ATC Parent Group -> expands to Root WHO Organ System (Terminal Root of ATC Ontology)
+      else if (node.nodeCategory === "atc_parent") {
+        const info = node.payload;
+        const rootId = `atc_root_${info.rootCode}`;
+        addNodeSafe({
+          id: rootId,
+          label: `ระบบอวัยวะ WHO (Root ${info.rootCode}):\n${info.rootName}`,
+          nodeCategory: "leaf_root",
+          payload: { title: `หมวดหลัก ${info.rootCode}: ${info.rootName}`, note: "จุดสิ้นสุดลำดับชั้นบนสุดของมาตรฐานองค์การอนามัยโลก (WHO ATC Level 1 Organ System)" },
+          shape: "dot",
+          size: 28,
+          color: { background: "#FACC15", border: "#18181B" },
+          font: { color: "#18181B", size: 12, face: "IBM Plex Sans Thai", bold: true }
+        });
+        addEdgeSafe(nodeId, rootId, "organ_system");
+      }
+
+      // Case 4: Expanding EU CosIng Role Node -> finds other substances with cosmetic functions
+      else if (node.nodeCategory === "cosing") {
+        const fnName = node.payload.functionName;
+        fallbackSubstances.forEach(other => {
+          if (other.cosingFunction) {
+            addNodeSafe(makeSubstanceNode(other));
+            addEdgeSafe(nodeId, `sub_${other.unii}`, "shares_cosing");
+          }
+        });
+      }
+
+      // Case 5: Expanding CAS / Chemical ID Node -> spawns PubChem CID & SMILES Structure Leaf Nodes
+      else if (node.nodeCategory === "cas") {
+        const p = node.payload;
+        if (p.pubchem && p.pubchem !== "-") {
+          const cidId = `pubchem_${p.cas}`;
+          addNodeSafe({
+            id: cidId,
+            label: `NIH PubChem:\n${p.pubchem}`,
+            nodeCategory: "leaf_root",
+            payload: { title: `NIH PubChem (${p.pubchem})`, note: "จุดสิ้นสุดรหัสอ้างอิงโครงสร้างโมเลกุลในคลังสารเคมีสหรัฐฯ" },
+            shape: "dot",
+            size: 18,
+            color: { background: "#FEF08A", border: "#CA8A04" },
+            font: { color: "#18181B", size: 10, face: "JetBrains Mono" }
+          });
+          addEdgeSafe(nodeId, cidId, "indexed_in");
+        }
+      }
+
+      expandedNodesSet.add(nodeId);
+      updateGraphStats();
+    }
+
+    // Update Right-Hand Inspector Drawer and trigger node expansion
+    function inspectAndExpandNode(nodeId) {
+      const node = fullGraphNodes.get(nodeId);
+      if (!node) return;
+
+      const typeBadge = document.getElementById("inspectorNodeType");
+      const contentBox = document.getElementById("inspectorContent");
+      const openCardBtn = document.getElementById("inspectorOpenCardBtn");
+
+      // Automatically expand connected nodes on click!
+      expandOntologyNode(nodeId);
+
+      if (node.nodeCategory === "substance") {
+        const item = node.payload;
+        selectedSubstanceUniiForModal = item.unii;
+        typeBadge.textContent = `UNII: ${item.unii}`;
+        typeBadge.className = "text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-yellow-400 text-zinc-900 font-bold";
+        openCardBtn.classList.remove("hidden");
+
+        contentBox.innerHTML = `
+          <div class="p-3.5 rounded-2xl bg-white/90 border border-zinc-200 space-y-2">
+            <div class="font-bold text-sm text-zinc-900">${item.thaiName}</div>
+            <div class="font-mono text-xs text-amber-700 font-semibold">${item.preferredName}</div>
+            <p class="text-xs text-zinc-600 leading-relaxed">${item.thaiDesc}</p>
+            <div class="pt-2 border-t border-zinc-100 grid grid-cols-2 gap-1.5 text-[11px] font-mono text-zinc-500">
+              <div>CAS: <strong class="text-zinc-800">${item.cas}</strong></div>
+              <div>ATC: <strong class="text-zinc-800">${item.atcCode || '-'}</strong></div>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-yellow-100/70 border border-yellow-300 text-[11px] text-amber-900">
+            ✨ <strong>แตกแขนงโหนดแล้ว!</strong> ลองคลิกที่โหนด <strong>WHO ATC</strong> หรือ <strong>CAS RN</strong> ที่เพิ่งเด้งออกมาเพื่อไล่ความสัมพันธ์ต่อไปจนสุดทาง
+          </div>
+        `;
+      } else if (node.nodeCategory === "atc" || node.nodeCategory === "atc_parent") {
+        selectedSubstanceUniiForModal = null;
+        openCardBtn.classList.add("hidden");
+        typeBadge.textContent = "WHO ATC ONTOLOGY";
+        typeBadge.className = "text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-900 text-yellow-300 font-bold";
+        contentBox.innerHTML = `
+          <div class="p-3.5 rounded-2xl bg-white/90 border border-zinc-200 space-y-2">
+            <div class="font-bold text-sm text-zinc-900">${node.label.replace('\n', ' — ')}</div>
+            <p class="text-xs text-zinc-600 leading-relaxed">
+              โหนดจำแนกกลุ่มการรักษาตามมาตรฐานองค์การอนามัยโลก (WHO ATC Hierarchy) เชื่อมโยงตัวยาที่ออกฤทธิ์ในระบบอวัยวะเดียวกันเข้าด้วยกัน
+            </p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-yellow-100/70 border border-yellow-300 text-[11px] text-amber-900">
+            ✨ แตกแขนงไปยัง <strong>หมวดระบบอวัยวะหลัก (Level 1 Organ System)</strong> และตัวยาที่เกี่ยวข้องในกลุ่มเดียวกันแล้ว!
+          </div>
+        `;
+      } else {
+        selectedSubstanceUniiForModal = null;
+        openCardBtn.classList.add("hidden");
+        typeBadge.textContent = node.nodeCategory.toUpperCase();
+        typeBadge.className = "text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-200 text-zinc-800 font-bold";
+        contentBox.innerHTML = `
+          <div class="p-3.5 rounded-2xl bg-white/90 border border-zinc-200 space-y-1.5">
+            <div class="font-bold text-sm text-zinc-900">${node.label.replace('\n', ' ')}</div>
+            <p class="text-xs text-zinc-600 leading-relaxed">
+              ${node.payload?.note || node.payload?.desc || 'โหนดคุณสมบัติและรหัสอ้างอิงมาตรฐานสากลในโครงข่าย ThaiUNII Knowledge Graph'}
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    // Search and spawn nodes in the Ontology Graph page
+    async function searchAndSpawnOntologyNodes(rawQuery) {
+      const q = (rawQuery || "").trim();
+      if (!q) {
+        initFullOntologyGraph("all9");
+        return;
+      }
+
+      // Check if query matches local or Supabase
+      let matchedItems = [];
+      let effectiveQ = q;
+      const qLow = q.toLowerCase();
+      if (qLow === "พาราเซตามอล" || qLow === "paracetamol") effectiveQ = "ACETAMINOPHEN";
+      else if (qLow.includes("เคอร์คูมิน") || qLow.includes("ขมิ้นชัน")) effectiveQ = "CURCUMIN";
+      else if (qLow.includes("บัวบก")) effectiveQ = "CENTELLA ASIATICA";
+
+      if (supabaseClient) {
+        try {
+          const { data } = await supabaseClient.rpc('search_thai_unii', {
+            search_term: effectiveQ,
+            filter_category: 'all',
+            only_legacy_flag: false,
+            max_results: 8
+          });
+          if (data && data.length > 0) {
+            matchedItems = data.map(row => ({
+              unii: row.unii,
+              legacyUnii: row.legacy_unii,
+              preferredName: row.preferred_name,
+              thaiName: row.thai_name || row.preferred_name,
+              cas: row.cas_rn || "N/A",
+              formula: row.molecular_formula || "-",
+              pubchem: row.pubchem_cid || "-",
+              substanceType: row.substance_type || "chemical",
+              typeLabelThai: row.type_label_th || "สารเคมีเดี่ยว",
+              inchikey: row.inchikey || "-",
+              smiles: row.smiles || "-",
+              thaiDesc: row.thai_desc || "สารสำคัญในฐานข้อมูล US FDA",
+              cosingFunction: row.cosing_function || null,
+              atcCode: row.atc_code || (COMMON_ATC_MAP[row.preferred_name?.toUpperCase()]?.[0] || null),
+              atcName: row.atc_name || (COMMON_ATC_MAP[row.preferred_name?.toUpperCase()]?.[1] || null),
+              synonyms: row.synonyms || []
+            }));
+          }
+        } catch (err) {}
+      }
+
+      if (matchedItems.length === 0) {
+        matchedItems = fallbackSubstances.filter(item =>
+          item.preferredName.toLowerCase().includes(effectiveQ.toLowerCase()) ||
+          item.thaiName.toLowerCase().includes(qLow) ||
+          item.unii.toLowerCase().includes(qLow) ||
+          (item.atcCode && item.atcCode.toLowerCase().includes(qLow))
+        );
+      }
+
+      if (matchedItems.length === 0) {
+        showToast(`ไม่พบโหนดที่ตรงกับ "${q}"`);
+        return;
+      }
+
+      fullGraphNodes.clear();
+      fullGraphEdges.clear();
+      explorationTrail = [`ค้นหา: ${q}`];
+
+      const queryHubId = `query_${q}`;
+      addNodeSafe({
+        id: queryHubId,
+        label: `คำค้นหา:\n"${q}"`,
+        nodeCategory: "hub",
+        shape: "dot",
+        size: 28,
+        color: { background: "#18181B", border: "#FACC15" },
+        font: { color: "#18181B", size: 13, face: "IBM Plex Sans Thai", bold: true }
+      });
+
+      matchedItems.forEach((item, idx) => {
+        addNodeSafe(makeSubstanceNode(item));
+        addEdgeSafe(queryHubId, `sub_${item.unii}`, "matched");
+        if (idx === 0) {
+          expandOntologyNode(`sub_${item.unii}`);
+        }
+      });
+
+      updateGraphStats();
+      if (fullGraphNetwork) {
+        fullGraphNetwork.fit({ animation: { duration: 500 } });
+      }
+    }
+
     // Open Substance Detail Modal
     function openDetailModal(unii) {
       const item = currentResults.find(d => d.unii === unii) || fallbackSubstances.find(d => d.unii === unii);
@@ -1949,6 +2597,56 @@
     });
 
     
+    // Main Page Navigation & Ontology Graph Controls
+    document.getElementById("navPageSearchBtn").addEventListener("click", () => switchMainPage("search"));
+    document.getElementById("navPageOntologyBtn").addEventListener("click", () => switchMainPage("ontology"));
+
+    document.getElementById("graphSearchBtn").addEventListener("click", () => {
+      const q = document.getElementById("graphSearchInput").value;
+      searchAndSpawnOntologyNodes(q);
+    });
+
+    document.getElementById("graphSearchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        searchAndSpawnOntologyNodes(e.target.value);
+      }
+    });
+
+    document.querySelectorAll(".graph-seed-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const seed = btn.getAttribute("data-graph-seed");
+        initFullOntologyGraph(seed);
+      });
+    });
+
+    document.getElementById("ontologyExpandAllBtn").addEventListener("click", () => {
+      if (selectedOntologyNodeId) {
+        expandOntologyNode(selectedOntologyNodeId);
+        showToast("แตกกิ่งความสัมพันธ์ของโหนดที่เลือกแล้ว");
+      } else {
+        // Expand all current substance nodes
+        const allIds = fullGraphNodes ? fullGraphNodes.getIds() : [];
+        allIds.forEach(id => expandOntologyNode(id));
+        showToast("แตกกิ่งโหนดทั้งหมดในกระดานแล้ว!");
+      }
+    });
+
+    document.getElementById("ontologyFitBtn").addEventListener("click", () => {
+      if (fullGraphNetwork) fullGraphNetwork.fit({ animation: { duration: 500 } });
+    });
+
+    document.getElementById("ontologyResetBtn").addEventListener("click", () => {
+      initFullOntologyGraph("all9");
+      showToast("รีเซ็ตกระดานโครงข่ายเรียบร้อย");
+    });
+
+    document.getElementById("inspectorOpenCardBtn").addEventListener("click", () => {
+      if (selectedSubstanceUniiForModal) {
+        openDetailModal(selectedSubstanceUniiForModal);
+      }
+    });
+
     // Initial Execution
     executeSearch();
   </script>
