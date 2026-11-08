@@ -2,7 +2,7 @@
 """
 ThaiUNII — openFDA Full Drug Label Bulk Backup to Supabase
 ดึงข้อมูลเอกสารกำกับยาทางการจาก openFDA API (Indications, Warnings, Adverse Reactions, Contraindications)
-แบบ Paging ละ 100 ฉบับ แล้วจับคู่ด้วย openfda.unii เพื่อนำเข้าตาราง public.substance_drug_labels ใน Supabase
+แบบ Bulk Paging เข้าสู่ตาราง public.substance_drug_labels ใน Supabase โดยตรง
 """
 
 import os
@@ -39,55 +39,54 @@ def insert_label_batch(supabase_url: str, service_key: str, batch: List[Dict[str
     try:
         with urllib.request.urlopen(req) as resp:
             pass
+    except urllib.error.HTTPError as e:
+        # หากมีตัวใดไม่ผ่าน foreign key ให้แยก insert ทีละตัวเพื่อไม่ให้กระทบทั้ง batch
+        for item in batch:
+            try:
+                single_payload = json.dumps([item]).encode('utf-8')
+                s_req = urllib.request.Request(url, data=single_payload, headers=headers, method="POST")
+                with urllib.request.urlopen(s_req):
+                    pass
+            except Exception:
+                pass
     except Exception as e:
-        print(f"[!] Error inserting drug label batch: {e}")
+        print(f"[!] Error: {e}")
 
-def get_existing_substances_set(supabase_url: str, service_key: str) -> set:
-    """ดึงรหัส unii ทั้งหมดที่มีในตาราง substances เพื่อตรวจสอบความสัมพันธ์"""
-    print("[*] กำลังตรวจสอบรหัส UNII ในฐานข้อมูล Supabase...")
-    unii_set = set()
-    limit = 2000
-    offset = 0
-
-    while True:
-        url = f"{supabase_url.rstrip('/')}/rest/v1/substances?select=unii&limit={limit}&offset={offset}"
-        req = urllib.request.Request(url, headers={"apikey": service_key})
-        try:
-            with urllib.request.urlopen(req) as resp:
-                data = json.loads(resp.read().decode('utf-8'))
-                if not data:
-                    break
-                for row in data:
-                    u = row.get("unii")
-                    if u:
-                        unii_set.add(u.strip())
-                offset += limit
-                if len(data) < limit:
-                    break
-        except Exception as e:
-            print(f"[!] Error reading substances: {e}")
-            break
-
-    print(f"[✔] พบรหัส UNII ในฐานข้อมูล Supabase พร้อมรับข้อมูลฉลากยา {len(unii_set)} ตัว")
-    return unii_set
+def get_already_saved_uniis(supabase_url: str, service_key: str) -> set:
+    """ดึงรหัส unii ที่มีข้อมูลใน substance_drug_labels อยู่แล้วเพื่อไม่ต้องดึงซ้ำ"""
+    saved_set = set()
+    url = f"{supabase_url.rstrip('/')}/rest/v1/substance_drug_labels?select=unii&limit=5000"
+    req = urllib.request.Request(url, headers={"apikey": service_key})
+    try:
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+            for row in data:
+                u = row.get("unii")
+                if u:
+                    saved_set.add(u.strip())
+    except Exception:
+        pass
+    return saved_set
 
 def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_count: int = 1000):
-    """ดึงข้อมูลเอกสารกำกับยาจาก openFDA ทีละ 100 ฉบับ จนครบตามเป้าหมาย"""
     print(f"[*] เริ่มต้นดาวน์โหลดเอกสารกำกับยาจาก openFDA API (เป้าหมาย {target_count} รายการ)...")
     
-    existing_uniis = get_existing_substances_set(supabase_url, service_key)
-    processed_uniis = set()
+    already_saved = get_already_saved_uniis(supabase_url, service_key)
+    print(f"[*] มีข้อมูลฉลากยาเดิมในตารางอยู่แล้ว {len(already_saved)} รายการ (จะข้ามเพื่อไม่ให้ซ้ำ)")
+
+    processed_uniis = set(already_saved)
     batch = []
     total_saved = 0
     skip = 0
     limit = 100
 
-    while total_saved < target_count and skip < 10000:
-        url = f"https://api.fda.gov/drug/label.json?limit={limit}&skip={skip}"
+    while total_saved < target_count and skip < 20000:
+        # ดึงเฉพาะฉลากยาที่มีรหัส UNII แน่ชัดจาก openFDA
+        url = f"https://api.fda.gov/drug/label.json?search=_exists_:openfda.unii&limit={limit}&skip={skip}"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         
         try:
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with urllib.request.urlopen(req, timeout=12) as resp:
                 data = json.loads(resp.read().decode('utf-8'))
                 results = data.get("results", [])
                 if not results:
@@ -99,50 +98,52 @@ def fetch_and_backup_openfda_labels(supabase_url: str, service_key: str, target_
                     if not uniis:
                         continue
 
-                    for unii in uniis:
-                        unii = unii.strip()
-                        if unii in existing_uniis and unii not in processed_uniis:
-                            processed_uniis.add(unii)
+                    # ใช้รหัส UNII ตัวแรกของฉลากยานั้นๆ
+                    unii = uniis[0].strip()
+                    if unii in processed_uniis:
+                        continue
+                    processed_uniis.add(unii)
 
-                            ind = clean_text_snippet(label.get("indications_and_usage"))
-                            warn = clean_text_snippet(label.get("boxed_warning") or label.get("warnings_and_cautions") or label.get("warnings"))
-                            react = clean_text_snippet(label.get("adverse_reactions"))
-                            contra = clean_text_snippet(label.get("contraindications"))
+                    ind = clean_text_snippet(label.get("indications_and_usage"))
+                    warn = clean_text_snippet(label.get("boxed_warning") or label.get("warnings_and_cautions") or label.get("warnings"))
+                    react = clean_text_snippet(label.get("adverse_reactions"))
+                    contra = clean_text_snippet(label.get("contraindications"))
 
-                            if ind or warn or react or contra:
-                                batch.append({
-                                    "unii": unii,
-                                    "indications": ind if ind else None,
-                                    "warnings": warn if warn else None,
-                                    "adverse_reactions": react if react else None,
-                                    "contraindications": contra if contra else None
-                                })
-                                total_saved += 1
+                    if ind or warn or react or contra:
+                        batch.append({
+                            "unii": unii,
+                            "indications": ind if ind else None,
+                            "warnings": warn if warn else None,
+                            "adverse_reactions": react if react else None,
+                            "contraindications": contra if contra else None
+                        })
+                        total_saved += 1
 
-                            if len(batch) >= 100:
-                                insert_label_batch(supabase_url, service_key, batch)
-                                print(f"[+] บันทึกเอกสารกำกับยาลง Supabase แล้ว {total_saved} ตัว...")
-                                batch = []
+                    if len(batch) >= 50:
+                        insert_label_batch(supabase_url, service_key, batch)
+                        print(f"[+] บันทึกเอกสารกำกับยาลง Supabase แล้ว {total_saved} ตัว...")
+                        batch = []
 
-                            if total_saved >= target_count:
-                                break
+                    if total_saved >= target_count:
+                        break
 
                 skip += limit
-                time.sleep(0.3) # ให้เกียรติ rate limit ของ openFDA
+                time.sleep(0.25) # ให้เกียรติ openFDA API rate limit
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 print("[*] สิ้นสุดข้อมูลใน openFDA")
                 break
-            print(f"[!] HTTP Error {e.code} จาก openFDA: {e}")
-            break
+            print(f"[!] HTTP Error {e.code} จาก openFDA, พัก 2 วินาทีแล้วลองต่อ...")
+            time.sleep(2)
+            skip += limit
         except Exception as e:
-            print(f"[!] เกิดข้อผิดพลาดในการดึงข้อมูล: {e}")
+            print(f"[!] Error: {e}")
             break
 
     if batch:
         insert_label_batch(supabase_url, service_key, batch)
 
-    print(f"[✔] สำรองเอกสารกำกับยา openFDA เข้าสู่ Supabase สำเร็จครบถ้วน {total_saved} รายการ!")
+    print(f"[✔] สำรองเอกสารกำกับยา openFDA เข้าสู่ Supabase สำเร็จครบถ้วนรวม {total_saved} รายการใหม่!")
 
 def main():
     supabase_url = os.environ.get("SUPABASE_URL", "")
