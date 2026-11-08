@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ThaiUNII — ระบบสืบค้นรหัสสารสำคัญและวัตถุดิบทางเภสัชกรรม (FDA UNII)</title>
+  <title>ThaiUNII — คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพรเชื่อมโยงฐานข้อมูลสากล</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <!-- Supabase Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -180,7 +180,7 @@
               <span id="dbSourceText">Supabase Live</span>
             </span>
           </div>
-          <p class="text-xs text-zinc-500 hidden sm:block">ฐานข้อมูลรหัสสารสำคัญและวัตถุดิบทางเภสัชกรรม (ฉบับภาษาไทย)</p>
+          <p class="text-xs text-zinc-500 hidden sm:block">คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพรเชื่อมโยงฐานข้อมูลสากล</p>
         </div>
       </div>
 
@@ -218,10 +218,10 @@
         </div>
 
         <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 leading-tight">
-          ค้นหารหัสสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">UNII</span> ชื่อเคมี และสมุนไพรไทย
+          สืบค้นข้อมูลสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">ยา เคมีภัณฑ์</span> และสมุนไพร
         </h1>
         <p class="text-xs sm:text-base text-zinc-500 max-w-2xl mx-auto leading-relaxed px-2">
-          สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII 10 หลัก เลขทะเบียน CAS RN และสูตรโมเลกุล
+          เชื่อมโยงข้อมูลโครงสร้างโมเลกุล กลุ่มยา รหัสสากล และหน้าที่ของสารจากฐานข้อมูลมาตรฐานโลกไว้ในที่เดียว
         </p>
 
         <!-- Glass Omni-Search Bar -->
@@ -243,22 +243,23 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
               </svg>
             </button>
-            <button id="LegacyLookupTrigger" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-xs font-medium transition-all shrink-0">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+            <button id="LegacyLookupTrigger" type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-xs sm:text-sm font-semibold transition-all shrink-0 shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
-              <span>เช็ครหัส Legacy</span>
+              <span>ค้นหา</span>
             </button>
           </div>
 
           <!-- Quick Try Keywords -->
-          <div class="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs text-zinc-500">
+          <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mt-3 text-xs text-zinc-500">
             <span>คำค้นยอดนิยม:</span>
-            <button data-quick="ขมิ้นชัน" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">ขมิ้นชัน (Curcuma)</button>
-            <button data-quick="Povidone K30" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Povidone K30</button>
-            <button data-quick="Chlorpheniramine" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">ยาแก้แพ้ Chlorpheniramine</button>
-            <button data-quick="Prednisone" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Prednisone</button>
-            <button data-quick="Lysozyme" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Lysozyme (โปรตีน)</button>
+            <button data-quick="Amoxicillin" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Amoxicillin</button>
+            <button data-quick="พาราเซตามอล" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">พาราเซตามอล</button>
+            <button data-quick="Naproxen" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Naproxen</button>
+            <button data-quick="Cetirizine" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">Cetirizine</button>
+            <button data-quick="Curcumin" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">เคอร์คูมิน (ขมิ้นชัน)</button>
+            <button data-quick="บัวบก" class="quick-chip px-2.5 py-1 rounded-full glass-pill hover:border-yellow-400 text-zinc-700">บัวบก</button>
           </div>
         </div>
       </div>
@@ -607,147 +608,171 @@
       document.getElementById("syncStatusBadge").className = "text-[11px] font-mono px-2 py-0.5 rounded-full bg-yellow-100 text-zinc-800 border border-yellow-300 font-medium flex items-center gap-1";
     }
 
-    // Fallback Seed Data (ชุดข้อมูลตัวอย่างจริงสำหรับแสดงผลทันทีก่อนเชื่อมต่อ Supabase)
+    // Featured 9 Showcase Substances (แสดงผล 9 รายการตัวอย่างหลักเมื่อเปิดหน้าเว็บ)
     const fallbackSubstances = [
       {
-        unii: "U725QWY32X",
-        legacyUnii: "390RMW2PEQ",
-        preferredName: "POVIDONE K30",
-        thaiName: "โพวิโดน เค30 (สารช่วยยึดเกาะเม็ดยา)",
-        cas: "9003-39-8",
-        formula: "(C6H9NO)n",
-        pubchem: "CID 6917",
-        substanceType: "polymer",
-        typeLabelThai: "พอลิเมอร์ / สารช่วย (Excipient)",
-        cosingFunction: "BINDING, FILM FORMING, EMULSION STABILISING",
-        inchikey: "N/A (Homopolymer)",
-        smiles: "C=CN1CCCC1=O",
-        thaiDesc: "พอลิเมอร์สังเคราะห์ละลายน้ำได้ดี นิยมใช้เป็นสารยึดเกาะ (Binder) ในการตอกเม็ดยา และช่วยเพิ่มการละลายของตัวยาสำคัญ",
-        synonyms: ["PVP K-30", "POLYVINYLPYRROLIDONE K30", "KOLLIDON 30", "PLASDONE K-29/32"]
+        unii: "804826J2HU",
+        legacyUnii: null,
+        preferredName: "AMOXICILLIN",
+        thaiName: "อะม็อกซีซิลลิน (ยาปฏิชีวนะกลุ่มเพนิซิลลิน)",
+        cas: "26787-78-0",
+        formula: "C16H19N3O5S",
+        pubchem: "CID 33613",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมีเดี่ยว (Antibiotic)",
+        atcCode: "J01CA04",
+        atcName: "Penicillins with extended spectrum (ยาปฏิชีวนะฆ่าเชื้อแบคทีเรีย)",
+        cosingFunction: null,
+        inchikey: "LSQZJLSUYDQPKJ-NJBDSQKTSA-N",
+        smiles: "CC1(C(N2C(S1)C(C2=O)NC(=O)C(C3=CC=C(C=C3)O)N)C(=O)O)C",
+        thaiDesc: "ยาปฏิชีวนะกลุ่มเพนิซิลลินออกฤทธิ์กว้าง ใช้รักษาการติดเชื้อแบคทีเรียในระบบทางเดินหายใจ หู คอ จมูก และผิวหนัง",
+        synonyms: ["AMOXICILLIN ANHYDROUS", "อะม็อกซีซิลลิน", "AMOXIL"]
       },
       {
-        unii: "3U6IO1965U",
-        legacyUnii: "783AHI015X",
-        preferredName: "CHLORPHENIRAMINE",
-        thaiName: "คลอร์เฟนิรามีน (ยาแก้แพ้ ลดน้ำมูก)",
-        cas: "132-22-9",
-        formula: "C16H19ClN2",
-        pubchem: "CID 2725",
+        unii: "362O9ITL9D",
+        legacyUnii: null,
+        preferredName: "ACETAMINOPHEN",
+        thaiName: "พาราเซตามอล (ยาลดไข้ บรรเทาปวด)",
+        cas: "103-90-2",
+        formula: "C8H9NO2",
+        pubchem: "CID 1983",
         substanceType: "chemical",
-        typeLabelThai: "สารเคมีเดี่ยว (Active Ingredient)",
+        typeLabelThai: "สารเคมีเดี่ยว (Analgesic / Antipyretic)",
         atcCode: "N02BE01",
-        atcName: "Anilides / Analgesics",
-        inchikey: "SOYKEARFFJGWCQ-UHFFFAOYSA-N",
-        smiles: "CN(C)CCC(C1=CC=C(Cl)C=C1)C2=CC=CC=N2",
-        thaiDesc: "สารต้านฮิสตามีนรุ่นที่ 1 (Antihistamine) ใช้บรรเทาอาการแพ้ จาม น้ำมูกไหล และลมพิษ",
-        synonyms: ["CHLORPHENAMINE", "คลอร์เฟนิรามีน", "CPM"]
+        atcName: "Anilides / Analgesics (ยาระงับปวดและลดไข้)",
+        cosingFunction: null,
+        inchikey: "RZVAJINKPMORJF-UHFFFAOYSA-N",
+        smiles: "CC(=O)NC1=CC=C(C=C1)O",
+        thaiDesc: "ยาสามัญประจำบ้านสำหรับบรรเทาอาการปวดศีรษะ ปวดกล้ามเนื้อ และลดไข้ (ในระบบ US FDA ใช้ชื่อทางการว่า Acetaminophen)",
+        synonyms: ["PARACETAMOL", "พาราเซตามอล", "TYLENOL", "APAP", "N-ACETYL-P-AMINOPHENOL"]
       },
       {
-        unii: "VB0R961HZT",
-        legacyUnii: "3EN3HG4WSW",
-        preferredName: "PREDNISONE",
-        thaiName: "เพรดนิโซน (ยาลดการอักเสบกลุ่มสเตียรอยด์)",
-        cas: "53-03-2",
-        formula: "C21H26O5",
-        pubchem: "CID 5865",
+        unii: "57Y76R9ATQ",
+        legacyUnii: null,
+        preferredName: "NAPROXEN",
+        thaiName: "นาพรอกเซน (ยาแก้ปวด ต้านการอักเสบ NSAIDs)",
+        cas: "22204-53-1",
+        formula: "C14H14O3",
+        pubchem: "CID 156391",
         substanceType: "chemical",
-        typeLabelThai: "สารเคมีเดี่ยว (Corticosteroid)",
-        inchikey: "XOFYZUVORIHUGs-ZPOLVrTGSA-N",
-        smiles: "CC12CC(=O)C3C(C1CCC2(C(=O)CO)O)CCC4=CC(=O)C=CC34C",
-        thaiDesc: "ตัวยาสำคัญกลุ่มคอร์ติโคสเตียรอยด์ ใช้ต้านการอักเสบและกดภูมิคุ้มกันในโรคภูมิแพ้รุนแรงหรือโรคแพ้ภูมิตัวเอง",
-        synonyms: ["DELTASONE", "METICORTEN", "เพรดนิโซน"]
+        typeLabelThai: "สารเคมีเดี่ยว (NSAID)",
+        atcCode: "M01AE02",
+        atcName: "Propionic acid derivatives (ยาต้านการอักเสบที่ไม่ใช่สเตียรอยด์)",
+        cosingFunction: null,
+        inchikey: "CMWTZPSULFXXJA-VIFPVBQESA-N",
+        smiles: "CC(C1=CC2=C(C=C1)C=C(C=C2)OC)C(=O)O",
+        thaiDesc: "ยาต้านการอักเสบที่ไม่ใช่สเตียรอยด์ (NSAIDs) ใช้บรรเทาอาการปวดข้อ ปวดกล้ามเนื้อ ปวดประจำเดือน และไมเกรน",
+        synonyms: ["NAPROXEN", "นาพรอกเซน", "NAPROSYN", "(+)-6-METHOXY-ALPHA-METHYL-2-NAPHTHALENEACETIC ACID"]
       },
       {
-        unii: "RIV999L6M8",
-        legacyUnii: "2A2233R8M7",
-        preferredName: "CURCUMA AROMATICA WHOLE",
-        thaiName: "ว่านทางคำ / ขมิ้นป่า (ทั้งต้น)",
-        cas: "N/A (Botanical)",
-        formula: "สมุนไพรธรรมชาติ",
-        pubchem: "NCBI 136215",
-        substanceType: "structurallyDiverse",
-        typeLabelThai: "สมุนไพร / พืช (Botanical)",
-        inchikey: "N/A (Botanical Material)",
-        smiles: "N/A (Whole Plant)",
-        thaiDesc: "พืชสมุนไพรตระกูลขมิ้น (Zingiberaceae) นิยมใช้ในตำรับยาแผนโบราณและเวชสำอางบำรุงผิวพรรณ",
-        synonyms: ["WILD TURMERIC WHOLE", "ขมิ้นป่า", "ว่านทางคำ"]
+        unii: "YO7261ME24",
+        legacyUnii: null,
+        preferredName: "CETIRIZINE",
+        thaiName: "เซทิริซีน (ยาแก้แพ้ ลดน้ำมูก รุ่นที่ 2)",
+        cas: "83881-51-0",
+        formula: "C21H25ClN2O3",
+        pubchem: "CID 2678",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมีเดี่ยว (Antihistamine)",
+        atcCode: "R06AE07",
+        atcName: "Piperazine derivatives (ยาต้านฮิสตามีนแก้แพ้)",
+        cosingFunction: null,
+        inchikey: "ZKLPARSLTMPFCP-UHFFFAOYSA-N",
+        smiles: "C1CN(CCN1CCOCC(=O)O)C(C2=CC=CC=C2)C3=CC=C(C=C3)Cl",
+        thaiDesc: "ยาต้านฮิสตามีนรุ่นที่ 2 (Second-generation Antihistamine) บรรเทาอาการภูมิแพ้อากาศ จาม คันตา และลมพิษ โดยทำให้ง่วงซึมน้อย",
+        synonyms: ["CETIRIZINE", "เซทิริซีน", "ZYRTEC"]
       },
       {
-        unii: "G0R4UBI2ZZ",
-        legacyUnii: "2Z4LRR776S",
-        preferredName: "MATRICARIA CHAMOMILLA WHOLE",
-        thaiName: "คาโมมายล์เยอรมัน (ทั้งต้น)",
-        cas: "84082-60-0",
-        formula: "สมุนไพรธรรมชาติ",
-        pubchem: "POWO 313322-2",
-        substanceType: "structurallyDiverse",
-        typeLabelThai: "สมุนไพร / พืช (Botanical)",
-        inchikey: "N/A (Botanical Material)",
-        smiles: "N/A (Botanical)",
-        thaiDesc: "สารสกัดและวัตถุดิบจากดอกคาโมมายล์ นิยมใช้ในเครื่องสำอางและผลิตภัณฑ์ดูแลผิวเพื่อลดการระคายเคือง",
-        synonyms: ["GERMAN CHAMOMILE WHOLE", "คาโมมายล์"]
+        unii: "451W47IQ8X",
+        legacyUnii: null,
+        preferredName: "SODIUM CHLORIDE",
+        thaiName: "โซเดียมคลอไรด์ (เกลือแกง / น้ำเกลือทางการแพทย์)",
+        cas: "7647-14-5",
+        formula: "ClNa",
+        pubchem: "CID 5234",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมี / สารอิเล็กโทรไลต์ (Electrolyte)",
+        atcCode: "B05CB01",
+        atcName: "Salt solutions / Irrigating solutions (สารละลายอิเล็กโทรไลต์)",
+        cosingFunction: "สารปรับความหนืดตำรับ (Viscosity Agent), สารช่วยยึดเกาะ (Bulking / Masking)",
+        inchikey: "FAPWRFPIFSIZLT-UHFFFAOYSA-M",
+        smiles: "[Na+].[Cl-]",
+        thaiDesc: "สารประกอบอิเล็กโทรไลต์พื้นฐาน ใช้เตรียมสารละลายน้ำเกลือ (Normal Saline) สำหรับล้างแผล ล้างจมูก ให้ทางหลอดเลือดดำ และปรับความหนืดในเครื่องสำอาง",
+        synonyms: ["NORMAL SALINE", "โซเดียมคลอไรด์", "SALT", "HALITE"]
+      },
+      {
+        unii: "IT942ZTH98",
+        legacyUnii: null,
+        preferredName: "CURCUMIN",
+        thaiName: "เคอร์คูมิน (สารสำคัญในขมิ้นชัน)",
+        cas: "458-37-7",
+        formula: "C21H20O6",
+        pubchem: "CID 969516",
+        substanceType: "chemical",
+        typeLabelThai: "สารสกัดบริสุทธิ์ (Phytochemical)",
+        atcCode: "A05AX",
+        atcName: "Other drugs for bile therapy (สารบำรุงระบบทางเดินอาหารและต้านอนุมูลอิสระ)",
+        cosingFunction: "สารต้านอนุมูลอิสระ (Antioxidant), สารบำรุงผิว (Skin Conditioning / Colorant)",
+        inchikey: "VFLDPWHFBUODDF-FCXRPNKRSA-N",
+        smiles: "COC1=C(C=CC(=C1)/C=C/C(=O)CC(=O)/C=C/C2=CC(=C(C=C2)O)OC)O",
+        thaiDesc: "สารเคอร์คูมินอยด์หลักที่พบในเหง้าขมิ้นชัน (Curcuma longa) มีฤทธิ์ต้านอนุมูลอิสระ ต้านการอักเสบ ขับลม และบำรุงผิวพรรณ",
+        synonyms: ["เคอร์คูมิน", "ขมิ้นชัน", "DIFERULOYLMETHANE", "NATURAL YELLOW 3", "E100"]
+      },
+      {
+        unii: "1FW7WLR731",
+        legacyUnii: null,
+        preferredName: "GLUCOSAMINE SULFATE",
+        thaiName: "กลูโคซามีนซัลเฟต (สารบำรุงข้อและกระดูกอ่อน)",
+        cas: "29031-19-4",
+        formula: "2C6H13NO5.H2O4S",
+        pubchem: "CID 24892759",
+        substanceType: "chemical",
+        typeLabelThai: "สารเคมีเดี่ยว (Joint Health Agent)",
+        atcCode: "M01AX05",
+        atcName: "Other antiinflammatory and antirheumatic agents (สารบรรเทาอาการข้อเสื่อม)",
+        cosingFunction: "สารบำรุงและปรับสภาพผิว (Skin Conditioning)",
+        inchikey: "N/A (Sulfate Salt)",
+        smiles: "C(C1C(C(C(C(O1)O)N)O)O)O.OS(=O)(=O)O",
+        thaiDesc: "สารตั้งต้นในการสร้างโปรตีโอไกลแคนและกระดูกอ่อนบริเวณข้อต่อ ใช้บรรเทาอาการปวดและชะลอความเสื่อมของโรคข้อเข่าเสื่อม (Osteoarthritis)",
+        synonyms: ["GLUCOSAMINE SULPHATE", "กลูโคซามีนซัลเฟต", "D-GLUCOSAMINE SULFATE"]
       },
       {
         unii: "968JKA7T33",
         legacyUnii: "1ZML031Y3C",
         preferredName: "LYSOZYME",
-        thaiName: "ไลโซไซม์ (เอนไซม์ต้านเชื้อแบคทีเรีย)",
+        thaiName: "Lysozyme (โปรตีน / เอนไซม์ต้านเชื้อแบคทีเรีย)",
         cas: "9001-63-2",
-        formula: "โปรตีนชีวภาพ",
-        pubchem: "EC 3.2.1.17",
+        formula: "โปรตีนชีวภาพ (Macromolecule)",
+        pubchem: "CID 16130573",
         substanceType: "protein",
         typeLabelThai: "โปรตีน / เอนไซม์ (Biologic)",
+        atcCode: "R02AA16",
+        atcName: "Throat preparations / Antiseptics (เอนไซม์ต้านจุลชีพในช่องปากและลำคอ)",
+        cosingFunction: "สารบำรุงผิวและต้านเชื้อจุลินทรีย์ (Antimicrobial / Skin Conditioning)",
         inchikey: "N/A (Protein Sequence)",
         smiles: "N/A (Macromolecule)",
-        thaiDesc: "เอนไซม์ธรรมชาติที่มีฤทธิ์ย่อยผนังเซลล์ของแบคทีเรียแกรมบวก ใช้ในยาอมแก้เจ็บคอ ยาหยอดตา และผลิตภัณฑ์ถนอมอาหาร",
-        synonyms: ["MURAMIDASE", "ไลโซไซม์"]
+        thaiDesc: "เอนไซม์โปรตีนตามธรรมชาติที่มีฤทธิ์ย่อยผนังเซลล์ของแบคทีเรียแกรมบวก ใช้ในยาอมบรรเทาอาการเจ็บคอ ยาหยอดตา และเวชสำอาง",
+        synonyms: ["MURAMIDASE", "ไลโซไซม์", "Lysozyme (โปรตีน)"]
       },
       {
-        unii: "001E35HGVF",
+        unii: "7M867G6T1U",
         legacyUnii: null,
-        preferredName: "MAGNOLOL",
-        thaiName: "แมกโนลอล (สารสำคัญจากเปลือกแมกโนเลีย)",
-        cas: "528-43-8",
-        formula: "C18H18O2",
-        pubchem: "CID 72300",
-        substanceType: "chemical",
-        typeLabelThai: "สารสกัดบริสุทธิ์ (Phytochemical)",
-        inchikey: "VVOAZFWZEDHOOU-UHFFFAOYSA-N",
-        smiles: "c1(-c2c(ccc(c2)CC=C)O)c(ccc(c1)CC=C)O",
-        thaiDesc: "สารกลุ่มลิกแนนที่สกัดได้จากเปลือกต้น Magnolia officinalis มีฤทธิ์ต้านอนุมูลอิสระและต้านเชื้อแบคทีเรียในช่องปากและผิวหนัง",
-        synonyms: ["5,5'-DIALLYL-2,2'-BIPHENYLDIOL", "แมกโนลอล"]
-      },
-      {
-        unii: "DK6Y9P42IN",
-        legacyUnii: "391O0PO49R",
-        preferredName: "SODIUM PROPIONATE",
-        thaiName: "โซเดียมโพรพิโอเนต (สารกันเสีย)",
-        cas: "137-40-6",
-        formula: "C3H5NaO2",
-        pubchem: "CID 2723810",
-        substanceType: "chemical",
-        typeLabelThai: "สารช่วย / สารกันเสีย (Preservative)",
-        inchikey: "JXKPEJDQGNYQSM-UHFFFAOYSA-M",
-        smiles: "CCC(=O)[O-].[Na+]",
-        thaiDesc: "เกลือโซเดียมของกรดโพรพิโอนิก ใช้เป็นวัตถุกันเสียป้องกันเชื้อราและแบคทีเรียในอาหารและเภสัชภัณฑ์ (E281)",
-        synonyms: ["PROPIONIC ACID, SODIUM SALT", "E281", "โซเดียมโพรพิโอเนต"]
-      },
-      {
-        unii: "000QCM6HAL",
-        legacyUnii: null,
-        preferredName: "ZAVEGEPANT HYDROCHLORIDE",
-        thaiName: "ซาเวจีแพนท์ ไฮโดรคลอไรด์ (ยารักษาไมเกรน)",
-        cas: "1414976-20-7",
-        formula: "C36H46N8O3.ClH",
-        pubchem: "CID 134819878",
-        substanceType: "chemical",
-        typeLabelThai: "สารเคมีเดี่ยว (CGRP Receptor Antagonist)",
-        inchikey: "VQDUWCSSPSOSNA-RYWNGCACSA-N",
-        smiles: "N1(CCC(CC1)c2c([nH]c3ccccc3c2)=O)C(=O)N[C@@H](C(=O)N4CCN(CC4)C5CCN(CC5)C)Cc6cc7cn[nH]c7c(c6)C.Cl",
-        thaiDesc: "ตัวยาออกฤทธิ์ยับยั้งตัวรับ CGRP รุ่นที่ 3 สำหรับรักษาอาการปวดไมเกรนเฉียบพลันในรูปแบบสเปรย์พ่นจมูก",
-        synonyms: ["ZAVZPRET", "BHV-3500", "ซาเวจีแพนท์"]
+        preferredName: "CENTELLA ASIATICA WHOLE",
+        thaiName: "บัวบก (ทั้งต้น)",
+        cas: "84696-21-9",
+        formula: "สมุนไพรธรรมชาติ (Botanical)",
+        pubchem: "CID 71306839",
+        substanceType: "structurallyDiverse",
+        typeLabelThai: "สมุนไพร / พืช (Botanical)",
+        atcCode: "D03AX",
+        atcName: "Other cicatrizants / Wound healing (สมุนไพรสมานแผลและลดการอักเสบ)",
+        cosingFunction: "สารปลอบประโลมผิว สมานแผล และต้านอนุมูลอิสระ (Soothing / Skin Conditioning)",
+        inchikey: "N/A (Botanical Material)",
+        smiles: "N/A (Whole Plant Extract)",
+        thaiDesc: "พืชสมุนไพรไทยที่มีสารสำคัญกลุ่มไตรเทอร์พีนอยด์ (Asiaticoside, Madecassoside) ช่วยกระตุ้นการสร้างคอลลาเจน สมานแผล แก้ช้ำใน และปลอบประโลมผิว",
+        synonyms: ["บัวบก (ทั้งต้น)", "ใบบัวบก", "GOTU KOLA", "TIGER GRASS", "CENTELLA ASIATICA"]
       }
-    ];
+        ];
 
     // Comprehensive WHO ATC Map for common drugs to ensure cards show ATC instantly
     const COMMON_ATC_MAP = {
@@ -836,13 +861,28 @@
     // 2. QUERY ENGINE: SUPABASE LIVE or LOCAL CACHE FALLBACK
     // =========================================================================
     async function executeSearch() {
+      // เมื่อยังไม่ได้พิมพ์คำค้นหา (หน้าแรกสุด) ให้แสดง 9 ตัวอย่างไฮไลต์ที่คัดสรรไว้ทันที
+      if (!searchQuery.trim() && currentCategory === "all" && !onlyLegacy) {
+        currentResults = [...fallbackSubstances];
+        renderResults();
+        resultSummaryText.innerHTML = `แสดงสารสำคัญและสมุนไพรไฮไลต์ <strong class="text-zinc-900 font-semibold">${currentResults.length}</strong> รายการ (พิมพ์ในช่องค้นหาเพื่อสืบค้นจากฐานข้อมูลเต็ม 171,912 รายการ)`;
+        return;
+      }
+
+      // ตัวช่วยแปลงคำค้นหายอดนิยมภาษาไทยให้ตรงกับฐานข้อมูลสากล (เช่น พาราเซตามอล -> ACETAMINOPHEN)
+      let effectiveQuery = searchQuery.trim();
+      const qLower = effectiveQuery.toLowerCase();
+      if (qLower === "พาราเซตามอล" || qLower === "paracetamol") effectiveQuery = "ACETAMINOPHEN";
+      else if (qLower.includes("เคอร์คูมิน") || qLower.includes("ขมิ้นชัน")) effectiveQuery = "CURCUMIN";
+      else if (qLower.includes("บัวบก")) effectiveQuery = "CENTELLA ASIATICA";
+
       resultSummaryText.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"></span> กำลังค้นหาข้อมูล...</span>`;
 
       if (supabaseClient) {
         try {
           // เรียกใช้งาน Supabase RPC search function
           const { data, error } = await supabaseClient.rpc('search_thai_unii', {
-            search_term: searchQuery,
+            search_term: effectiveQuery,
             filter_category: currentCategory,
             only_legacy_flag: onlyLegacy,
             max_results: 50
@@ -936,9 +976,25 @@
                 </button>
               </div>
 
-              <div>
-                <h3 class="font-bold text-base text-zinc-900 leading-snug">${item.thaiName}</h3>
-                <p class="font-mono text-xs text-zinc-500 mt-0.5 truncate">${item.preferredName}</p>
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-bold text-base text-zinc-900 leading-snug">${item.thaiName}</h3>
+                  <p class="font-mono text-xs text-zinc-500 mt-0.5 truncate">${item.preferredName}</p>
+                </div>
+                <!-- 2D Chemical Structure Thumbnail on Card -->
+                ${(() => {
+                  const cid = extractCidNumber(item.pubchem);
+                  const structTarget = cid ? `cid/${cid}` : (item.substanceType === 'chemical' ? `name/${encodeURIComponent(item.preferredName)}` : null);
+                  if (!structTarget || item.substanceType === 'structurallyDiverse' || item.substanceType === 'protein') {
+                    const iconEmoji = item.substanceType === 'structurallyDiverse' ? '🌿' : (item.substanceType === 'protein' ? '🧬' : '🧪');
+                    return `<div class="w-14 h-14 rounded-xl bg-white/90 border border-zinc-200/80 flex items-center justify-center text-xl shrink-0 shadow-2xs" title="${item.typeLabelThai}">${iconEmoji}</div>`;
+                  }
+                  return `
+                    <div class="w-14 h-14 rounded-xl bg-white border border-zinc-200/90 p-1 shrink-0 shadow-2xs flex items-center justify-center overflow-hidden" title="โครงสร้างโมเลกุล 2D">
+                      <img src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/${structTarget}/PNG?record_type=2d&image_size=160x160" alt="${item.preferredName}" class="w-full h-full object-contain" loading="lazy" onerror="this.parentElement.innerHTML='🧪'" />
+                    </div>
+                  `;
+                })()}
               </div>
 
               <!-- ATC Code & Name Badge on Card -->
@@ -1367,25 +1423,46 @@
       if (activeModalItem) copyText(activeModalItem.smiles, "SMILES");
     });
 
-    // Legacy Lookup Modal
-    const legacyModal = document.getElementById("legacyModal");
+    // Search Button ("ค้นหา") & Enter Key Trigger
     document.getElementById("LegacyLookupTrigger").addEventListener("click", () => {
-      const legacyItems = fallbackSubstances.filter(d => d.legacyUnii);
-      document.getElementById("legacyListPreview").innerHTML = legacyItems.map(item => `
-        <div class="p-3 rounded-xl bg-white border border-zinc-200 flex items-center justify-between text-xs">
-          <div>
-            <div class="font-semibold text-zinc-800">${item.thaiName}</div>
-            <div class="font-mono text-zinc-500">${item.preferredName}</div>
-          </div>
-          <div class="flex items-center gap-2 font-mono">
-            <span class="px-2 py-0.5 rounded bg-zinc-200 text-zinc-600 line-through">${item.legacyUnii}</span>
-            <span>→</span>
-            <span class="px-2 py-0.5 rounded bg-yellow-400 text-zinc-900 font-bold">${item.unii}</span>
-          </div>
-        </div>
-      `).join("");
-      legacyModal.classList.remove("hidden");
-      legacyModal.classList.add("flex");
+      searchQuery = searchInput.value;
+      executeSearch();
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+        searchQuery = searchInput.value;
+        executeSearch();
+      }
+    });
+
+    // Click outside modal card (on backdrop) or press Escape to close modal
+    const detailModalEl = document.getElementById("detailModal");
+    const legacyModal = document.getElementById("legacyModal");
+
+    detailModalEl.addEventListener("click", (e) => {
+      if (e.target === detailModalEl) {
+        detailModalEl.classList.add("hidden");
+        detailModalEl.classList.remove("flex");
+      }
+    });
+
+    legacyModal.addEventListener("click", (e) => {
+      if (e.target === legacyModal) {
+        legacyModal.classList.add("hidden");
+        legacyModal.classList.remove("flex");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        detailModalEl.classList.add("hidden");
+        detailModalEl.classList.remove("flex");
+        legacyModal.classList.add("hidden");
+        legacyModal.classList.remove("flex");
+      }
     });
 
     document.getElementById("closeLegacyModalBtn").addEventListener("click", () => {
