@@ -6,10 +6,11 @@
   <title>ThaiUNII — คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร</title>
   
   <!-- Social Share Preview (Open Graph) -->
-  <meta name="description" content="คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร 171,912 รายการ (US FDA, WHO ATC, EU CosIng, NIH PubChem) พร้อมระบบโครงข่าย Ontology Graph">
+  <meta name="description" content="คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร 171,912 รายการ (US FDA, WHO ATC 5-Level, EU CosIng, NIH PubChem) พร้อมระบบโครงข่าย Ontology Graph">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="ThaiUNII — คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร">
-  <meta property="og:description" content="สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII เลข CAS และรหัสกลุ่มยา WHO ATC พร้อมแผนผังโครงข่ายความรู้">
+  <meta property="og:url" content="https://pharmacistlife.github.io/thai-unii/">
+  <meta property="og:title" content="ThaiUNII — คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพรเชื่อมโยงฐานข้อมูลสากล">
+  <meta property="og:description" content="สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII เลข CAS และรหัสกลุ่มยา WHO ATC 5 ระดับ พร้อมแผนผังโครงข่ายความรู้">
   <meta property="og:image" content="https://pharmacistlife.github.io/thai-unii/og-cover.jpg">
 
   <!-- Tailwind & Fonts -->
@@ -26,12 +27,16 @@
     body { font-family: 'IBM Plex Sans Thai', sans-serif; background-color: #F8F9FA; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .glass-nav { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(228, 228, 231, 0.8); }
-    .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03); }
-    .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(228, 228, 231, 0.8); transition: all 0.2s ease; }
+    .glass-panel { background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03); }
+    .glass-card { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(10px); border: 1px solid rgba(228, 228, 231, 0.8); transition: all 0.2s ease; }
     .glass-card:hover { transform: translateY(-2px); border-color: rgba(250, 204, 21, 0.7); box-shadow: 0 10px 25px -4px rgba(250, 204, 21, 0.15); }
-    .glass-pill { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(228, 228, 231, 0.8); transition: all 0.15s ease; }
+    .glass-pill { background: rgba(255, 255, 255, 0.88); border: 1px solid rgba(228, 228, 231, 0.8); transition: all 0.15s ease; }
     .glass-pill:hover, .glass-pill.active { background: #FACC15; color: #18181B; border-color: #EAB308; font-weight: 600; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
+    .bg-grid-pattern {
+      background-image: radial-gradient(rgba(24, 24, 27, 0.08) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col text-zinc-900 antialiased selection:bg-yellow-300">
@@ -65,14 +70,13 @@
 
     <!-- ==================== VIEW 1: SEARCH & CARDS ==================== -->
     <section id="pageSearch" class="space-y-6">
-      <!-- Hero -->
       <div class="text-center max-w-3xl mx-auto space-y-3.5">
         <div class="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-1.5 rounded-2xl glass-panel text-[11px] sm:text-xs font-medium text-zinc-600">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>ซิงค์ข้อมูลจาก:</span>
           <a href="https://precision.fda.gov/uniisearch/archive" target="_blank" class="font-semibold text-amber-800 bg-yellow-100/90 px-2 py-0.5 rounded border border-yellow-300">US FDA UNII</a>
           <span>•</span>
-          <a href="https://atcddd.fhi.no/atc_ddd_index/" target="_blank" class="font-semibold text-purple-800 bg-purple-100/90 px-2 py-0.5 rounded border border-purple-300">WHO ATC</a>
+          <a href="https://atcddd.fhi.no/atc_ddd_index/" target="_blank" class="font-semibold text-purple-800 bg-purple-100/90 px-2 py-0.5 rounded border border-purple-300">WHO ATC (5-Level)</a>
           <span>•</span>
           <a href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" class="font-semibold text-blue-800 bg-blue-100/90 px-2 py-0.5 rounded border border-blue-300">EU CosIng</a>
           <span>•</span>
@@ -83,13 +87,13 @@
           สืบค้นข้อมูลสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">ยา เคมีภัณฑ์</span> และสมุนไพร
         </h1>
         <p class="text-xs sm:text-sm text-zinc-500 max-w-2xl mx-auto">
-          เชื่อมโยงโครงสร้างโมเลกุล กลุ่มยา WHO ATC รหัสสากล และหน้าที่ของสารจากฐานข้อมูลทางการไว้ในที่เดียว
+          เชื่อมโยงโครงสร้างโมเลกุล กลุ่มยา WHO ATC 5 ระดับ รหัสสากล และหน้าที่ของสารจากฐานข้อมูลทางการไว้ในที่เดียว
         </p>
 
         <!-- Search Bar -->
         <div class="relative max-w-2xl mx-auto pt-1">
           <div class="glass-panel rounded-2xl p-2 border-2 border-yellow-400/80 flex items-center gap-2 shadow-sm">
-            <input id="searchInput" type="text" placeholder="พิมพ์ชื่อสาร เช่น พาราเซตามอล, N02BE01, ขมิ้นชัน, AMOXICILLIN, 103-90-2..." class="w-full bg-transparent text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none px-3 py-1" />
+            <input id="searchInput" type="text" placeholder="พิมพ์ชื่อสาร เช่น พาราเซตามอล, J01CA04, ขมิ้นชัน, AMOXICILLIN, 103-90-2..." class="w-full bg-transparent text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none px-3 py-1" onkeydown="if(event.key==='Enter') executeSearch()" />
             <button onclick="executeSearch()" class="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-xs sm:text-sm font-semibold transition-all shrink-0">ค้นหา</button>
           </div>
           <div class="flex flex-wrap items-center justify-center gap-1.5 mt-2.5 text-xs text-zinc-500">
@@ -106,7 +110,7 @@
 
       <!-- Categories & Summary -->
       <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs pt-2">
-        <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none pb-1 sm:pb-0" id="catGroup">
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none pb-1 sm:pb-0">
           <button onclick="setCategory('all')" class="cat-btn glass-pill active px-3 py-1.5 rounded-xl whitespace-nowrap">ทั้งหมด</button>
           <button onclick="setCategory('chemical')" class="cat-btn glass-pill px-3 py-1.5 rounded-xl whitespace-nowrap">สารเคมี/ตัวยา</button>
           <button onclick="setCategory('structurallyDiverse')" class="cat-btn glass-pill px-3 py-1.5 rounded-xl whitespace-nowrap">สมุนไพร/พืช</button>
@@ -120,57 +124,82 @@
       <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
 
-    <!-- ==================== VIEW 2: DEDICATED ONTOLOGY GRAPH EXPLORER ==================== -->
+    <!-- ==================== VIEW 2: DEDICATED 5-LEVEL ATC ONTOLOGY GRAPH ==================== -->
     <section id="pageGraph" class="hidden space-y-4">
-      <div class="glass-panel rounded-3xl p-5 space-y-3 border border-yellow-400/50">
+      <div class="glass-panel rounded-3xl p-5 space-y-3 border border-yellow-400/60">
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
           <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-yellow-400/30 text-amber-900 text-[11px] font-mono font-semibold border border-yellow-400/50 mb-1">
+              <span>WHO 5-LEVEL ATC ONTOLOGY & KNOWLEDGE GRAPH</span>
+            </div>
             <h2 class="text-xl font-bold text-zinc-900">สำรวจโครงข่ายความรู้เชื่อมโยง <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">(Knowledge Graph)</span></h2>
-            <p class="text-xs text-zinc-500 mt-0.5">คลิกที่โหนดวงกลมเพื่อ <strong>แตกกิ่ง (Expand)</strong> ดูกลุ่มยา WHO ATC, หน้าที่สาร CosIng และตัวยาที่อยู่ในกลุ่มเดียวกันจนสุดทาง</p>
+            <p class="text-xs text-zinc-500 mt-0.5">
+              แสดงความเชื่อมโยงครบทั้ง <strong>5 ระดับชั้นของ WHO ATC (L5 ➔ L4 ➔ L3 ➔ L2 ➔ L1)</strong> • คลิกที่โหนดใดก็ได้เพื่อแตกกิ่งต่อจนสุดทาง
+            </p>
           </div>
           <div class="flex items-center gap-2 w-full md:w-auto">
-            <input id="graphSearchInput" type="text" placeholder="พิมพ์ชื่อสารเพื่อสร้างโหนด..." class="w-full md:w-64 px-3 py-1.5 rounded-xl bg-white border border-zinc-300 text-xs focus:outline-none" />
-            <button onclick="searchGraph()" class="px-3.5 py-1.5 rounded-xl bg-yellow-400 hover:bg-yellow-500 font-bold text-xs shrink-0 shadow-xs">สร้างโหนด</button>
+            <input id="graphSearchInput" type="text" placeholder="พิมพ์ชื่อยา เช่น Metformin, N02BE01..." class="w-full md:w-64 px-3.5 py-2 rounded-xl bg-white border border-zinc-300 text-xs focus:outline-none focus:border-yellow-500" onkeydown="if(event.key==='Enter') searchGraph()" />
+            <button onclick="searchGraph()" class="px-4 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 font-bold text-xs shrink-0 shadow-xs">สร้างโหนด</button>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-200/70 text-xs">
           <div class="flex flex-wrap items-center gap-1.5">
-            <span class="text-zinc-400">เริ่มสำรวจ:</span>
-            <button onclick="initGraph('all9')" class="px-2.5 py-1 rounded-lg bg-yellow-400 font-semibold shadow-2xs">🌟 รวม 9 สารไฮไลต์</button>
-            <button onclick="initGraph('ACETAMINOPHEN')" class="glass-pill px-2.5 py-1 rounded-lg">พาราเซตามอล</button>
-            <button onclick="initGraph('NAPROXEN')" class="glass-pill px-2.5 py-1 rounded-lg">Naproxen (3 ATC)</button>
-            <button onclick="initGraph('AMOXICILLIN')" class="glass-pill px-2.5 py-1 rounded-lg">Amoxicillin</button>
+            <span class="text-zinc-500 font-medium">เลือกดูโครงข่าย:</span>
+            <button onclick="initGraph('AMOXICILLIN')" class="px-2.5 py-1 rounded-lg bg-yellow-400 font-semibold text-zinc-900 shadow-2xs">💊 Amoxicillin (ค่าเริ่มต้น 4 ลำดับ)</button>
+            <button onclick="initGraph('ACETAMINOPHEN')" class="glass-pill px-2.5 py-1 rounded-lg">พาราเซตามอล (N02BE01)</button>
+            <button onclick="initGraph('NAPROXEN')" class="glass-pill px-2.5 py-1 rounded-lg">Naproxen (3 สาย ATC)</button>
+            <button onclick="initGraph('SODIUM CHLORIDE')" class="glass-pill px-2.5 py-1 rounded-lg">Sodium Chloride (4 สาย ATC)</button>
+            <button onclick="initGraph('LYSOZYME')" class="glass-pill px-2.5 py-1 rounded-lg">Lysozyme (2 สาย ATC)</button>
             <button onclick="initGraph('CENTELLA ASIATICA WHOLE')" class="glass-pill px-2.5 py-1 rounded-lg">บัวบก (D03AX14)</button>
+            <button onclick="initGraph('all9')" class="glass-pill px-2.5 py-1 rounded-lg">🌟 รวม 9 สารไฮไลต์</button>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
+            <button onclick="expandFullAtcChainOnBoard()" class="px-3 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-yellow-300 font-semibold transition-all">✨ กางครบ 5 Level ทันที</button>
             <button onclick="fitGraph()" class="px-2.5 py-1 rounded-lg bg-white border border-zinc-300 text-zinc-700">⛶ จัดกึ่งกลาง</button>
-            <button onclick="resetGraph()" class="px-2.5 py-1 rounded-lg bg-white border border-zinc-300 text-zinc-600 hover:text-red-600">ล้างกระดาน</button>
           </div>
         </div>
       </div>
 
       <!-- Graph Canvas & Node Inspector -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <div class="lg:col-span-3 relative h-[520px] rounded-3xl overflow-hidden glass-panel border border-yellow-400/40 bg-gradient-to-br from-white/95 via-zinc-50/80 to-yellow-50/70 shadow-sm">
-          <div id="fullOntologyCanvas" class="w-full h-full"></div>
-          <div class="absolute bottom-3 left-3 text-[11px] font-mono text-zinc-500 bg-white/90 px-3 py-1 rounded-xl border border-zinc-200 pointer-events-none">
-            💡 คลิกที่โหนดเพื่อแตกกิ่งกลุ่มยา ATC / CAS / CosIng ต่อเนื่องไปจนสุดทาง • ลากโหนดเพื่อดูแรงสปริง
+        <div class="lg:col-span-3 relative h-[560px] rounded-3xl overflow-hidden glass-panel border-2 border-white bg-gradient-to-br from-white/95 via-zinc-50/85 to-yellow-50/75 shadow-md">
+          <div class="absolute inset-0 bg-grid-pattern pointer-events-none"></div>
+
+          <!-- Top Legend for 5 ATC Levels -->
+          <div class="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+            <div class="flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200/90 shadow-xs text-[11px] font-medium text-zinc-700">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-yellow-400 border border-amber-600 inline-block"></span> ตัวยา (UNII)</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-300 border border-amber-500 inline-block"></span> L5: ตัวยา ATC</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-200 border border-amber-500 inline-block"></span> L4: กลุ่มเคมี</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-zinc-700 border border-yellow-400 inline-block"></span> L3: เภสัชวิทยา</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-zinc-800 border border-yellow-400 inline-block"></span> L2: กลุ่มรักษา</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-zinc-950 border-2 border-yellow-400 inline-block"></span> L1: ระบบอวัยวะหลัก</span>
+            </div>
+            <div id="graphStatsBadge" class="px-3 py-1 rounded-xl bg-zinc-900 text-yellow-300 font-mono text-[11px] shadow-xs">
+              Nodes: 0 | Edges: 0
+            </div>
+          </div>
+
+          <div id="fullOntologyCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+          <div class="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between px-3.5 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 text-[11px] text-zinc-600 pointer-events-none">
+            <span>💡 <strong>คลิกที่โหนดใดก็ได้</strong> เพื่อแตกกิ่งลำดับถัดไปจนถึง <strong>Level 1 (Main Anatomical Group)</strong> • ลากโหนดเพื่อจัดตำแหน่งได้อิสระ</span>
+            <span class="hidden sm:inline font-mono text-amber-700 font-semibold">5-Level ATC Engine</span>
           </div>
         </div>
 
-        <div class="glass-panel rounded-3xl p-4 flex flex-col justify-between gap-3 h-[520px] overflow-y-auto">
+        <!-- Inspector Sidebar -->
+        <div class="glass-panel rounded-3xl p-4 flex flex-col justify-between gap-3 h-[560px] overflow-y-auto border border-white">
           <div class="space-y-3">
-            <div class="flex items-center justify-between border-b border-zinc-200/80 pb-2">
-              <h3 class="font-bold text-xs text-zinc-900">ข้อมูลโหนดที่เลือก (Inspector)</h3>
-              <span id="inspectorNodeType" class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-200 font-bold">READY</span>
+            <div class="flex items-center justify-between border-b border-zinc-200/80 pb-2.5">
+              <h3 class="font-bold text-xs text-zinc-900">รายละเอียดโหนด (Node Inspector)</h3>
+              <span id="inspectorNodeType" class="text-[10px] font-mono px-2 py-0.5 rounded bg-yellow-400 text-zinc-900 font-bold">AMOXICILLIN</span>
             </div>
-            <div id="inspectorContent" class="text-xs text-zinc-600 leading-relaxed">
-              คลิกที่ <strong>โหนดวงกลมในกราฟ</strong> เพื่อดูรายละเอียดและแตกกิ่งเชื่อมโยงไปยังกลุ่มยา รหัสอ้างอิง และตัวยาที่อยู่ในกลุ่มเดียวกัน
-            </div>
+            <div id="inspectorContent" class="text-xs text-zinc-600 leading-relaxed space-y-2.5"></div>
           </div>
-          <button id="btnOpenDetailFromGraph" onclick="openActiveSubstanceModal()" class="hidden w-full py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-bold text-xs shadow-xs">
-            เปิดดูข้อมูลสารฉบับเต็ม ↗
+          <button id="btnOpenDetailFromGraph" onclick="openActiveSubstanceModal()" class="w-full py-2.5 rounded-xl bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-bold text-xs shadow-xs transition-all">
+            เปิดดูการ์ดข้อมูลสารฉบับเต็ม ↗
           </button>
         </div>
       </div>
@@ -206,6 +235,12 @@
         </div>
       </div>
 
+      <!-- 5-Level ATC Hierarchy Breakdown inside Modal -->
+      <div id="modalAtcBreakdownWrap" class="hidden p-3.5 rounded-2xl bg-zinc-900 text-zinc-100 space-y-2 text-xs">
+        <div class="text-yellow-400 font-semibold font-mono text-[11px]">ลำดับชั้นมาตรฐานองค์การอนามัยโลก (WHO 5-Level ATC Hierarchy)</div>
+        <div id="modalAtcBreakdownList" class="space-y-1 font-mono text-[11px] text-zinc-300"></div>
+      </div>
+
       <!-- Identifiers Grid -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
         <div class="p-2.5 rounded-xl bg-white border border-zinc-200/80">
@@ -224,7 +259,10 @@
 
       <!-- Footer Buttons -->
       <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-zinc-200 text-xs">
-        <button onclick="copyCurrentUnii()" class="px-3.5 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 font-bold shadow-2xs">คัดลอกรหัส UNII</button>
+        <div class="flex items-center gap-2">
+          <button onclick="copyCurrentUnii()" class="px-3.5 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 font-bold shadow-2xs">คัดลอกรหัส UNII</button>
+          <button onclick="viewCurrentInGraph()" class="px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 font-semibold">🕸️ ดูในกราฟ 5-Level</button>
+        </div>
         <div class="flex items-center gap-1.5">
           <a id="modalAtcLink" href="#" target="_blank" class="hidden px-2.5 py-1.5 rounded-lg border border-purple-300 text-purple-700 hover:bg-purple-50">WHO ATC ↗</a>
           <a id="modalFdaLink" href="https://precision.fda.gov/uniisearch" target="_blank" class="px-2.5 py-1.5 rounded-lg border border-zinc-300 text-zinc-700 hover:bg-zinc-50">FDA GSRS ↗</a>
@@ -243,36 +281,153 @@
     const SUPABASE_CONFIG = { url: 'https://aiunnmkghvxfkubrhnsy.supabase.co', anonKey: 'sb_publishable_jnM92sIwkE4Of4k_g8MFew_isgnowxw' };
     let supabaseClient = (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) ? window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey) : null;
 
-    // WHO ATC Full Hierarchy Tree (Level 5 -> Level 4 -> Level 1)
-    const ATC_TREE = {
-      "N02BE01": { p: "N02BE", n: "Anilides (กลุ่มอะนิไลด์)", r: "N", rn: "NERVOUS SYSTEM (ระบบประสาท)" },
-      "J01CA04": { p: "J01CA", n: "Penicillins with extended spectrum (ยาปฏิชีวนะเพนิซิลลิน)", r: "J", rn: "ANTIINFECTIVES (ยาต้านการติดเชื้อ)" },
-      "M01AE02": { p: "M01AE", n: "Propionic acid derivatives (NSAIDs แก้ปวดอักเสบ)", r: "M", rn: "MUSCULO-SKELETAL (กล้ามเนื้อและกระดูก)" },
-      "M02AA12": { p: "M02AA", n: "Antiinflammatory for topical use (ยาทาแก้ปวด)", r: "M", rn: "MUSCULO-SKELETAL (กล้ามเนื้อและกระดูก)" },
-      "G02CC02": { p: "G02CC", n: "Antiinflammatory for vaginal administration (ยานรีเวช)", r: "G", rn: "GENITO URINARY SYSTEM (ทางเดินปัสสาวะและสืบพันธุ์)" },
-      "R06AE07": { p: "R06AE", n: "Piperazine derivatives (ยาต้านฮิสตามีนแก้แพ้)", r: "R", rn: "RESPIRATORY (ระบบทางเดินหายใจ)" },
-      "B05CB01": { p: "B05CB", n: "Salt solutions (น้ำเกลือล้างแผล)", r: "B", rn: "BLOOD (ระบบเลือด)" },
-      "B05XA03": { p: "B05XA", n: "Electrolyte solutions (สารละลายน้ำเกลือ)", r: "B", rn: "BLOOD (ระบบเลือด)" },
-      "A12CA01": { p: "A12CA", n: "Sodium chloride (อาหารเสริมแร่ธาตุโซเดียม)", r: "A", rn: "ALIMENTARY (ทางเดินอาหาร)" },
-      "S01XA03": { p: "S01XA", n: "Ophthalmologicals (ยาหยอดตา)", r: "S", rn: "SENSORY ORGANS (อวัยวะรับสัมผัส)" },
-      "M01AX05": { p: "M01AX", n: "Other antiinflammatory agents (สารบำรุงข้อ)", r: "M", rn: "MUSCULO-SKELETAL (กล้ามเนื้อและกระดูก)" },
-      "D06BB07": { p: "D06BB", n: "Antivirals (ยาทาต้านไวรัส)", r: "D", rn: "DERMATOLOGICALS (ผิวหนัง)" },
-      "J05AX02": { p: "J05AX", n: "Other antivirals (ยาต้านไวรัสชนิดกิน)", r: "J", rn: "ANTIINFECTIVES (ยาต้านการติดเชื้อ)" },
-      "D03AX14": { p: "D03AX", n: "Centella asiatica herba, incl. combinations (ยาสมานแผล)", r: "D", rn: "DERMATOLOGICALS (ผิวหนัง)" },
-      "A05AX":   { p: "A05A",  n: "Bile therapy (ระบบทางเดินน้ำดี)", r: "A", rn: "ALIMENTARY (ทางเดินอาหาร)" }
+    // =========================================================================
+    // 1. COMPLETE WHO ATC 5-LEVEL HIERARCHY DICTIONARY (All 14 Main Groups + Sublevels)
+    // =========================================================================
+    const ATC_L1_MAIN_GROUPS = {
+      "A": "Alimentary tract and metabolism (ระบบทางเดินอาหารและเมแทบอลิซึม)",
+      "B": "Blood and blood forming organs (ระบบเลือดและอวัยวะสร้างเลือด)",
+      "C": "Cardiovascular system (ระบบหัวใจและหลอดเลือด)",
+      "D": "Dermatologicals (ยาระบบผิวหนัง)",
+      "G": "Genito urinary system and sex hormones (ระบบสืบพันธุ์และทางเดินปัสสาวะ)",
+      "H": "Systemic hormonal preparations (ระบบฮอร์โมนร่างกาย)",
+      "J": "Antiinfectives for systemic use (ยาต้านการติดเชื้อสำหรับใช้ทั่วร่างกาย)",
+      "L": "Antineoplastic and immunomodulating agents (ยามะเร็งและปรับภูมิคุ้มกัน)",
+      "M": "Musculo-skeletal system (ระบบกล้ามเนื้อและโครงกระดูก)",
+      "N": "Nervous system (ระบบประสาท)",
+      "P": "Antiparasitic products (ยาต้านปรสิตและฆ่าแมลง)",
+      "R": "Respiratory system (ระบบทางเดินหายใจ)",
+      "S": "Sensory organs (อวัยวะรับสัมผัส ตา/หู)",
+      "V": "Various (หมวดอื่นๆ)"
     };
+
+    const ATC_SUBLEVEL_NAMES = {
+      // Level 2 (3 chars)
+      "J01": "Antibacterials for systemic use (ยาต้านแบคทีเรีย)",
+      "J05": "Antivirals for systemic use (ยาต้านไวรัส)",
+      "N02": "Analgesics (ยาระงับปวดและลดไข้)",
+      "N05": "Psycholeptics (ยาออกฤทธิ์ต่อจิตประสาท)",
+      "M01": "Antiinflammatory and antirheumatic products (ยาต้านอักเสบและรูมาติก)",
+      "M02": "Topical products for joint and muscular pain (ยาทาแก้ปวดข้อและกล้ามเนื้อ)",
+      "G02": "Other gynecologicals (ยาทางนรีเวชอื่นๆ)",
+      "R06": "Antihistamines for systemic use (ยาต้านฮิสตามีนแก้แพ้)",
+      "B05": "Blood substitutes and perfusion solutions (สารละลายทดแทนเลือดและน้ำเกลือ)",
+      "B01": "Antithrombotic agents (ยาต้านการแข็งตัวของเลือด)",
+      "A12": "Mineral supplements (ผลิตภัณฑ์เสริมแร่ธาตุ)",
+      "A05": "Bile and liver therapy (ยารักษาโรคทางเดินน้ำดีและตับ)",
+      "A02": "Drugs for acid related disorders (ยารักษาโรคกรดในกระเพาะ)",
+      "A10": "Drugs used in diabetes (ยารักษาโรคเบาหวาน)",
+      "S01": "Ophthalmologicals (ยาทางจักษุวิทยา/ยาหยอดตา)",
+      "D06": "Antibiotics and chemotherapeutics for dermatological use (ยาฆ่าเชื้อทางผิวหนัง)",
+      "D03": "Preparations for treatment of wounds and ulcers (ยารักษาแผลและสมานแผล)",
+      "H02": "Corticosteroids for systemic use (คอร์ติโคสเตียรอยด์)",
+      // Level 3 (4 chars)
+      "J01C": "Beta-lactam antibacterials, penicillins (กลุ่มเบต้า-แลคแตม เพนิซิลลิน)",
+      "J05A": "Direct acting antivirals (ยาต้านไวรัสออกฤทธิ์โดยตรง)",
+      "N02B": "Other analgesics and antipyretics (ยาระงับปวดและลดไข้)",
+      "M01A": "Antiinflammatory and antirheumatic products, non-steroids (NSAIDs)",
+      "M02A": "Topical products for joint and muscular pain (ยาทาเฉพาะที่แก้ปวด)",
+      "G02C": "Other gynecologicals (ยานรีเวช)",
+      "R06A": "Antihistamines for systemic use (ยาแก้แพ้ชนิดกิน)",
+      "B05C": "Irrigating solutions (สารละลายชะล้างแผล)",
+      "B05X": "I.V. solution additives (สารเติมแต่งสารละลายทางหลอดเลือดดำ)",
+      "A12C": "Other mineral supplements (แร่ธาตุเสริมอื่นๆ)",
+      "A05A": "Bile therapy (ยารักษาทางเดินน้ำดี)",
+      "A02B": "Drugs for peptic ulcer and GORD (ยารักษาแผลในกระเพาะและกรดไหลย้อน)",
+      "A10B": "Blood glucose lowering drugs, excl. insulins (ยาลดน้ำตาลในเลือดชนิดกิน)",
+      "S01X": "Other ophthalmologicals (ยาหยอดตาอื่นๆ)",
+      "D06B": "Chemotherapeutics for topical use (ยาเคมีบำบัดทาเฉพาะที่)",
+      "D03A": "Cicatrizants (ยาสมานแผล)",
+      "H02A": "Corticosteroids for systemic use, plain (สเตียรอยด์เดี่ยว)",
+      // Level 4 (5 chars)
+      "J01CA": "Penicillins with extended spectrum (เพนิซิลลินออกฤทธิ์กว้าง)",
+      "J05AX": "Other antivirals (ยาต้านไวรัสอื่นๆ)",
+      "N02BE": "Anilides (ยากลุ่มอะนิไลด์)",
+      "M01AE": "Propionic acid derivatives (อนุพันธ์กรดโพรพิโอนิก)",
+      "M01AX": "Other antiinflammatory and antirheumatic agents (สารบำรุงข้อและต้านอักเสบอื่นๆ)",
+      "M02AA": "Antiinflammatory preparations, non-steroids for topical use (ยาทา NSAIDs)",
+      "G02CC": "Antiinflammatory products for vaginal administration (ยาต้านอักเสบทางช่องคลอด)",
+      "R06AE": "Piperazine derivatives (อนุพันธ์ไพเพอราซีน)",
+      "R06AB": "Substituted alkylamines (อนุพันธ์อัลคิลเอมีน)",
+      "B05CB": "Salt solutions (สารละลายเกลือชะล้าง)",
+      "B05XA": "Electrolyte solutions (สารละลายอิเล็กโทรไลต์)",
+      "A12CA": "Sodium (ผลิตภัณฑ์เสริมโซเดียม)",
+      "A05AX": "Other drugs for bile therapy (ยาระบบทางเดินน้ำดีอื่นๆ)",
+      "A02BC": "Proton pump inhibitors (ยาลดกรดกลุ่ม PPI)",
+      "A10BA": "Biguanides (ยากลุ่มไบกัวไนด์)",
+      "S01XA": "Other ophthalmologicals (ยาหยอดตาเฉพาะทาง)",
+      "D06BB": "Antivirals for topical use (ยาทาต้านไวรัสผิวหนัง)",
+      "D03AX": "Other cicatrizants (สารสมานแผลและกระตุ้นเนื้อเยื่อ)",
+      "H02AB": "Glucocorticoids (กลูโคคอร์ติคอยด์)"
+    };
+
+    // Parse any 5- or 7-character ATC code into its complete 5-Level Hierarchy Array!
+    function parseAtc5Levels(rawCode, drugName) {
+      const code = (rawCode || "").trim().toUpperCase();
+      if (!code || code.length < 1) return [];
+      const levels = [];
+
+      // Level 1 (1 letter)
+      const c1 = code.slice(0, 1);
+      levels.push({
+        level: 1,
+        code: c1,
+        name: ATC_L1_MAIN_GROUPS[c1] || `Main Anatomical Group ${c1}`
+      });
+
+      // Level 2 (3 chars: e.g. J01)
+      if (code.length >= 3) {
+        const c2 = code.slice(0, 3);
+        levels.push({
+          level: 2,
+          code: c2,
+          name: ATC_SUBLEVEL_NAMES[c2] || `Therapeutic Subgroup ${c2}`
+        });
+      }
+
+      // Level 3 (4 chars: e.g. J01C)
+      if (code.length >= 4) {
+        const c3 = code.slice(0, 4);
+        levels.push({
+          level: 3,
+          code: c3,
+          name: ATC_SUBLEVEL_NAMES[c3] || `Pharmacological Subgroup ${c3}`
+        });
+      }
+
+      // Level 4 (5 chars: e.g. J01CA)
+      if (code.length >= 5) {
+        const c4 = code.slice(0, 5);
+        levels.push({
+          level: 4,
+          code: c4,
+          name: ATC_SUBLEVEL_NAMES[c4] || `Chemical Subgroup ${c4}`
+        });
+      }
+
+      // Level 5 (7 chars: e.g. J01CA04)
+      if (code.length === 7) {
+        levels.push({
+          level: 5,
+          code: code,
+          name: drugName || `Chemical Substance ${code}`
+        });
+      }
+
+      return levels;
+    }
 
     // 9 Showcase Substances
     const fallbackSubstances = [
-      { unii: "804826J2HU", preferredName: "AMOXICILLIN", thaiName: "อะม็อกซีซิลลิน (ยาปฏิชีวนะกลุ่มเพนิซิลลิน)", cas: "61336-70-7 / 26787-78-0", formula: "C16H19N3O5S", pubchem: "CID 33613", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Antibiotic)", atcCode: "J01CA04", atcName: "Penicillins with extended spectrum (ยาปฏิชีวนะฆ่าเชื้อแบคทีเรีย)", thaiDesc: "ยาปฏิชีวนะกลุ่มเพนิซิลลินออกฤทธิ์กว้าง รักษาการติดเชื้อแบคทีเรียระบบทางเดินหายใจ หู คอ จมูก" },
-      { unii: "362O9ITL9D", preferredName: "ACETAMINOPHEN", thaiName: "พาราเซตามอล (ยาลดไข้ บรรเทาปวด)", cas: "103-90-2", formula: "C8H9NO2", pubchem: "CID 1983", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Analgesic)", atcCode: "N02BE01", atcName: "Anilides / Analgesics (ยาระงับปวดและลดไข้)", thaiDesc: "ยาสามัญประจำบ้านบรรเทาอาการปวดและลดไข้ (ในระบบ US FDA ใช้ชื่อทางการว่า Acetaminophen ส่วน WHO ใช้ Paracetamol)" },
-      { unii: "57Y76R9ATQ", preferredName: "NAPROXEN", thaiName: "นาพรอกเซน (ยาแก้ปวด ต้านการอักเสบ NSAIDs)", cas: "22204-53-1", formula: "C14H14O3", pubchem: "CID 156391", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (NSAID)", atcCode: "M01AE02, M02AA12, G02CC02", atcName: "Propionic acid derivatives (ยากินแก้ปวดข้อ) | ยาทาแก้ปวดข้อ | ยานรีเวช", thaiDesc: "ยาต้านการอักเสบที่ไม่ใช่สเตียรอยด์ มี 3 รหัส ATC ครอบคลุมทั้งยากินแก้ปวดข้อ ยาทาภายนอก และยานรีเวช" },
-      { unii: "YO7261ME24", preferredName: "CETIRIZINE", thaiName: "เซทิริซีน (ยาแก้แพ้ ลดน้ำมูก รุ่นที่ 2)", cas: "83881-51-0", formula: "C21H25ClN2O3", pubchem: "CID 2678", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Antihistamine)", atcCode: "R06AE07", atcName: "Piperazine derivatives (ยาต้านฮิสตามีนแก้แพ้)", thaiDesc: "ยาต้านฮิสตามีนรุ่นที่ 2 บรรเทาอาการภูมิแพ้อากาศ จาม คันตา ลมพิษ โดยทำให้ง่วงซึมน้อย" },
-      { unii: "451W47IQ8X", preferredName: "SODIUM CHLORIDE", thaiName: "โซเดียมคลอไรด์ (เกลือแกง / น้ำเกลือทางการแพทย์)", cas: "7647-14-5", formula: "ClNa", pubchem: "CID 5234", substanceType: "chemical", typeLabelThai: "สารเคมี / อิเล็กโทรไลต์", atcCode: "B05CB01, B05XA03, A12CA01, S01XA03", atcName: "Salt solutions (น้ำเกลือล้างแผล) | Electrolyte solutions (สารละลายน้ำเกลือ) | Mineral supplements | ยาหยอดตา", cosingFunction: "สารปรับความหนืดตำรับ (Viscosity Agent)", thaiDesc: "สารประกอบอิเล็กโทรไลต์พื้นฐาน มีหลายรหัส ATC ตามการใช้ เช่น ล้างแผล (B05CB01) ให้น้ำเกลือทางหลอดเลือด (B05XA03) ยาหยอดตา" },
-      { unii: "IT942ZTH98", preferredName: "CURCUMIN", thaiName: "เคอร์คูมิน (สารสำคัญในขมิ้นชัน)", cas: "458-37-7", formula: "C21H20O6", pubchem: "CID 969516", substanceType: "chemical", typeLabelThai: "สารสกัดบริสุทธิ์ (Phytochemical)", atcCode: "A05AX", atcName: "Other drugs for bile therapy (ระบบทางเดินน้ำดีและต้านอนุมูลอิสระ)", cosingFunction: "สารต้านอนุมูลอิสระ (Antioxidant), สารบำรุงผิว", thaiDesc: "สารเคอร์คูมินอยด์หลักในเหง้าขมิ้นชัน มีฤทธิ์ต้านอนุมูลอิสระ ต้านการอักเสบ ขับลม และบำรุงผิวพรรณ" },
-      { unii: "1FW7WLR731", preferredName: "GLUCOSAMINE SULFATE", thaiName: "กลูโคซามีนซัลเฟต (สารบำรุงข้อและกระดูกอ่อน)", cas: "29031-19-4", formula: "2C6H13NO5.H2O4S", pubchem: "CID 24892759", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Joint Health)", atcCode: "M01AX05", atcName: "Other antiinflammatory agents (สารบรรเทาอาการข้อเสื่อม)", cosingFunction: "สารบำรุงผิว (Skin Conditioning)", thaiDesc: "สารตั้งต้นสร้างกระดูกอ่อนบริเวณข้อต่อ บรรเทาอาการปวดข้อเข่าเสื่อม (ใน WHO ATC อ้างอิงภายใต้ชื่อ Glucosamine รหัส M01AX05)" },
-      { unii: "968JKA7T33", preferredName: "LYSOZYME", thaiName: "Lysozyme (โปรตีน / เอนไซม์ต้านเชื้อแบคทีเรีย)", cas: "9001-63-2 / 12650-88-3", formula: "โปรตีนชีวภาพ", pubchem: "CID 16130573", substanceType: "protein", typeLabelThai: "โปรตีน / เอนไซม์ (Biologic)", atcCode: "D06BB07, J05AX02", atcName: "Antivirals (ยาทาต้านไวรัสผิวหนัง) | Other antivirals (ยาต้านไวรัสชนิดกิน)", cosingFunction: "สารบำรุงผิวและต้านเชื้อจุลินทรีย์", thaiDesc: "เอนไซม์โปรตีนตามธรรมชาติย่อยผนังเซลล์แบคทีเรีย รหัส WHO ATC ทางการคือ D06BB07 และ J05AX02" },
-      { unii: "7M867G6T1U", preferredName: "CENTELLA ASIATICA WHOLE", thaiName: "บัวบก (ทั้งต้น)", cas: "84696-21-9", formula: "สมุนไพรธรรมชาติ", pubchem: "CID 71306839", substanceType: "structurallyDiverse", typeLabelThai: "สมุนไพร / พืช (Botanical)", atcCode: "D03AX14", atcName: "Centella asiatica herba, incl. combinations (ยาสมานแผลและลดการอักเสบ)", cosingFunction: "สารปลอบประโลมผิว สมานแผล และต้านอนุมูลอิสระ", thaiDesc: "พืชสมุนไพรไทยช่วยสมานแผล กระตุ้นคอลลาเจน ใน WHO ATC มีรหัสเต็ม 7 หลักคือ D03AX14 (Centella asiatica herba)" }
+      { unii: "804826J2HU", preferredName: "AMOXICILLIN", thaiName: "อะม็อกซีซิลลิน (ยาปฏิชีวนะกลุ่มเพนิซิลลิน)", cas: "61336-70-7 / 26787-78-0", formula: "C16H19N3O5S", pubchem: "CID 33613", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Antibiotic)", atcCode: "J01CA04", atcName: "Penicillins with extended spectrum", thaiDesc: "ยาปฏิชีวนะกลุ่มเพนิซิลลินออกฤทธิ์กว้าง รักษาการติดเชื้อแบคทีเรียระบบทางเดินหายใจ หู คอ จมูก และผิวหนัง" },
+      { unii: "362O9ITL9D", preferredName: "ACETAMINOPHEN", thaiName: "พาราเซตามอล (ยาลดไข้ บรรเทาปวด)", cas: "103-90-2", formula: "C8H9NO2", pubchem: "CID 1983", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Analgesic)", atcCode: "N02BE01", atcName: "Anilides / Analgesics", thaiDesc: "ยาสามัญประจำบ้านบรรเทาอาการปวดและลดไข้ (ในระบบ US FDA ใช้ชื่อทางการว่า Acetaminophen ส่วน WHO ใช้ Paracetamol)" },
+      { unii: "57Y76R9ATQ", preferredName: "NAPROXEN", thaiName: "นาพรอกเซน (ยาแก้ปวด ต้านการอักเสบ NSAIDs)", cas: "22204-53-1", formula: "C14H14O3", pubchem: "CID 156391", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (NSAID)", atcCode: "M01AE02, M02AA12, G02CC02", atcName: "Propionic acid derivatives | Topical NSAID | Vaginal antiinflammatory", thaiDesc: "ยาต้านการอักเสบที่ไม่ใช่สเตียรอยด์ มี 3 รหัส ATC ครอบคลุมทั้งยากินแก้ปวดข้อ ยาทาภายนอก และยานรีเวช" },
+      { unii: "YO7261ME24", preferredName: "CETIRIZINE", thaiName: "เซทิริซีน (ยาแก้แพ้ ลดน้ำมูก รุ่นที่ 2)", cas: "83881-51-0", formula: "C21H25ClN2O3", pubchem: "CID 2678", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Antihistamine)", atcCode: "R06AE07", atcName: "Piperazine derivatives", thaiDesc: "ยาต้านฮิสตามีนรุ่นที่ 2 บรรเทาอาการภูมิแพ้อากาศ จาม คันตา ลมพิษ โดยทำให้ง่วงซึมน้อย" },
+      { unii: "451W47IQ8X", preferredName: "SODIUM CHLORIDE", thaiName: "โซเดียมคลอไรด์ (เกลือแกง / น้ำเกลือทางการแพทย์)", cas: "7647-14-5", formula: "ClNa", pubchem: "CID 5234", substanceType: "chemical", typeLabelThai: "สารเคมี / อิเล็กโทรไลต์", atcCode: "B05CB01, B05XA03, A12CA01, S01XA03", atcName: "Salt solutions | Electrolyte solutions | Mineral supplements | Ophthalmologicals", cosingFunction: "สารปรับความหนืดตำรับ (Viscosity Agent)", thaiDesc: "สารประกอบอิเล็กโทรไลต์พื้นฐาน มี 4 รหัส ATC ตามการใช้ เช่น ล้างแผล (B05CB01) น้ำเกลือทางหลอดเลือด (B05XA03) ยาหยอดตา" },
+      { unii: "IT942ZTH98", preferredName: "CURCUMIN", thaiName: "เคอร์คูมิน (สารสำคัญในขมิ้นชัน)", cas: "458-37-7", formula: "C21H20O6", pubchem: "CID 969516", substanceType: "chemical", typeLabelThai: "สารสกัดบริสุทธิ์ (Phytochemical)", atcCode: "A05AX", atcName: "Other drugs for bile therapy", cosingFunction: "สารต้านอนุมูลอิสระ (Antioxidant), สารบำรุงผิว", thaiDesc: "สารเคอร์คูมินอยด์หลักในเหง้าขมิ้นชัน มีฤทธิ์ต้านอนุมูลอิสระ ต้านการอักเสบ ขับลม และบำรุงผิวพรรณ" },
+      { unii: "1FW7WLR731", preferredName: "GLUCOSAMINE SULFATE", thaiName: "กลูโคซามีนซัลเฟต (สารบำรุงข้อและกระดูกอ่อน)", cas: "29031-19-4", formula: "2C6H13NO5.H2O4S", pubchem: "CID 24892759", substanceType: "chemical", typeLabelThai: "สารเคมีเดี่ยว (Joint Health)", atcCode: "M01AX05", atcName: "Other antiinflammatory and antirheumatic agents", cosingFunction: "สารบำรุงผิว (Skin Conditioning)", thaiDesc: "สารตั้งต้นสร้างกระดูกอ่อนบริเวณข้อต่อ บรรเทาอาการปวดข้อเข่าเสื่อม (รหัส WHO ATC คือ M01AX05)" },
+      { unii: "968JKA7T33", preferredName: "LYSOZYME", thaiName: "Lysozyme (โปรตีน / เอนไซม์ต้านเชื้อแบคทีเรีย)", cas: "9001-63-2 / 12650-88-3", formula: "โปรตีนชีวภาพ", pubchem: "CID 16130573", substanceType: "protein", typeLabelThai: "โปรตีน / เอนไซม์ (Biologic)", atcCode: "D06BB07, J05AX02", atcName: "Antivirals for topical use | Direct acting antivirals", cosingFunction: "สารบำรุงผิวและต้านเชื้อจุลินทรีย์", thaiDesc: "เอนไซม์โปรตีนตามธรรมชาติย่อยผนังเซลล์แบคทีเรีย รหัส WHO ATC ทางการคือ D06BB07 และ J05AX02" },
+      { unii: "7M867G6T1U", preferredName: "CENTELLA ASIATICA WHOLE", thaiName: "บัวบก (ทั้งต้น)", cas: "84696-21-9", formula: "สมุนไพรธรรมชาติ", pubchem: "CID 71306839", substanceType: "structurallyDiverse", typeLabelThai: "สมุนไพร / พืช (Botanical)", atcCode: "D03AX14", atcName: "Centella asiatica herba, incl. combinations", cosingFunction: "สารปลอบประโลมผิว สมานแผล และต้านอนุมูลอิสระ", thaiDesc: "พืชสมุนไพรไทยช่วยสมานแผล กระตุ้นคอลลาเจน ใน WHO ATC มีรหัสเต็ม 7 หลักคือ D03AX14 (Centella asiatica herba)" }
     ];
 
     let currentCategory = "all", searchQuery = "", currentResults = [...fallbackSubstances], activeItem = null;
@@ -282,14 +437,26 @@
       document.getElementById("pageGraph").classList.toggle("hidden", page !== "graph");
       document.getElementById("btnNavSearch").className = page === "search" ? "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-zinc-900 shadow-xs transition-all" : "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-all";
       document.getElementById("btnNavGraph").className = page === "graph" ? "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-yellow-400 text-zinc-900 shadow-xs transition-all" : "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-all";
-      if (page === "graph") setTimeout(() => initGraph("all9"), 50);
+      // Default to AMOXICILLIN with 4 connected levels when opening the Graph page!
+      if (page === "graph") {
+        setTimeout(() => {
+          if (!graphNet) initGraph("AMOXICILLIN");
+          else fitGraph();
+        }, 50);
+      }
     }
 
     function showToast(msg) {
       const b = document.getElementById("toastBox");
       document.getElementById("toastMsg").textContent = msg;
       b.classList.remove("hidden"); b.classList.add("flex");
-      setTimeout(() => { b.classList.add("hidden"); b.classList.remove("flex"); }, 2000);
+      setTimeout(() => { b.classList.add("hidden"); b.classList.remove("flex"); }, 2200);
+    }
+
+    function copyText(text, label) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast(`คัดลอก ${label}: ${text}`));
+      }
     }
 
     function setQuery(q) { document.getElementById("searchInput").value = q; executeSearch(); }
@@ -356,7 +523,7 @@
             <div class="space-y-2.5">
               <div class="flex items-center justify-between gap-2">
                 <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-yellow-400 text-zinc-900">${item.unii}</span>
-                <span class="text-[11px] font-mono text-zinc-400">CAS: <strong class="text-zinc-700">${item.cas}</strong></span>
+                <span class="text-[11px] font-mono text-zinc-400 truncate max-w-[170px]">CAS: <strong class="text-zinc-700">${item.cas}</strong></span>
               </div>
               <div class="flex items-start justify-between gap-2">
                 <div class="flex-1 min-w-0">
@@ -368,7 +535,7 @@
               ${item.atcCode ? `
                 <div class="flex items-center gap-1.5 text-xs font-mono text-purple-800 bg-purple-50/90 border border-purple-200 px-2 py-1 rounded-lg">
                   <span class="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0"></span>
-                  <span class="font-bold shrink-0">ATC: ${item.atcCode}</span>
+                  <span class="font-bold truncate">ATC: ${item.atcCode}</span>
                 </div>
               ` : ''}
               <p class="text-xs text-zinc-600 line-clamp-2 leading-relaxed">${item.thaiDesc}</p>
@@ -396,18 +563,35 @@
 
       const atcBadge = document.getElementById("modalAtc");
       const atcLink = document.getElementById("modalAtcLink");
+      const atcBreakdownWrap = document.getElementById("modalAtcBreakdownWrap");
+      const atcBreakdownList = document.getElementById("modalAtcBreakdownList");
+
       if (activeItem.atcCode) {
+        const firstCode = activeItem.atcCode.split(',')[0].trim();
         atcBadge.textContent = `WHO ATC: ${activeItem.atcCode}`;
         atcBadge.classList.remove("hidden");
-        atcLink.href = `https://atcddd.fhi.no/atc_ddd_index/?code=${encodeURIComponent(activeItem.atcCode.split(',')[0].trim())}`;
+        atcLink.href = `https://atcddd.fhi.no/atc_ddd_index/?code=${encodeURIComponent(firstCode)}`;
         atcLink.classList.remove("hidden");
+
+        // Show 5-Level Breakdown in Modal
+        const levels = parseAtc5Levels(firstCode, activeItem.preferredName);
+        atcBreakdownList.innerHTML = levels.map(lv => `
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-yellow-300 font-bold">L${lv.level}</span>
+            <span class="font-bold text-white w-16 shrink-0">${lv.code}</span>
+            <span class="text-zinc-300 truncate">${lv.name}</span>
+          </div>
+        `).join("");
+        atcBreakdownWrap.classList.remove("hidden");
       } else {
-        atcBadge.classList.add("hidden"); atcLink.classList.add("hidden");
+        atcBadge.classList.add("hidden");
+        atcLink.classList.add("hidden");
+        atcBreakdownWrap.classList.add("hidden");
       }
 
       const cosBadge = document.getElementById("modalCosing");
       if (activeItem.cosingFunction) {
-        cosBadge.textContent = `CosIng: ${activeItem.cosingFunction.slice(0, 30)}...`;
+        cosBadge.textContent = `CosIng: ${activeItem.cosingFunction.slice(0, 32)}`;
         cosBadge.classList.remove("hidden");
       } else { cosBadge.classList.add("hidden"); }
 
@@ -430,31 +614,209 @@
     }
     function closeModalOnBackdrop(e) { if (e.target === document.getElementById("detailModal")) closeModal(); }
     function copyCurrentUnii() { if (activeItem) copyText(activeItem.unii, "รหัส UNII"); }
+    function viewCurrentInGraph() {
+      if (!activeItem) return;
+      closeModal();
+      switchPage("graph");
+      setTimeout(() => initGraph(activeItem.preferredName), 80);
+    }
 
     // =========================================================================
-    // VIS.JS KNOWLEDGE GRAPH (Progressive Multi-Hop ATC & Ontology Explorer)
+    // 2. VIS.JS 5-LEVEL ATC KNOWLEDGE GRAPH ENGINE (Non-Overlapping & Clean)
     // =========================================================================
-    let graphNet = null, gNodes = null, gEdges = null, selectedSubstanceUnii = null;
+    let graphNet = null, gNodes = null, gEdges = null, selectedSubstanceUnii = "804826J2HU";
+
+    function addNodeSafe(n) {
+      if (!gNodes.get(n.id)) gNodes.add(n);
+    }
+    function addEdgeSafe(fromId, toId, labelText) {
+      const eId = `${fromId}__${toId}`;
+      const revId = `${toId}__${fromId}`;
+      if (!gEdges.get(eId) && !gEdges.get(revId)) {
+        gEdges.add({
+          id: eId,
+          from: fromId,
+          to: toId,
+          label: labelText || "",
+          arrows: "to",
+          font: { size: 9, color: "#71717A", background: "rgba(255,255,255,0.85)", strokeWidth: 0 }
+        });
+      }
+    }
+
+    function updateGraphCounter() {
+      const el = document.getElementById("graphStatsBadge");
+      if (el && gNodes && gEdges) {
+        el.textContent = `Nodes: ${gNodes.length} | Edges: ${gEdges.length}`;
+      }
+    }
+
+    // Style helper for each ATC Level (1 to 5) in Yellow-Charcoal palette
+    function createAtcLevelNodeObj(lvObj, drugItem) {
+      const lv = lvObj.level;
+      const styles = {
+        5: { size: 22, bg: "#FDE047", border: "#CA8A04", fontColor: "#18181B" }, // L5 Substance
+        4: { size: 24, bg: "#FEF08A", border: "#D97706", fontColor: "#18181B" }, // L4 Chemical Subgroup
+        3: { size: 25, bg: "#3F3F46", border: "#FACC15", fontColor: "#18181B" }, // L3 Pharmacological
+        2: { size: 27, bg: "#27272A", border: "#FACC15", fontColor: "#18181B" }, // L2 Therapeutic
+        1: { size: 32, bg: "#18181B", border: "#FACC15", fontColor: "#18181B" }  // L1 Main Organ Group
+      };
+      const st = styles[lv] || styles[4];
+      const shortName = lvObj.name.length > 34 ? lvObj.name.slice(0, 34) + "..." : lvObj.name;
+
+      return {
+        id: `atc_${lvObj.code}`,
+        label: `[L${lv}] ${lvObj.code}\n${shortName}`,
+        shape: "dot",
+        size: st.size,
+        color: {
+          background: st.bg,
+          border: st.border,
+          highlight: { background: "#FACC15", border: "#18181B" }
+        },
+        font: {
+          size: 11,
+          color: "#18181B",
+          face: "IBM Plex Sans Thai",
+          background: "rgba(255, 255, 255, 0.9)",
+          strokeWidth: 3,
+          strokeColor: "#FFFFFF"
+        },
+        atcLevel: lv,
+        atcCode: lvObj.code,
+        atcFullName: lvObj.name,
+        sourceItem: drugItem,
+        nodeType: "atc_level"
+      };
+    }
+
+    // Build and spawn the ATC hierarchy up to `maxDepth` hops (e.g. 4 hops for initial Amoxicillin view, or all 5 levels)
+    function spawnSubstanceWithAtcLevels(item, maxHops = 4) {
+      const sId = `sub_${item.unii}`;
+      selectedSubstanceUnii = item.unii;
+
+      // Central Substance Node (Golden Yellow)
+      addNodeSafe({
+        id: sId,
+        label: `${item.preferredName}\n(UNII: ${item.unii})`,
+        shape: "dot",
+        size: 32,
+        color: { background: "#FACC15", border: "#18181B", highlight: { background: "#FDE047", border: "#CA8A04" } },
+        font: { size: 13, color: "#18181B", bold: true, background: "rgba(254, 249, 195, 0.95)", strokeWidth: 4, strokeColor: "#FFFFFF" },
+        payload: item,
+        nodeType: "substance"
+      });
+
+      // Spawn CAS RN & Formula Node (Hop 1)
+      if (item.cas && item.cas !== "N/A") {
+        const casId = `cas_${item.unii}`;
+        addNodeSafe({
+          id: casId,
+          label: `CAS: ${item.cas.split('/')[0].trim()}\nสูตร: ${item.formula}`,
+          shape: "dot",
+          size: 19,
+          color: { background: "#E4E4E7", border: "#71717A" },
+          font: { size: 10, color: "#27272A", face: "JetBrains Mono", background: "rgba(255,255,255,0.88)" },
+          nodeType: "cas",
+          payload: item
+        });
+        addEdgeSafe(sId, casId, "chemical_id");
+      }
+
+      // Spawn CosIng Function Node if available
+      if (item.cosingFunction) {
+        const cosId = `cos_${item.unii}`;
+        addNodeSafe({
+          id: cosId,
+          label: `EU CosIng:\n${item.cosingFunction.slice(0, 28)}...`,
+          shape: "dot",
+          size: 20,
+          color: { background: "#DBEAFE", border: "#2563EB" },
+          font: { size: 10, color: "#1E3A8A", background: "rgba(255,255,255,0.88)" },
+          nodeType: "cosing",
+          payload: item
+        });
+        addEdgeSafe(sId, cosId, "cosmetic_role");
+      }
+
+      // Spawn Multi-ATC Chains (from Level 5 -> Level 4 -> Level 3 -> Level 2 -> Level 1)
+      if (item.atcCode) {
+        const codes = item.atcCode.split(',').map(s => s.trim()).filter(Boolean);
+        codes.forEach(code => {
+          const levels = parseAtc5Levels(code, item.preferredName).reverse(); // [L5, L4, L3, L2, L1]
+          let prevNodeId = sId;
+
+          levels.slice(0, maxHops).forEach((lvObj, idx) => {
+            const nodeObj = createAtcLevelNodeObj(lvObj, item);
+            addNodeSafe(nodeObj);
+            const edgeLabel = idx === 0 ? "has_atc" : `level_${lvObj.level}`;
+            addEdgeSafe(prevNodeId, nodeObj.id, edgeLabel);
+            prevNodeId = nodeObj.id;
+          });
+        });
+      }
+
+      updateInspectorForSubstance(item);
+      updateGraphCounter();
+    }
 
     function initGraph(seed) {
       if (!window.vis) return;
-      gNodes = new vis.DataSet([]); gEdges = new vis.DataSet([]);
+      gNodes = new vis.DataSet([]);
+      gEdges = new vis.DataSet([]);
       const container = document.getElementById("fullOntologyCanvas");
 
       if (seed === "all9") {
-        gNodes.add({ id: "hub", label: "ThaiUNII Hub\\n(สารสากล)", shape: "dot", size: 30, color: { background: "#FACC15", border: "#CA8A04" }, font: { bold: true, color: "#18181B" } });
-        fallbackSubstances.forEach(item => {
-          gNodes.add({ id: `sub_${item.unii}`, label: `${item.preferredName}\\n(${item.thaiName.split('(')[0].trim()})`, shape: "dot", size: 22, color: { background: "#FEF08A", border: "#EAB308" }, payload: item, nodeType: "substance" });
-          gEdges.add({ from: "hub", to: `sub_${item.unii}`, color: { color: "#D4D4D8" } });
+        addNodeSafe({
+          id: "hub",
+          label: "ThaiUNII Hub\n(คลังข้อมูลสากล)",
+          shape: "dot",
+          size: 34,
+          color: { background: "#18181B", border: "#FACC15" },
+          font: { size: 13, bold: true, color: "#18181B", background: "rgba(250,204,21,0.9)" }
         });
+        fallbackSubstances.forEach(item => {
+          const sId = `sub_${item.unii}`;
+          addNodeSafe({
+            id: sId,
+            label: `${item.preferredName}\n(${item.thaiName.split('(')[0].trim()})`,
+            shape: "dot",
+            size: 23,
+            color: { background: "#FACC15", border: "#CA8A04" },
+            font: { size: 11, color: "#18181B", background: "rgba(255,255,255,0.9)" },
+            payload: item,
+            nodeType: "substance"
+          });
+          addEdgeSafe("hub", sId, "");
+        });
+        updateGraphCounter();
       } else {
-        const item = fallbackSubstances.find(d => d.preferredName === seed || d.unii === seed) || fallbackSubstances[1];
-        addFullSubstanceNodeWithEdges(item);
+        const item = currentResults.find(d => d.preferredName === seed || d.unii === seed) ||
+                     fallbackSubstances.find(d => d.preferredName === seed || d.unii === seed) ||
+                     fallbackSubstances[0];
+        // Show 4 connected ATC levels initially as requested (and clicking expands the 5th root level!)
+        spawnSubstanceWithAtcLevels(item, 4);
       }
 
+      // Physics tuned for crisp non-overlapping labels!
       const options = {
-        physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -60, springLength: 120, damping: 0.4 } },
-        edges: { smooth: { type: "continuous" } },
+        physics: {
+          enabled: true,
+          solver: "forceAtlas2Based",
+          forceAtlas2Based: {
+            gravitationalConstant: -110,
+            centralGravity: 0.01,
+            springLength: 165,
+            springConstant: 0.06,
+            damping: 0.45,
+            avoidOverlap: 1.0
+          }
+        },
+        edges: {
+          color: { color: "#A1A1AA", highlight: "#EAB308" },
+          width: 2,
+          smooth: { type: "continuous" }
+        },
         interaction: { hover: true, zoomView: true, dragView: true }
       };
 
@@ -463,105 +825,144 @@
 
       graphNet.on("click", (params) => {
         if (params.nodes && params.nodes.length) {
-          const nId = params.nodes[0];
-          expandGraphNode(nId);
+          handleGraphNodeClick(params.nodes[0]);
         }
       });
-      fitGraph();
+
+      setTimeout(() => fitGraph(), 120);
     }
 
-    function addFullSubstanceNodeWithEdges(item) {
-      const sId = `sub_${item.unii}`;
-      if (!gNodes.get(sId)) {
-        gNodes.add({ id: sId, label: `${item.preferredName}\\n[UNII: ${item.unii}]`, shape: "dot", size: 28, color: { background: "#FACC15", border: "#CA8A04" }, font: { bold: true, color: "#18181B" }, payload: item, nodeType: "substance" });
-      }
-      expandGraphNode(sId);
-    }
-
-    function expandGraphNode(nId) {
+    // Progressive expansion when clicking any node in the graph
+    function handleGraphNodeClick(nId) {
       const node = gNodes.get(nId);
       if (!node) return;
-      const inspector = document.getElementById("inspectorContent");
-      const btnCard = document.getElementById("btnOpenDetailFromGraph");
-      const badge = document.getElementById("inspectorNodeType");
 
-      // CASE 1: Expand Substance Node -> Spawns ATC Codes, CAS, CosIng
       if (node.nodeType === "substance") {
-        const item = node.payload;
-        selectedSubstanceUnii = item.unii;
-        badge.textContent = `UNII: ${item.unii}`; badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-yellow-400 font-bold text-zinc-900";
-        btnCard.classList.remove("hidden");
-        inspector.innerHTML = `
-          <div class="space-y-1.5 p-3 rounded-xl bg-white border border-zinc-200">
-            <div class="font-bold text-zinc-900">${item.thaiName}</div>
-            <div class="font-mono text-amber-700 font-semibold">${item.preferredName}</div>
-            <p class="text-zinc-600">${item.thaiDesc}</p>
-          </div>
-          <div class="p-2 rounded-lg bg-yellow-100 text-amber-900 text-[11px]">✨ แตกกิ่งรหัสยา WHO ATC และ CAS RN ออกมาแล้ว! ลองคลิกที่ <strong>Node ATC</strong> ต่อเพื่อดูกลุ่มยาแม่จนสุดทาง</div>
-        `;
-
-        // Expand multiple ATCs if separated by commas!
-        if (item.atcCode) {
-          const codes = item.atcCode.split(',').map(s => s.trim()).filter(Boolean);
-          codes.forEach(c => {
-            const atcId = `atc_${c}`;
-            if (!gNodes.get(atcId)) {
-              gNodes.add({ id: atcId, label: `WHO ATC: ${c}`, shape: "dot", size: 20, color: { background: "#C084FC", border: "#A855F7" }, font: { color: "#FFFFFF", size: 11, face: "JetBrains Mono" }, atcCode: c, nodeType: "atc" });
-              gEdges.add({ from: nId, to: atcId, label: "has_atc", font: { size: 9, color: "#A855F7" } });
-            }
-          });
-        }
-
-        // Expand CAS
-        if (item.cas && item.cas !== "N/A") {
-          const casId = `cas_${item.cas.slice(0, 15)}`;
-          if (!gNodes.get(casId)) {
-            gNodes.add({ id: casId, label: `CAS: ${item.cas}`, shape: "dot", size: 18, color: { background: "#4ADE80", border: "#22C55E" }, font: { color: "#FFFFFF", size: 10, face: "JetBrains Mono" }, nodeType: "cas" });
-            gEdges.add({ from: nId, to: casId });
+        // Expand full 5 levels of ATC for this substance
+        spawnSubstanceWithAtcLevels(node.payload, 5);
+        showToast(`กางลำดับชั้น ATC ครบ 5 Level ของ ${node.payload.preferredName} แล้ว`);
+      } else if (node.nodeType === "atc_level") {
+        // Find parent level (e.g. if user clicked Level 2 J01, spawn Level 1 J + any sibling drugs sharing this group)
+        const item = node.sourceItem || fallbackSubstances[0];
+        const allCodes = (item.atcCode || "").split(',').map(s => s.trim());
+        allCodes.forEach(c => {
+          if (c.startsWith(node.atcCode) || node.atcCode.startsWith(c.slice(0, 1))) {
+            const full5 = parseAtc5Levels(c, item.preferredName).reverse(); // [L5, L4, L3, L2, L1]
+            let prevId = `sub_${item.unii}`;
+            full5.forEach(lvObj => {
+              const nextNode = createAtcLevelNodeObj(lvObj, item);
+              addNodeSafe(nextNode);
+              addEdgeSafe(prevId, nextNode.id, `level_${lvObj.level}`);
+              prevId = nextNode.id;
+            });
           }
-        }
-      }
+        });
 
-      // CASE 2: Expand ATC Code Node (Level 5) -> Spawns ATC Level 4 Group & Level 1 Organ System!
-      else if (node.nodeType === "atc") {
-        btnCard.classList.add("hidden");
-        const c = node.atcCode;
-        const info = ATC_TREE[c] || { p: c.slice(0, 4), n: `กลุ่มเภสัชวิทยา ${c.slice(0, 4)}`, r: c.slice(0, 1), rn: `ระบบอวัยวะ (${c.slice(0, 1)})` };
-        badge.textContent = "WHO ATC LEVEL 5"; badge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold border border-purple-200";
-        inspector.innerHTML = `
-          <div class="space-y-1 p-3 rounded-xl bg-white border border-zinc-200">
-            <div class="font-bold text-zinc-900 font-mono">ATC: ${c}</div>
-            <div class="text-zinc-600">รหัสยาเดี่ยวตามระบบองค์การอนามัยโลก (WHO)</div>
+        // Also connect any other showcase substances that share the same Level 1 Organ Group!
+        const rootLetter = node.atcCode.slice(0, 1);
+        fallbackSubstances.forEach(other => {
+          if (other.atcCode && other.atcCode.split(',').some(code => code.trim().startsWith(rootLetter))) {
+            const otherId = `sub_${other.unii}`;
+            addNodeSafe({
+              id: otherId,
+              label: `${other.preferredName}\n(${other.thaiName.split('(')[0].trim()})`,
+              shape: "dot",
+              size: 24,
+              color: { background: "#FACC15", border: "#CA8A04" },
+              font: { size: 11, color: "#18181B", background: "rgba(255,255,255,0.9)" },
+              payload: other,
+              nodeType: "substance"
+            });
+            addEdgeSafe(`atc_${rootLetter}`, otherId, "same_organ_group");
+          }
+        });
+
+        document.getElementById("inspectorNodeType").textContent = `ATC LEVEL ${node.atcLevel}`;
+        document.getElementById("inspectorContent").innerHTML = `
+          <div class="p-3 rounded-2xl bg-white border border-zinc-200 space-y-1.5">
+            <div class="font-mono font-bold text-sm text-zinc-900">รหัส: ${node.atcCode} (Level ${node.atcLevel})</div>
+            <div class="text-zinc-700 font-medium">${node.atcFullName}</div>
           </div>
-          <div class="p-2 rounded-lg bg-yellow-100 text-amber-900 text-[11px]">✨ แตกกิ่งไปหา <strong>กลุ่มเภสัชวิทยา Level 4: ${info.p}</strong> และ <strong>ระบบอวัยวะหลัก Level 1: ${info.r}</strong> เรียบร้อยแล้ว!</div>
+          <div class="p-2.5 rounded-xl bg-yellow-100/80 border border-yellow-300 text-amber-950 text-[11px]">
+            ✨ แตกกิ่งครบทั้ง <strong>5 ระดับชั้น (Level 5 ➔ Level 1)</strong> และเชื่อมโยงตัวยาอื่นที่ออกฤทธิ์ในระบบอวัยวะเดียวกัน (${rootLetter}) เรียบร้อยแล้ว!
+          </div>
         `;
-
-        // Level 4 Parent Node
-        const pId = `atc_l4_${info.p}`;
-        if (!gNodes.get(pId)) {
-          gNodes.add({ id: pId, label: `กลุ่มยา (${info.p}):\\n${info.n}`, shape: "dot", size: 22, color: { background: "#27272A", border: "#FACC15" }, font: { color: "#FFFFFF", size: 11 }, levelInfo: info, nodeType: "atc_group" });
-          gEdges.add({ from: nId, to: pId, label: "subclass_of", font: { size: 9, color: "#71717A" } });
-        }
-
-        // Level 1 Root Organ Node (Terminal Root!)
-        const rId = `atc_l1_${info.r}`;
-        if (!gNodes.get(rId)) {
-          gNodes.add({ id: rId, label: `ระบบอวัยวะ WHO (${info.r}):\\n${info.rn}`, shape: "dot", size: 26, color: { background: "#FACC15", border: "#18181B" }, font: { color: "#18181B", size: 12, bold: true }, nodeType: "atc_root" });
-          gEdges.add({ from: pId, to: rId, label: "organ_system", font: { size: 9, color: "#CA8A04" } });
-        }
+        updateGraphCounter();
       }
     }
 
-    function searchGraph() {
-      const q = document.getElementById("graphSearchInput").value.trim().toLowerCase();
-      if (!q) { initGraph("all9"); return; }
-      const found = fallbackSubstances.find(d => d.preferredName.toLowerCase().includes(q) || d.thaiName.toLowerCase().includes(q) || (d.atcCode && d.atcCode.toLowerCase().includes(q)));
-      if (found) { initGraph(found.preferredName); }
-      else { showToast(`ไม่พบโหนดสำหรับ "${q}"`); }
+    function updateInspectorForSubstance(item) {
+      if (!item) return;
+      document.getElementById("inspectorNodeType").textContent = `UNII: ${item.unii}`;
+      const firstCode = (item.atcCode || "").split(',')[0].trim();
+      const levels = parseAtc5Levels(firstCode, item.preferredName);
+
+      document.getElementById("inspectorContent").innerHTML = `
+        <div class="p-3 rounded-2xl bg-white border border-zinc-200 space-y-1.5">
+          <div class="font-bold text-sm text-zinc-900">${item.thaiName}</div>
+          <div class="font-mono text-xs text-amber-700 font-bold">${item.preferredName}</div>
+          <p class="text-zinc-600 text-xs">${item.thaiDesc}</p>
+        </div>
+        ${levels.length ? `
+          <div class="p-3 rounded-2xl bg-zinc-900 text-white space-y-1.5">
+            <div class="text-[11px] font-mono text-yellow-400 font-bold">โครงสร้าง 5-Level WHO ATC:</div>
+            ${levels.map(l => `
+              <div class="flex items-start gap-1.5 text-[11px] font-mono">
+                <span class="px-1.5 rounded bg-zinc-800 text-yellow-300 font-bold shrink-0">L${l.level}</span>
+                <span class="font-bold text-amber-200 shrink-0">${l.code}:</span>
+                <span class="text-zinc-300 font-sans">${l.name}</span>
+              </div>
+            `).join("")}
+          </div>
+        ` : ''}
+      `;
     }
 
-    function fitGraph() { if (graphNet) graphNet.fit({ animation: { duration: 400 } }); }
-    function resetGraph() { initGraph("all9"); }
+    function expandFullAtcChainOnBoard() {
+      const item = fallbackSubstances.find(d => d.unii === selectedSubstanceUnii) || fallbackSubstances[0];
+      spawnSubstanceWithAtcLevels(item, 5);
+      fitGraph();
+      showToast("กางโครงข่าย ATC ครบทั้ง 5 Level แล้ว!");
+    }
+
+    async function searchGraph() {
+      const q = document.getElementById("graphSearchInput").value.trim();
+      if (!q) { initGraph("AMOXICILLIN"); return; }
+      const qLow = q.toLowerCase();
+
+      // Check local first
+      let found = currentResults.find(d => d.preferredName.toLowerCase().includes(qLow) || d.thaiName.toLowerCase().includes(qLow) || (d.atcCode && d.atcCode.toLowerCase().includes(qLow))) ||
+                  fallbackSubstances.find(d => d.preferredName.toLowerCase().includes(qLow) || d.thaiName.toLowerCase().includes(qLow) || (d.atcCode && d.atcCode.toLowerCase().includes(qLow)));
+
+      // Or query Supabase live so ANY drug in the 171,912 database gets a full 5-Level ATC graph!
+      if (!found && supabaseClient) {
+        try {
+          const { data } = await supabaseClient.rpc('search_thai_unii', {
+            search_term: q, filter_category: 'all', only_legacy_flag: false, max_results: 1
+          });
+          if (data && data.length) {
+            const r = data[0];
+            found = {
+              unii: r.unii, preferredName: r.preferred_name, thaiName: r.thai_name || r.preferred_name,
+              cas: r.cas_rn || "N/A", formula: r.molecular_formula || "-", pubchem: r.pubchem_cid || "-",
+              substanceType: r.substance_type || "chemical", typeLabelThai: r.type_label_th || "สารเคมีเดี่ยว",
+              thaiDesc: r.thai_desc || "สารสำคัญในฐานข้อมูล US FDA", cosingFunction: r.cosing_function || null,
+              atcCode: r.atc_code || null, atcName: r.atc_name || null
+            };
+          }
+        } catch (e) {}
+      }
+
+      if (found) {
+        gNodes.clear(); gEdges.clear();
+        spawnSubstanceWithAtcLevels(found, 5);
+        fitGraph();
+      } else {
+        showToast(`ไม่พบข้อมูลสำหรับ "${q}"`);
+      }
+    }
+
+    function fitGraph() { if (graphNet) graphNet.fit({ animation: { duration: 450 } }); }
     function openActiveSubstanceModal() { if (selectedSubstanceUnii) openModal(selectedSubstanceUnii); }
 
     // Init
