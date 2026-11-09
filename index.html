@@ -6,11 +6,11 @@
   <title>ThaiUNII — คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร</title>
   
   <!-- Social Share Preview (Open Graph) -->
-  <meta name="description" content="คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร 171,912 รายการ (US FDA, WHO ATC 5-Level, EU CosIng, NIH PubChem) พร้อมระบบโครงข่าย Ontology Graph">
+  <meta name="description" content="คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพร 171,912 รายการ (US FDA, WHO ATC 5-Level, EU CosIng, NIH PubChem, openFDA) พร้อมระบบโครงข่าย Ontology Graph">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pharmacistlife.github.io/thai-unii/">
   <meta property="og:title" content="ThaiUNII — คลังข้อมูลสารสำคัญ ยา เคมีภัณฑ์ และสมุนไพรเชื่อมโยงฐานข้อมูลสากล">
-  <meta property="og:description" content="สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII เลข CAS และรหัสกลุ่มยา WHO ATC 5 ระดับ พร้อมแผนผังโครงข่ายความรู้">
+  <meta property="og:description" content="สืบค้นรวดเร็วด้วยชื่อภาษาไทย ชื่อสามัญยา รหัส UNII เลข CAS ข้อมูลคลินิก openFDA และรหัสกลุ่มยา WHO ATC 5 ระดับ พร้อมแผนผังโครงข่ายความรู้">
   <meta property="og:image" content="https://pharmacistlife.github.io/thai-unii/og-cover.jpg">
 
   <!-- Tailwind & Fonts -->
@@ -81,13 +81,15 @@
           <a href="https://ec.europa.eu/growth/tools-databases/cosing/" target="_blank" class="font-semibold text-blue-800 bg-blue-100/90 px-2 py-0.5 rounded border border-blue-300">EU CosIng</a>
           <span>•</span>
           <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank" class="font-semibold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300">NIH PubChem</a>
+          <span>•</span>
+          <a href="https://open.fda.gov/apis/drug/label/" target="_blank" class="font-semibold text-cyan-800 bg-cyan-100/90 px-2 py-0.5 rounded border border-cyan-300">openFDA Label</a>
         </div>
 
         <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900">
           สืบค้นข้อมูลสารสำคัญ <span class="underline decoration-yellow-400 decoration-4 underline-offset-4">ยา เคมีภัณฑ์</span> และสมุนไพร
         </h1>
         <p class="text-xs sm:text-sm text-zinc-500 max-w-2xl mx-auto">
-          เชื่อมโยงโครงสร้างโมเลกุล กลุ่มยา WHO ATC 5 ระดับ รหัสสากล และหน้าที่ของสารจากฐานข้อมูลทางการไว้ในที่เดียว
+          เชื่อมโยงโครงสร้างโมเลกุล กลุ่มยา WHO ATC 5 ระดับ ข้อมูลฉลากยาคลินิก openFDA และหน้าที่ของสารไว้ในที่เดียว
         </p>
 
         <!-- Search Bar -->
@@ -207,9 +209,9 @@
 
   </main>
 
-  <!-- DETAIL MODAL -->
+  <!-- ==================== DETAIL MODAL (WITH PUBCHEM + OPENFDA + 5-LEVEL ATC) ==================== -->
   <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm" onclick="closeModalOnBackdrop(event)">
-    <div class="glass-panel bg-white/95 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-2xl border border-white space-y-4">
+    <div class="glass-panel bg-white/95 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-7 shadow-2xl border border-white space-y-4">
       <div class="flex items-start justify-between gap-3 border-b border-zinc-200/80 pb-3">
         <div>
           <div class="flex flex-wrap items-center gap-1.5">
@@ -223,25 +225,94 @@
         <button onclick="closeModal()" class="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-600">✕</button>
       </div>
 
-      <!-- Pharmacology & 2D Structure -->
-      <div class="p-4 rounded-2xl bg-yellow-50/80 border border-yellow-200/80 flex flex-col sm:flex-row gap-4 items-start">
-        <div class="flex-1 space-y-1.5 text-xs">
-          <div class="font-bold text-amber-900">คำอธิบายและข้อมูลเภสัชวิทยา (PubChem API)</div>
-          <p id="modalDesc" class="text-zinc-700 leading-relaxed"></p>
+      <!-- 1. Pharmacology & Live PubChem Box -->
+      <div class="p-4 rounded-2xl bg-yellow-50/80 border border-yellow-200/80 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+            <span>คำอธิบายและข้อมูลเภสัชวิทยา (Thai & Live NIH PubChem API)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="pubchemLiveBadge" class="hidden text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">ดึงสดจาก NIH PubChem</span>
+            <button type="button" id="translatePubchemBtn" onclick="translatePubchemToThai()" class="hidden px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-[11px] font-medium transition-all">
+              แปลเป็นภาษาไทย 🇹🇭
+            </button>
+          </div>
         </div>
-        <div id="modalStructWrap" class="hidden shrink-0 w-24 h-24 p-1.5 rounded-xl bg-white border border-zinc-200 shadow-2xs text-center">
-          <img id="modalStructImg" src="" alt="2D Structure" class="w-full h-full object-contain" />
-          <span class="text-[9px] font-mono text-zinc-400 block">2D Structure</span>
+
+        <div class="flex flex-col sm:flex-row gap-4 items-start">
+          <div class="flex-1 space-y-2 text-xs">
+            <p id="modalDesc" class="text-zinc-800 leading-relaxed font-medium"></p>
+            <div id="pubchemExtraBox" class="hidden pt-2 border-t border-yellow-200/80 space-y-1">
+              <div class="text-[10px] font-mono text-amber-700" id="pubchemSourceLabel">Source: NIH PubChem PUG REST API</div>
+              <p id="pubchemDescText" class="text-zinc-700 leading-relaxed"></p>
+            </div>
+          </div>
+          <div id="modalStructWrap" class="hidden shrink-0 w-28 h-28 p-1.5 rounded-xl bg-white border border-zinc-200 shadow-2xs text-center mx-auto sm:mx-0">
+            <img id="modalStructImg" src="" alt="2D Structure" class="w-full h-full object-contain" />
+            <span class="text-[9px] font-mono text-zinc-400 block">2D Structure</span>
+          </div>
         </div>
       </div>
 
-      <!-- 5-Level ATC Hierarchy Breakdown inside Modal -->
+      <!-- 2. openFDA Clinical Drug Label & Package Insert Box (RESTORED!) -->
+      <div id="openFdaBox" class="hidden p-4 rounded-2xl bg-slate-50/95 border border-slate-200/90 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-slate-900">ข้อมูลคลินิกจากเอกสารกำกับยา (openFDA Drug Label)</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-cyan-100 text-cyan-800 border border-cyan-200 font-semibold">Official SPL</span>
+          </div>
+          <button type="button" id="translateFdaBtn" onclick="translateOpenFdaToThai()" class="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-yellow-300 text-[11px] font-medium transition-all shadow-2xs">
+            แปลข้อมูลคลินิกเป็นไทย 🇹🇭
+          </button>
+        </div>
+
+        <div class="space-y-2.5 text-xs leading-relaxed text-zinc-700">
+          <!-- Indications -->
+          <div id="fdaIndicationsWrap" class="hidden space-y-1">
+            <div class="font-semibold text-zinc-900 flex items-center gap-1.5 text-[11px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>ข้อบ่งใช้ทางการแพทย์ที่ได้รับการรับรอง (Indications & Usage)</span>
+            </div>
+            <p id="fdaIndicationsText" class="p-2.5 rounded-xl bg-white border border-slate-200 text-zinc-800 text-[11px] sm:text-xs"></p>
+          </div>
+
+          <!-- Warnings / Boxed Warnings -->
+          <div id="fdaWarningsWrap" class="hidden space-y-1">
+            <div class="font-semibold text-amber-900 flex items-center gap-1.5 text-[11px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              <span>คำเตือนและข้อควรระวังสำคัญ (Warnings & Precautions)</span>
+            </div>
+            <p id="fdaWarningsText" class="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-950 text-[11px] sm:text-xs"></p>
+          </div>
+
+          <!-- Adverse Reactions -->
+          <div id="fdaReactionsWrap" class="hidden space-y-1">
+            <div class="font-semibold text-red-900 flex items-center gap-1.5 text-[11px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+              <span>อาการไม่พึงประสงค์ / ผลข้างเคียง (Adverse Reactions)</span>
+            </div>
+            <p id="fdaReactionsText" class="p-2.5 rounded-xl bg-red-50/80 border border-red-200 text-red-950 text-[11px] sm:text-xs"></p>
+          </div>
+
+          <!-- Contraindications -->
+          <div id="fdaContraWrap" class="hidden space-y-1">
+            <div class="font-semibold text-rose-900 flex items-center gap-1.5 text-[11px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>ข้อห้ามใช้ (Contraindications)</span>
+            </div>
+            <p id="fdaContraText" class="p-2.5 rounded-xl bg-rose-50/80 border border-rose-200 text-rose-950 text-[11px] sm:text-xs"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 5-Level ATC Hierarchy Breakdown inside Modal -->
       <div id="modalAtcBreakdownWrap" class="hidden p-3.5 rounded-2xl bg-zinc-900 text-zinc-100 space-y-2 text-xs">
         <div class="text-yellow-400 font-semibold font-mono text-[11px]">ลำดับชั้นมาตรฐานองค์การอนามัยโลก (WHO 5-Level ATC Hierarchy)</div>
         <div id="modalAtcBreakdownList" class="space-y-1 font-mono text-[11px] text-zinc-300"></div>
       </div>
 
-      <!-- Identifiers Grid -->
+      <!-- 4. Identifiers Grid -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
         <div class="p-2.5 rounded-xl bg-white border border-zinc-200/80">
           <span class="text-[10px] font-mono uppercase text-zinc-400 block">CAS RN</span>
@@ -263,8 +334,9 @@
           <button onclick="copyCurrentUnii()" class="px-3.5 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-500 font-bold shadow-2xs">คัดลอกรหัส UNII</button>
           <button onclick="viewCurrentInGraph()" class="px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-yellow-300 font-semibold">🕸️ ดูในกราฟ 5-Level</button>
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex flex-wrap items-center gap-1.5">
           <a id="modalAtcLink" href="#" target="_blank" class="hidden px-2.5 py-1.5 rounded-lg border border-purple-300 text-purple-700 hover:bg-purple-50">WHO ATC ↗</a>
+          <a id="modalOpenFdaLink" href="https://open.fda.gov/apis/drug/label/" target="_blank" class="px-2.5 py-1.5 rounded-lg border border-cyan-300 text-cyan-800 hover:bg-cyan-50">openFDA Label ↗</a>
           <a id="modalFdaLink" href="https://precision.fda.gov/uniisearch" target="_blank" class="px-2.5 py-1.5 rounded-lg border border-zinc-300 text-zinc-700 hover:bg-zinc-50">FDA GSRS ↗</a>
         </div>
       </div>
@@ -278,6 +350,7 @@
 
   <!-- SCRIPT LOGIC -->
   <script>
+    // ใส่ URL และ Publishable Key (anonKey) ของ Supabase ที่นี่
     const SUPABASE_CONFIG = { url: 'https://aiunnmkghvxfkubrhnsy.supabase.co', anonKey: 'sb_publishable_jnM92sIwkE4Of4k_g8MFew_isgnowxw' };
     let supabaseClient = (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) ? window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey) : null;
 
@@ -361,59 +434,27 @@
       "H02AB": "Glucocorticoids (กลูโคคอร์ติคอยด์)"
     };
 
-    // Parse any 5- or 7-character ATC code into its complete 5-Level Hierarchy Array!
     function parseAtc5Levels(rawCode, drugName) {
       const code = (rawCode || "").trim().toUpperCase();
       if (!code || code.length < 1) return [];
       const levels = [];
-
-      // Level 1 (1 letter)
       const c1 = code.slice(0, 1);
-      levels.push({
-        level: 1,
-        code: c1,
-        name: ATC_L1_MAIN_GROUPS[c1] || `Main Anatomical Group ${c1}`
-      });
-
-      // Level 2 (3 chars: e.g. J01)
+      levels.push({ level: 1, code: c1, name: ATC_L1_MAIN_GROUPS[c1] || `Main Anatomical Group ${c1}` });
       if (code.length >= 3) {
         const c2 = code.slice(0, 3);
-        levels.push({
-          level: 2,
-          code: c2,
-          name: ATC_SUBLEVEL_NAMES[c2] || `Therapeutic Subgroup ${c2}`
-        });
+        levels.push({ level: 2, code: c2, name: ATC_SUBLEVEL_NAMES[c2] || `Therapeutic Subgroup ${c2}` });
       }
-
-      // Level 3 (4 chars: e.g. J01C)
       if (code.length >= 4) {
         const c3 = code.slice(0, 4);
-        levels.push({
-          level: 3,
-          code: c3,
-          name: ATC_SUBLEVEL_NAMES[c3] || `Pharmacological Subgroup ${c3}`
-        });
+        levels.push({ level: 3, code: c3, name: ATC_SUBLEVEL_NAMES[c3] || `Pharmacological Subgroup ${c3}` });
       }
-
-      // Level 4 (5 chars: e.g. J01CA)
       if (code.length >= 5) {
         const c4 = code.slice(0, 5);
-        levels.push({
-          level: 4,
-          code: c4,
-          name: ATC_SUBLEVEL_NAMES[c4] || `Chemical Subgroup ${c4}`
-        });
+        levels.push({ level: 4, code: c4, name: ATC_SUBLEVEL_NAMES[c4] || `Chemical Subgroup ${c4}` });
       }
-
-      // Level 5 (7 chars: e.g. J01CA04)
       if (code.length === 7) {
-        levels.push({
-          level: 5,
-          code: code,
-          name: drugName || `Chemical Substance ${code}`
-        });
+        levels.push({ level: 5, code: code, name: drugName || `Chemical Substance ${code}` });
       }
-
       return levels;
     }
 
@@ -431,13 +472,14 @@
     ];
 
     let currentCategory = "all", searchQuery = "", currentResults = [...fallbackSubstances], activeItem = null;
+    const pubchemCache = {}, openFdaCache = {};
+    let currentPubchemEnglishText = "";
 
     function switchPage(page) {
       document.getElementById("pageSearch").classList.toggle("hidden", page !== "search");
       document.getElementById("pageGraph").classList.toggle("hidden", page !== "graph");
       document.getElementById("btnNavSearch").className = page === "search" ? "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-white text-zinc-900 shadow-xs transition-all" : "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-all";
       document.getElementById("btnNavGraph").className = page === "graph" ? "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-yellow-400 text-zinc-900 shadow-xs transition-all" : "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-all";
-      // Default to AMOXICILLIN with 4 connected levels when opening the Graph page!
       if (page === "graph") {
         setTimeout(() => {
           if (!graphNet) initGraph("AMOXICILLIN");
@@ -494,7 +536,11 @@
               pubchem: r.pubchem_cid || "-", substanceType: r.substance_type || "chemical",
               typeLabelThai: r.type_label_th || "สารเคมีเดี่ยว", inchikey: r.inchikey || "-",
               thaiDesc: r.thai_desc || "สารสำคัญในฐานข้อมูล US FDA", cosingFunction: r.cosing_function || null,
-              atcCode: r.atc_code || null, atcName: r.atc_name || null
+              atcCode: r.atc_code || null, atcName: r.atc_name || null,
+              fdaIndications: r.fda_indications || null,
+              fdaWarnings: r.fda_warnings || null,
+              fdaReactions: r.fda_reactions || null,
+              fdaContra: r.fda_contra || null
             }));
             renderCards(); return;
           }
@@ -549,7 +595,187 @@
       }).join("");
     }
 
-    // MODAL
+    // =========================================================================
+    // LIVE PUBCHEM & OPENFDA DRUG LABEL FETCHERS + THAI TRANSLATORS
+    // =========================================================================
+    async function fetchPubchemEnrichment(item) {
+      const extraBox = document.getElementById("pubchemExtraBox");
+      const badgeEl = document.getElementById("pubchemLiveBadge");
+      const transBtn = document.getElementById("translatePubchemBtn");
+      extraBox.classList.add("hidden");
+      badgeEl.classList.add("hidden");
+      transBtn.classList.add("hidden");
+      currentPubchemEnglishText = "";
+
+      const cid = item.pubchem ? (item.pubchem.match(/(\d{2,12})/) || [])[1] : null;
+      const queryTarget = cid ? `cid/${cid}` : `name/${encodeURIComponent(item.preferredName)}`;
+
+      if (pubchemCache[item.unii]) {
+        applyPubchemData(pubchemCache[item.unii]);
+        return;
+      }
+
+      try {
+        const resp = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/${queryTarget}/description/JSON`);
+        if (!resp.ok) return;
+        const json = await resp.json();
+        const infoList = json?.InformationList?.Information || [];
+        let bestDesc = "", bestSource = "NIH PubChem";
+        for (const info of infoList) {
+          if (info.Description && info.Description.length > bestDesc.length) {
+            bestDesc = info.Description;
+            bestSource = info.DescriptionSourceName || "NIH PubChem";
+          }
+        }
+        if (bestDesc) {
+          const res = { description: bestDesc, source: bestSource };
+          pubchemCache[item.unii] = res;
+          applyPubchemData(res);
+        }
+      } catch (e) {}
+    }
+
+    function applyPubchemData(data) {
+      if (!data.description) return;
+      currentPubchemEnglishText = data.description;
+      document.getElementById("pubchemLiveBadge").classList.remove("hidden");
+      const transBtn = document.getElementById("translatePubchemBtn");
+      transBtn.classList.remove("hidden");
+      transBtn.textContent = "แปลเป็นภาษาไทย 🇹🇭";
+      document.getElementById("pubchemSourceLabel").textContent = `แหล่งอ้างอิง: ${data.source} (PubChem API)`;
+      document.getElementById("pubchemDescText").textContent = data.description;
+      document.getElementById("pubchemExtraBox").classList.remove("hidden");
+    }
+
+    async function translatePubchemToThai() {
+      if (!currentPubchemEnglishText) return;
+      const transBtn = document.getElementById("translatePubchemBtn");
+      transBtn.textContent = "กำลังแปล...";
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=th&dt=t&q=${encodeURIComponent(currentPubchemEnglishText)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById("pubchemDescText").textContent = data[0].map(p => p[0]).join("");
+        transBtn.textContent = "แปลเป็นไทยแล้ว ✓";
+      } catch (e) {
+        transBtn.textContent = "ไม่สามารถแปลได้";
+      }
+    }
+
+    // openFDA Drug Label Fetcher (Supabase Backup + Live API)
+    async function fetchOpenFdaDrugLabel(item) {
+      const fdaBox = document.getElementById("openFdaBox");
+      document.getElementById("fdaIndicationsWrap").classList.add("hidden");
+      document.getElementById("fdaWarningsWrap").classList.add("hidden");
+      document.getElementById("fdaReactionsWrap").classList.add("hidden");
+      document.getElementById("fdaContraWrap").classList.add("hidden");
+
+      // 1. If already present from Supabase backup, show immediately!
+      if (item.fdaIndications || item.fdaWarnings || item.fdaReactions || item.fdaContra) {
+        applyOpenFdaData({
+          indications: item.fdaIndications,
+          warnings: item.fdaWarnings,
+          reactions: item.fdaReactions,
+          contra: item.fdaContra
+        });
+      } else {
+        fdaBox.classList.add("hidden");
+      }
+
+      if (openFdaCache[item.unii]) {
+        applyOpenFdaData(openFdaCache[item.unii]);
+        return;
+      }
+
+      // 2. Live query from openFDA API
+      try {
+        let url = `https://api.fda.gov/drug/label.json?search=openfda.unii:"${encodeURIComponent(item.unii)}"&limit=1`;
+        let resp = await fetch(url);
+        if (!resp.ok) {
+          const cleanName = item.preferredName.replace(/ (WHOLE|SALT|HYDROCHLORIDE|SODIUM|POTASSIUM|SULFATE)$/i, '').trim();
+          url = `https://api.fda.gov/drug/label.json?search=openfda.substance_name:"${encodeURIComponent(cleanName)}"&limit=1`;
+          resp = await fetch(url);
+        }
+        if (!resp.ok) return;
+
+        const data = await resp.json();
+        const label = data?.results?.[0];
+        if (!label) return;
+
+        function cleanSnippet(arr) {
+          if (!arr || !arr.length) return "";
+          const text = arr.join(" ").replace(/\s+/g, ' ').trim();
+          return text.length > 480 ? text.slice(0, 480) + "..." : text;
+        }
+
+        const res = {
+          indications: cleanSnippet(label.indications_and_usage),
+          warnings: cleanSnippet(label.boxed_warning || label.warnings_and_cautions || label.warnings),
+          reactions: cleanSnippet(label.adverse_reactions),
+          contra: cleanSnippet(label.contraindications)
+        };
+
+        if (res.indications || res.warnings || res.reactions || res.contra) {
+          openFdaCache[item.unii] = res;
+          applyOpenFdaData(res);
+        }
+      } catch (e) {}
+    }
+
+    function applyOpenFdaData(data) {
+      let hasAny = false;
+      if (data.indications) {
+        document.getElementById("fdaIndicationsText").textContent = data.indications;
+        document.getElementById("fdaIndicationsWrap").classList.remove("hidden");
+        hasAny = true;
+      }
+      if (data.warnings) {
+        document.getElementById("fdaWarningsText").textContent = data.warnings;
+        document.getElementById("fdaWarningsWrap").classList.remove("hidden");
+        hasAny = true;
+      }
+      if (data.reactions) {
+        document.getElementById("fdaReactionsText").textContent = data.reactions;
+        document.getElementById("fdaReactionsWrap").classList.remove("hidden");
+        hasAny = true;
+      }
+      if (data.contra) {
+        document.getElementById("fdaContraText").textContent = data.contra;
+        document.getElementById("fdaContraWrap").classList.remove("hidden");
+        hasAny = true;
+      }
+      if (hasAny) {
+        document.getElementById("openFdaBox").classList.remove("hidden");
+        document.getElementById("translateFdaBtn").textContent = "แปลข้อมูลคลินิกเป็นไทย 🇹🇭";
+      }
+    }
+
+    async function translateOpenFdaToThai() {
+      const transBtn = document.getElementById("translateFdaBtn");
+      transBtn.textContent = "กำลังแปลภาษาไทย...";
+      const targets = [
+        document.getElementById("fdaIndicationsText"),
+        document.getElementById("fdaWarningsText"),
+        document.getElementById("fdaReactionsText"),
+        document.getElementById("fdaContraText")
+      ];
+      try {
+        for (const el of targets) {
+          if (el && el.textContent.trim()) {
+            const raw = el.textContent.trim();
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=th&dt=t&q=${encodeURIComponent(raw)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            el.textContent = data[0].map(part => part[0]).join("");
+          }
+        }
+        transBtn.textContent = "แปลเป็นไทยแล้ว ✓";
+      } catch (e) {
+        transBtn.textContent = "ไม่สามารถแปลได้";
+      }
+    }
+
+    // OPEN MODAL
     function openModal(unii) {
       activeItem = currentResults.find(d => d.unii === unii) || fallbackSubstances.find(d => d.unii === unii);
       if (!activeItem) return;
@@ -573,7 +799,6 @@
         atcLink.href = `https://atcddd.fhi.no/atc_ddd_index/?code=${encodeURIComponent(firstCode)}`;
         atcLink.classList.remove("hidden");
 
-        // Show 5-Level Breakdown in Modal
         const levels = parseAtc5Levels(firstCode, activeItem.preferredName);
         atcBreakdownList.innerHTML = levels.map(lv => `
           <div class="flex items-center gap-2">
@@ -606,6 +831,10 @@
 
       document.getElementById("detailModal").classList.remove("hidden");
       document.getElementById("detailModal").classList.add("flex");
+
+      // Fetch live PubChem and openFDA Clinical Labels!
+      fetchPubchemEnrichment(activeItem);
+      fetchOpenFdaDrugLabel(activeItem);
     }
 
     function closeModal() {
@@ -626,19 +855,13 @@
     // =========================================================================
     let graphNet = null, gNodes = null, gEdges = null, selectedSubstanceUnii = "804826J2HU";
 
-    function addNodeSafe(n) {
-      if (!gNodes.get(n.id)) gNodes.add(n);
-    }
+    function addNodeSafe(n) { if (!gNodes.get(n.id)) gNodes.add(n); }
     function addEdgeSafe(fromId, toId, labelText) {
       const eId = `${fromId}__${toId}`;
       const revId = `${toId}__${fromId}`;
       if (!gEdges.get(eId) && !gEdges.get(revId)) {
         gEdges.add({
-          id: eId,
-          from: fromId,
-          to: toId,
-          label: labelText || "",
-          arrows: "to",
+          id: eId, from: fromId, to: toId, label: labelText || "", arrows: "to",
           font: { size: 9, color: "#71717A", background: "rgba(255,255,255,0.85)", strokeWidth: 0 }
         });
       }
@@ -646,20 +869,17 @@
 
     function updateGraphCounter() {
       const el = document.getElementById("graphStatsBadge");
-      if (el && gNodes && gEdges) {
-        el.textContent = `Nodes: ${gNodes.length} | Edges: ${gEdges.length}`;
-      }
+      if (el && gNodes && gEdges) el.textContent = `Nodes: ${gNodes.length} | Edges: ${gEdges.length}`;
     }
 
-    // Style helper for each ATC Level (1 to 5) in Yellow-Charcoal palette
     function createAtcLevelNodeObj(lvObj, drugItem) {
       const lv = lvObj.level;
       const styles = {
-        5: { size: 22, bg: "#FDE047", border: "#CA8A04", fontColor: "#18181B" }, // L5 Substance
-        4: { size: 24, bg: "#FEF08A", border: "#D97706", fontColor: "#18181B" }, // L4 Chemical Subgroup
-        3: { size: 25, bg: "#3F3F46", border: "#FACC15", fontColor: "#18181B" }, // L3 Pharmacological
-        2: { size: 27, bg: "#27272A", border: "#FACC15", fontColor: "#18181B" }, // L2 Therapeutic
-        1: { size: 32, bg: "#18181B", border: "#FACC15", fontColor: "#18181B" }  // L1 Main Organ Group
+        5: { size: 22, bg: "#FDE047", border: "#CA8A04" },
+        4: { size: 24, bg: "#FEF08A", border: "#D97706" },
+        3: { size: 25, bg: "#3F3F46", border: "#FACC15" },
+        2: { size: 27, bg: "#27272A", border: "#FACC15" },
+        1: { size: 32, bg: "#18181B", border: "#FACC15" }
       };
       const st = styles[lv] || styles[4];
       const shortName = lvObj.name.length > 34 ? lvObj.name.slice(0, 34) + "..." : lvObj.name;
@@ -669,88 +889,56 @@
         label: `[L${lv}] ${lvObj.code}\n${shortName}`,
         shape: "dot",
         size: st.size,
-        color: {
-          background: st.bg,
-          border: st.border,
-          highlight: { background: "#FACC15", border: "#18181B" }
-        },
-        font: {
-          size: 11,
-          color: "#18181B",
-          face: "IBM Plex Sans Thai",
-          background: "rgba(255, 255, 255, 0.9)",
-          strokeWidth: 3,
-          strokeColor: "#FFFFFF"
-        },
-        atcLevel: lv,
-        atcCode: lvObj.code,
-        atcFullName: lvObj.name,
-        sourceItem: drugItem,
-        nodeType: "atc_level"
+        color: { background: st.bg, border: st.border, highlight: { background: "#FACC15", border: "#18181B" } },
+        font: { size: 11, color: "#18181B", face: "IBM Plex Sans Thai", background: "rgba(255, 255, 255, 0.92)", strokeWidth: 3, strokeColor: "#FFFFFF" },
+        atcLevel: lv, atcCode: lvObj.code, atcFullName: lvObj.name, sourceItem: drugItem, nodeType: "atc_level"
       };
     }
 
-    // Build and spawn the ATC hierarchy up to `maxDepth` hops (e.g. 4 hops for initial Amoxicillin view, or all 5 levels)
     function spawnSubstanceWithAtcLevels(item, maxHops = 4) {
       const sId = `sub_${item.unii}`;
       selectedSubstanceUnii = item.unii;
 
-      // Central Substance Node (Golden Yellow)
       addNodeSafe({
         id: sId,
         label: `${item.preferredName}\n(UNII: ${item.unii})`,
-        shape: "dot",
-        size: 32,
+        shape: "dot", size: 32,
         color: { background: "#FACC15", border: "#18181B", highlight: { background: "#FDE047", border: "#CA8A04" } },
         font: { size: 13, color: "#18181B", bold: true, background: "rgba(254, 249, 195, 0.95)", strokeWidth: 4, strokeColor: "#FFFFFF" },
-        payload: item,
-        nodeType: "substance"
+        payload: item, nodeType: "substance"
       });
 
-      // Spawn CAS RN & Formula Node (Hop 1)
       if (item.cas && item.cas !== "N/A") {
         const casId = `cas_${item.unii}`;
         addNodeSafe({
-          id: casId,
-          label: `CAS: ${item.cas.split('/')[0].trim()}\nสูตร: ${item.formula}`,
-          shape: "dot",
-          size: 19,
-          color: { background: "#E4E4E7", border: "#71717A" },
+          id: casId, label: `CAS: ${item.cas.split('/')[0].trim()}\nสูตร: ${item.formula}`,
+          shape: "dot", size: 19, color: { background: "#E4E4E7", border: "#71717A" },
           font: { size: 10, color: "#27272A", face: "JetBrains Mono", background: "rgba(255,255,255,0.88)" },
-          nodeType: "cas",
-          payload: item
+          nodeType: "cas", payload: item
         });
         addEdgeSafe(sId, casId, "chemical_id");
       }
 
-      // Spawn CosIng Function Node if available
       if (item.cosingFunction) {
         const cosId = `cos_${item.unii}`;
         addNodeSafe({
-          id: cosId,
-          label: `EU CosIng:\n${item.cosingFunction.slice(0, 28)}...`,
-          shape: "dot",
-          size: 20,
-          color: { background: "#DBEAFE", border: "#2563EB" },
+          id: cosId, label: `EU CosIng:\n${item.cosingFunction.slice(0, 28)}...`,
+          shape: "dot", size: 20, color: { background: "#DBEAFE", border: "#2563EB" },
           font: { size: 10, color: "#1E3A8A", background: "rgba(255,255,255,0.88)" },
-          nodeType: "cosing",
-          payload: item
+          nodeType: "cosing", payload: item
         });
         addEdgeSafe(sId, cosId, "cosmetic_role");
       }
 
-      // Spawn Multi-ATC Chains (from Level 5 -> Level 4 -> Level 3 -> Level 2 -> Level 1)
       if (item.atcCode) {
         const codes = item.atcCode.split(',').map(s => s.trim()).filter(Boolean);
         codes.forEach(code => {
-          const levels = parseAtc5Levels(code, item.preferredName).reverse(); // [L5, L4, L3, L2, L1]
+          const levels = parseAtc5Levels(code, item.preferredName).reverse();
           let prevNodeId = sId;
-
           levels.slice(0, maxHops).forEach((lvObj, idx) => {
             const nodeObj = createAtcLevelNodeObj(lvObj, item);
             addNodeSafe(nodeObj);
-            const edgeLabel = idx === 0 ? "has_atc" : `level_${lvObj.level}`;
-            addEdgeSafe(prevNodeId, nodeObj.id, edgeLabel);
+            addEdgeSafe(prevNodeId, nodeObj.id, idx === 0 ? "has_atc" : `level_${lvObj.level}`);
             prevNodeId = nodeObj.id;
           });
         });
@@ -762,30 +950,22 @@
 
     function initGraph(seed) {
       if (!window.vis) return;
-      gNodes = new vis.DataSet([]);
-      gEdges = new vis.DataSet([]);
+      gNodes = new vis.DataSet([]); gEdges = new vis.DataSet([]);
       const container = document.getElementById("fullOntologyCanvas");
 
       if (seed === "all9") {
         addNodeSafe({
-          id: "hub",
-          label: "ThaiUNII Hub\n(คลังข้อมูลสากล)",
-          shape: "dot",
-          size: 34,
+          id: "hub", label: "ThaiUNII Hub\n(คลังข้อมูลสากล)", shape: "dot", size: 34,
           color: { background: "#18181B", border: "#FACC15" },
           font: { size: 13, bold: true, color: "#18181B", background: "rgba(250,204,21,0.9)" }
         });
         fallbackSubstances.forEach(item => {
           const sId = `sub_${item.unii}`;
           addNodeSafe({
-            id: sId,
-            label: `${item.preferredName}\n(${item.thaiName.split('(')[0].trim()})`,
-            shape: "dot",
-            size: 23,
-            color: { background: "#FACC15", border: "#CA8A04" },
+            id: sId, label: `${item.preferredName}\n(${item.thaiName.split('(')[0].trim()})`,
+            shape: "dot", size: 23, color: { background: "#FACC15", border: "#CA8A04" },
             font: { size: 11, color: "#18181B", background: "rgba(255,255,255,0.9)" },
-            payload: item,
-            nodeType: "substance"
+            payload: item, nodeType: "substance"
           });
           addEdgeSafe("hub", sId, "");
         });
@@ -794,29 +974,15 @@
         const item = currentResults.find(d => d.preferredName === seed || d.unii === seed) ||
                      fallbackSubstances.find(d => d.preferredName === seed || d.unii === seed) ||
                      fallbackSubstances[0];
-        // Show 4 connected ATC levels initially as requested (and clicking expands the 5th root level!)
         spawnSubstanceWithAtcLevels(item, 4);
       }
 
-      // Physics tuned for crisp non-overlapping labels!
       const options = {
         physics: {
-          enabled: true,
-          solver: "forceAtlas2Based",
-          forceAtlas2Based: {
-            gravitationalConstant: -110,
-            centralGravity: 0.01,
-            springLength: 165,
-            springConstant: 0.06,
-            damping: 0.45,
-            avoidOverlap: 1.0
-          }
+          enabled: true, solver: "forceAtlas2Based",
+          forceAtlas2Based: { gravitationalConstant: -110, centralGravity: 0.01, springLength: 165, springConstant: 0.06, damping: 0.45, avoidOverlap: 1.0 }
         },
-        edges: {
-          color: { color: "#A1A1AA", highlight: "#EAB308" },
-          width: 2,
-          smooth: { type: "continuous" }
-        },
+        edges: { color: { color: "#A1A1AA", highlight: "#EAB308" }, width: 2, smooth: { type: "continuous" } },
         interaction: { hover: true, zoomView: true, dragView: true }
       };
 
@@ -824,30 +990,25 @@
       graphNet = new vis.Network(container, { nodes: gNodes, edges: gEdges }, options);
 
       graphNet.on("click", (params) => {
-        if (params.nodes && params.nodes.length) {
-          handleGraphNodeClick(params.nodes[0]);
-        }
+        if (params.nodes && params.nodes.length) handleGraphNodeClick(params.nodes[0]);
       });
 
       setTimeout(() => fitGraph(), 120);
     }
 
-    // Progressive expansion when clicking any node in the graph
     function handleGraphNodeClick(nId) {
       const node = gNodes.get(nId);
       if (!node) return;
 
       if (node.nodeType === "substance") {
-        // Expand full 5 levels of ATC for this substance
         spawnSubstanceWithAtcLevels(node.payload, 5);
         showToast(`กางลำดับชั้น ATC ครบ 5 Level ของ ${node.payload.preferredName} แล้ว`);
       } else if (node.nodeType === "atc_level") {
-        // Find parent level (e.g. if user clicked Level 2 J01, spawn Level 1 J + any sibling drugs sharing this group)
         const item = node.sourceItem || fallbackSubstances[0];
         const allCodes = (item.atcCode || "").split(',').map(s => s.trim());
         allCodes.forEach(c => {
           if (c.startsWith(node.atcCode) || node.atcCode.startsWith(c.slice(0, 1))) {
-            const full5 = parseAtc5Levels(c, item.preferredName).reverse(); // [L5, L4, L3, L2, L1]
+            const full5 = parseAtc5Levels(c, item.preferredName).reverse();
             let prevId = `sub_${item.unii}`;
             full5.forEach(lvObj => {
               const nextNode = createAtcLevelNodeObj(lvObj, item);
@@ -858,20 +1019,15 @@
           }
         });
 
-        // Also connect any other showcase substances that share the same Level 1 Organ Group!
         const rootLetter = node.atcCode.slice(0, 1);
         fallbackSubstances.forEach(other => {
           if (other.atcCode && other.atcCode.split(',').some(code => code.trim().startsWith(rootLetter))) {
             const otherId = `sub_${other.unii}`;
             addNodeSafe({
-              id: otherId,
-              label: `${other.preferredName}\n(${other.thaiName.split('(')[0].trim()})`,
-              shape: "dot",
-              size: 24,
-              color: { background: "#FACC15", border: "#CA8A04" },
+              id: otherId, label: `${other.preferredName}\n(${other.thaiName.split('(')[0].trim()})`,
+              shape: "dot", size: 24, color: { background: "#FACC15", border: "#CA8A04" },
               font: { size: 11, color: "#18181B", background: "rgba(255,255,255,0.9)" },
-              payload: other,
-              nodeType: "substance"
+              payload: other, nodeType: "substance"
             });
             addEdgeSafe(`atc_${rootLetter}`, otherId, "same_organ_group");
           }
@@ -930,11 +1086,9 @@
       if (!q) { initGraph("AMOXICILLIN"); return; }
       const qLow = q.toLowerCase();
 
-      // Check local first
       let found = currentResults.find(d => d.preferredName.toLowerCase().includes(qLow) || d.thaiName.toLowerCase().includes(qLow) || (d.atcCode && d.atcCode.toLowerCase().includes(qLow))) ||
                   fallbackSubstances.find(d => d.preferredName.toLowerCase().includes(qLow) || d.thaiName.toLowerCase().includes(qLow) || (d.atcCode && d.atcCode.toLowerCase().includes(qLow)));
 
-      // Or query Supabase live so ANY drug in the 171,912 database gets a full 5-Level ATC graph!
       if (!found && supabaseClient) {
         try {
           const { data } = await supabaseClient.rpc('search_thai_unii', {
